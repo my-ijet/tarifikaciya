@@ -1,0 +1,5 @@
+lib
+*.exe
+*.dbg
+settings.ini
+tarifikaciya

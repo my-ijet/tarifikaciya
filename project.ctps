@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <BuildModes Active="Debug"/>
+    <Units>
+      <Unit>
+        <Filename Value="project.ppr"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <CursorPos X="47" Y="21"/>
+        <UsageCount Value="37"/>
+      </Unit>
+      <Unit>
+        <Filename Value="main_form.pas"/>
+        <FRMtype Value="200"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="4"/>
+        <CursorPos X="27" Y="10"/>
+        <UsageCount Value="37"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unit1.pas"/>
+        <FRMtype Value="200"/>
+        <ComponentName Value="Form2"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <UsageCount Value="24"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/forms.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1512"/>
+        <CursorPos X="15" Y="1525"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/classes/classesh.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2428"/>
+        <CursorPos X="3" Y="2322"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/pairsplitter.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="PairSplitter"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/checklst.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="CheckLst"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="154"/>
+        <CursorPos X="3" Y="93"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="45" Column="25" TopLine="30"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="46" Column="25" TopLine="30"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="47" Column="25" TopLine="31"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="32" Column="20" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="33" Column="20" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="34" Column="20" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="33" Column="20" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="32" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="33" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="34" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="35" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="36" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="37" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="38" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="39" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="40" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="39" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="41" Column="20" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="10" Column="36"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="25" Column="16" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="75" Column="14" TopLine="47"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="80" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="79" TopLine="56"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="80" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="81" Column="6" TopLine="70"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="86" Column="29" TopLine="65"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="83" Column="32" TopLine="69"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="85" Column="50" TopLine="71"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="87" Column="35" TopLine="70"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="97" Column="37" TopLine="71"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>
