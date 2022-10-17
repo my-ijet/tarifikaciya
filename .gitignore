@@ -1,5 +1,7 @@
 lib
+bin
+GPATH
+GRTAGS
+GTAGS
 *.exe
 *.dbg
-settings.ini
-tarifikaciya

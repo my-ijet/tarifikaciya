@@ -2,8 +2,8 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="12"/>
-    <ManyBuildModesSelection Value="Debug,ReleaseWin32"/>
-    <BuildModes Active="Debug"/>
+    <ManyBuildModesSelection Value="Debug,Release,ReleaseWin32"/>
+    <BuildModes Active="ReleaseWin32"/>
     <Units>
       <Unit>
         <Filename Value="project.ppr"/>
@@ -12,7 +12,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="47" Y="21"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="62"/>
       </Unit>
       <Unit>
         <Filename Value="main_form.pas"/>
@@ -24,9 +24,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
-        <CursorPos X="43" Y="10"/>
-        <UsageCount Value="48"/>
+        <TopLine Value="251"/>
+        <CursorPos X="19" Y="256"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -39,7 +39,7 @@
         <UnitName Value="Unit1"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="23"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/forms.pp"/>
@@ -47,8 +47,8 @@
         <UnitName Value="Forms"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1512"/>
-        <CursorPos X="15" Y="1525"/>
+        <TopLine Value="2147"/>
+        <CursorPos X="13" Y="2171"/>
         <UsageCount Value="10"/>
       </Unit>
       <Unit>
@@ -58,7 +58,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2428"/>
         <CursorPos X="3" Y="2322"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/pairsplitter.pas"/>
@@ -66,7 +66,7 @@
         <UnitName Value="PairSplitter"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/checklst.pas"/>
@@ -76,7 +76,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="154"/>
         <CursorPos X="3" Y="93"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/actnlist.pas"/>
@@ -86,125 +86,194 @@
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="6" Y="16"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/stdctrls.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="428"/>
+        <CursorPos X="14" Y="440"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/propertystorage.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="PropertyStorage"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="152"/>
+        <CursorPos X="14" Y="165"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/lcl/inipropstorage.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="IniPropStorage"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="132"/>
+        <CursorPos X="24" Y="55"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/inc/objpash.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="189"/>
+        <CursorPos X="8" Y="203"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/components/packages_pl/pl_FpSpreadsheet/source/visual/fpspreadsheetctrls.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="46"/>
+        <CursorPos X="3" Y="60"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/components/packages_pl/pl_FpSpreadsheet/source/export/fpsexport.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="19"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/types.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="Types"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="223"/>
         <UsageCount Value="10"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="28">
+    <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="32" Column="20" TopLine="18"/>
+        <Caret Line="87" Column="37" TopLine="77"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="33" Column="20" TopLine="18"/>
+        <Caret Line="84" Column="31" TopLine="73"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="34" Column="20" TopLine="18"/>
+        <Caret Line="99" Column="31" TopLine="94"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="33" Column="20" TopLine="18"/>
+        <Caret Line="221" Column="22" TopLine="208"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="32" Column="20" TopLine="16"/>
+        <Caret Line="223" TopLine="203"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="33" Column="20" TopLine="16"/>
+        <Caret Line="224" TopLine="204"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="34" Column="20" TopLine="16"/>
+        <Caret Line="226" TopLine="206"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="35" Column="20" TopLine="16"/>
+        <Caret Line="227" TopLine="207"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="36" Column="20" TopLine="16"/>
+        <Caret Line="228" TopLine="208"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="37" Column="20" TopLine="16"/>
+        <Caret Line="227" TopLine="207"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="38" Column="20" TopLine="16"/>
+        <Caret Line="226" TopLine="206"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="39" Column="20" TopLine="16"/>
+        <Caret Line="227" TopLine="207"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="40" Column="20" TopLine="16"/>
+        <Caret Line="226" TopLine="206"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="39" Column="20" TopLine="16"/>
+        <Caret Line="225" TopLine="205"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="41" Column="20" TopLine="16"/>
+        <Caret Line="226" TopLine="206"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="10" Column="36"/>
+        <Caret Line="81" Column="37" TopLine="65"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="25" Column="16" TopLine="16"/>
+        <Caret Line="10" Column="54"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="75" Column="14" TopLine="47"/>
+        <Caret Line="11" Column="45"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="80" TopLine="57"/>
+        <Caret Line="203" Column="56" TopLine="203"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="79" TopLine="56"/>
+        <Caret Line="202" Column="56" TopLine="202"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="80" TopLine="57"/>
+        <Caret Line="126" Column="16" TopLine="126"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="81" Column="6" TopLine="70"/>
+        <Caret Line="147" Column="28" TopLine="130"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="86" Column="29" TopLine="65"/>
+        <Caret Line="153" Column="28" TopLine="143"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="83" Column="32" TopLine="69"/>
+        <Caret Line="164" Column="28" TopLine="144"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="85" Column="50" TopLine="71"/>
+        <Caret Line="154" Column="28" TopLine="147"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="87" Column="35" TopLine="70"/>
+        <Caret Line="134" Column="13" TopLine="122"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="97" Column="37" TopLine="71"/>
+        <Caret Line="104" Column="20" TopLine="91"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="10" Column="27" TopLine="4"/>
+        <Caret Line="203" Column="16" TopLine="195"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="10" Column="43" TopLine="4"/>
+        <Caret Line="107" Column="42" TopLine="90"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="240" Column="23" TopLine="226"/>
       </Position>
     </JumpHistory>
     <RunParams>

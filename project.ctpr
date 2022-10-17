@@ -16,6 +16,36 @@
     </General>
     <BuildModes>
       <Item Name="Debug" Default="True"/>
+      <Item Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="bin/tarifikaciya"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="4"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item>
       <Item Name="ReleaseWin32">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="win32"/>
@@ -23,7 +53,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="tarifikaciya"/>
+            <Filename Value="bin/tarifikaciya-win32"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -64,6 +94,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="pl_FpSpreadsheet"/>
+      </Item>
+      <Item>
         <PackageName Value="lz_tdbf"/>
       </Item>
       <Item>
@@ -92,7 +125,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="tarifikaciya"/>
+      <Filename Value="bin/tarifikaciya-debug"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
