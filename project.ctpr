@@ -44,6 +44,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dONRELEASE"/>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="ReleaseWin32">
@@ -79,6 +82,12 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dONRELEASE"/>
+            <OtherDefines Count="1">
+              <Define0 Value="ONRELEASE"/>
+            </OtherDefines>
+          </Other>
         </CompilerOptions>
       </Item>
       <SharedMatrixOptions Count="1">
@@ -135,7 +144,7 @@
       </Unit>
       <Unit>
         <Filename Value="spravochniky_frame.pas"/>
-        <FRMtype Value="0"/>
+        <FRMtype Value="400"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SpravochnikyFrame"/>
         <HasResources Value="True"/>
@@ -143,7 +152,7 @@
       </Unit>
       <Unit>
         <Filename Value="otchety_frame.pas"/>
-        <FRMtype Value="0"/>
+        <FRMtype Value="400"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OtchetyFrame"/>
         <HasResources Value="True"/>
@@ -151,7 +160,7 @@
       </Unit>
       <Unit>
         <Filename Value="tarifikaciya_frame.pas"/>
-        <FRMtype Value="0"/>
+        <FRMtype Value="400"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TarifikaciyaFrame"/>
         <HasResources Value="True"/>

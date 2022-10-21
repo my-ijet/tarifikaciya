@@ -117,12 +117,12 @@ object TarDataModule: TTarDataModule
     Left = 29
     Top = 8
   end
-  object DataSource1: TDataSource
-    DataSet = SQLQuery1
+  object DSSprPersons: TDataSource
+    DataSet = QSprPersons
     Left = 58
     Top = 8
   end
-  object SQLQuery1: TSQLQuery
+  object QSprPersons: TSQLQuery
     IndexName = 'DEFAULT_ORDER'
     MaxIndexesCount = 4
     FieldDefs = <    
@@ -132,13 +132,13 @@ object TarDataModule: TTarDataModule
         Precision = -1
       end    
       item
-        Name = 'firstname'
+        Name = 'familyname'
         DataType = ftString
         Precision = -1
         Size = 8192
       end    
       item
-        Name = 'familyname'
+        Name = 'firstname'
         DataType = ftString
         Precision = -1
         Size = 8192

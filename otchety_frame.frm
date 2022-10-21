@@ -14,9 +14,9 @@ object OtchetyFrame: TOtchetyFrame
     Height = 720
     Top = 0
     Width = 1280
-    ActivePage = RequisiteTab
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Отчёт'
@@ -29,13 +29,13 @@ object OtchetyFrame: TOtchetyFrame
         AnchorSideLeft.Control = RequisiteTab
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Control = RequisiteTab
-        Left = 314
-        Height = 281
+        Left = 326
+        Height = 208
         Top = 0
-        Width = 649
+        Width = 625
         Caption = 'Реквизиты'
-        ClientHeight = 251
-        ClientWidth = 645
+        ClientHeight = 178
+        ClientWidth = 621
         TabOrder = 0
         object Label7: TLabel
           Left = 10

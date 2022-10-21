@@ -29,7 +29,7 @@ object TarifikaciyaFrame: TTarifikaciyaFrame
       ClientWidth = 300
       ClientHeight = 719
       Constraints.MaxWidth = 800
-      Constraints.MinWidth = 300
+      Constraints.MinWidth = 110
       object GBOrganizations: TGroupBox
         Left = 0
         Height = 719

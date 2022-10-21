@@ -12,13 +12,13 @@ type
   { TTarDataModule }
 
   TTarDataModule = class(TDataModule)
-    DataSource1: TDataSource;
+    DSSprPersons: TDataSource;
     DSAllDatabases: TDataSource;
     MainConnection: TPQConnection;
     QAllDatabases: TSQLQuery;
     MainTransaction: TSQLTransaction;
     SQLCreateTables: TSQLScript;
-    SQLQuery1: TSQLQuery;
+    QSprPersons: TSQLQuery;
 
     procedure ConnectToHost(NewHostName, NewUserName, NewPassword, NewDatabaseName : String);
     procedure ChangeCurrentDatabase(NewDatabaseName : String);
@@ -125,7 +125,7 @@ end;
 procedure TTarDataModule.PrepQueries;
 begin
   QAllDatabases.Active := True;
-  SQLQuery1.Active := True;
+  QSprPersons.Active := True;
 end;
 
 end.

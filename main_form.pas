@@ -28,16 +28,16 @@ type
     BtnRenameDatabase: TBitBtn;
     BtnRestoreDatabase: TBitBtn;
     CalendarDialog1: TCalendarDialog;
-    GBTarifikaciyaTables: TGroupBox;
-    ListCurrentDatabase: TDBLookupComboBox;
+    GBCurrentDatabase: TGroupBox;
+    GBDatabases: TGroupBox;
+    GBRestoreDatabases: TGroupBox;
     EditHostDbName: TEdit;
     EditHostIP: TEdit;
     EditHostLogin: TEdit;
     EditHostPassword: TEdit;
-    GBCurrentDatabase: TGroupBox;
-    GBDatabases: TGroupBox;
     GBLoginPassword: TGroupBox;
-    GBRestoreDatabases: TGroupBox;
+    GBTarifikaciyaTables: TGroupBox;
+    ListCurrentDatabase: TDBLookupComboBox;
     ListCurrentTarifikationDate: TComboBox;
     ImageList: TImageList;
     InfoTarDbConnection: TCheckBox;
@@ -49,18 +49,20 @@ type
     ListDatabaseBackups: TListBox;
     ListDatabases: TDBLookupListBox;
     ListTarTables: TListBox;
-    OtchetyFrame1: TOtchetyFrame;
     OtchetyTab: TTabSheet;
     MainPageControl: TPageControl;
+    Panel1: TPanel;
     ServicePageControl: TPageControl;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     SpravochnikyTab: TTabSheet;
-    SpravochnikyFrame1: TSpravochnikyFrame;
     Service: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
-    TarifikaciyaFrame1: TTarifikaciyaFrame;
     TarifikaciyaTab: TTabSheet;
+
+    TarifikaciyaFrame: TTarifikaciyaFrame;
+    OtchetyFrame: TOtchetyFrame;
+    SpravochnikyFrame: TSpravochnikyFrame;
 
     procedure BtnConnectToHostClick(Sender: TObject);
     procedure BtnDeleteDatabaseClick(Sender: TObject);
@@ -111,7 +113,17 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   TarDataModule.MainConnection.AfterConnect := @OnConnect;
   TarDataModule.MainConnection.BeforeDisconnect := @OnDisconnect;
-  //MainPageControl.TabIndex := 0;
+
+  TarifikaciyaFrame := TTarifikaciyaFrame.Create(MainForm);
+  TarifikaciyaFrame.Parent := TarifikaciyaTab;
+  OtchetyFrame := TOtchetyFrame.Create(MainForm);
+  OtchetyFrame.Parent := OtchetyTab;
+  SpravochnikyFrame := TSpravochnikyFrame.Create(MainForm);
+  SpravochnikyFrame.Parent := SpravochnikyTab;
+
+  {$IfDef ONRELEASE}
+  MainPageControl.TabIndex := 0;
+  {$EndIf}
   LoadSettings;
 end;
 

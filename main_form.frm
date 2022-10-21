@@ -3,13 +3,9 @@ object MainForm: TMainForm
   Height = 720
   Top = 256
   Width = 1280
-  HorzScrollBar.Increment = 84
   HorzScrollBar.Page = 842
-  HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
-  VertScrollBar.Increment = 68
-  VertScrollBar.Page = 680
-  VertScrollBar.Smooth = True
+  VertScrollBar.Page = 708
   VertScrollBar.Tracking = True
   AutoScroll = True
   BorderWidth = 5
@@ -38,140 +34,56 @@ object MainForm: TMainForm
     TabOrder = 0
     object TarifikaciyaTab: TTabSheet
       Caption = 'Тарификация'
-      ClientHeight = 675
-      ClientWidth = 1266
-      inline TarifikaciyaFrame1: TTarifikaciyaFrame
-        Height = 675
-        Width = 1266
-        ClientHeight = 675
-        ClientWidth = 1266
-        inherited PairSplitter1: TPairSplitter
-          Height = 674
-          Width = 1265
-          inherited PSSOrganizatons: TPairSplitterSide
-            Height = 674
-            ClientHeight = 674
-            inherited GBOrganizations: TGroupBox
-              Height = 674
-              ClientHeight = 644
-              ClientWidth = 296
-              inherited ListOrganizations: TListBox
-                Height = 644
-              end
-            end
-          end
-          inherited PSSRight: TPairSplitterSide
-            Height = 674
-            Width = 960
-            ClientWidth = 960
-            ClientHeight = 674
-            inherited PairSplitter2: TPairSplitter
-              Height = 674
-              Width = 960
-              inherited PSUp: TPairSplitterSide
-                Width = 960
-                ClientWidth = 960
-              end
-              inherited PSDown: TPairSplitterSide
-                Height = 319
-                Width = 960
-              end
-            end
-          end
-        end
-      end
     end
     object OtchetyTab: TTabSheet
       Caption = 'Отчёты'
-      ClientHeight = 675
-      ClientWidth = 1266
-      inline OtchetyFrame1: TOtchetyFrame
-        Height = 675
-        Width = 1266
-        ClientHeight = 675
-        ClientWidth = 1266
-        inherited PageControl1: TPageControl
-          Height = 675
-          Width = 1266
-          inherited RequisiteTab: TTabSheet
-            ClientHeight = 640
-            ClientWidth = 1262
-            inherited GroupBox1: TGroupBox
-              Left = 333
-              Height = 185
-              Width = 596
-              ClientHeight = 155
-              ClientWidth = 592
-            end
-          end
-        end
-      end
     end
     object SpravochnikyTab: TTabSheet
       Caption = 'Справочники'
-      ClientHeight = 675
-      ClientWidth = 1266
-      inline SpravochnikyFrame1: TSpravochnikyFrame
-        Height = 675
-        Width = 1266
-        ClientHeight = 675
-        ClientWidth = 1266
-        inherited GBSpravochniki: TGroupBox
-          Height = 675
-          ClientHeight = 645
-          ClientWidth = 149
-        end
-        inherited DBGrid1: TDBGrid
-          Height = 675
-          Width = 1113
-          Columns = <          
-            item
-              PickList.Strings = (              )
-              Title.Caption = 'id'
-              Width = 269
-              FieldName = 'id'
-            end          
-            item
-              PickList.Strings = (              )
-              Title.Caption = 'firstname'
-              Width = 269
-              FieldName = 'firstname'
-            end          
-            item
-              PickList.Strings = (              )
-              Title.Caption = 'middlename'
-              Width = 269
-              FieldName = 'middlename'
-            end          
-            item
-              PickList.Strings = (              )
-              Title.Caption = 'familyname'
-              Width = 269
-              FieldName = 'familyname'
-            end>
-        end
-      end
     end
     object Service: TTabSheet
       Caption = 'Сервис'
       ClientHeight = 675
       ClientWidth = 1266
+      object Panel1: TPanel
+        Left = 0
+        Height = 28
+        Top = 647
+        Width = 1266
+        Align = alBottom
+        BevelOuter = bvNone
+        ClientHeight = 28
+        ClientWidth = 1266
+        TabOrder = 0
+        object InfoTarDbConnection: TCheckBox
+          Left = 0
+          Height = 28
+          Top = 0
+          Width = 255
+          Align = alLeft
+          BidiMode = bdRightToLeft
+          Caption = 'Состояние подключения к серверу:'
+          Enabled = False
+          ParentFont = False
+          ParentBidiMode = False
+          TabOrder = 0
+          TabStop = False
+        end
+      end
       object ServicePageControl: TPageControl
         Left = 0
-        Height = 675
+        Height = 647
         Top = 0
         Width = 1266
         ActivePage = TabSheet2
         Align = alClient
         TabIndex = 0
-        TabOrder = 0
+        TabOrder = 1
         object TabSheet2: TTabSheet
           Caption = 'Базы данных'
-          ClientHeight = 640
+          ClientHeight = 612
           ClientWidth = 1262
           object GBRestoreDatabases: TGroupBox
-            AnchorSideLeft.Control = TabSheet2
-            AnchorSideRight.Control = TabSheet2
             AnchorSideRight.Side = asrBottom
             Left = 0
             Height = 300
@@ -181,21 +93,22 @@ object MainForm: TMainForm
             ClientHeight = 270
             ClientWidth = 266
             TabOrder = 0
-            object ListDatabaseBackups: TListBox
-              AnchorSideLeft.Control = GBRestoreDatabases
-              AnchorSideTop.Control = GBRestoreDatabases
+            object BtnDeleteBackup: TBitBtn
               AnchorSideRight.Control = GBRestoreDatabases
               AnchorSideRight.Side = asrBottom
               AnchorSideBottom.Control = GBRestoreDatabases
               AnchorSideBottom.Side = asrBottom
-              Left = 0
-              Height = 242
-              Top = 0
-              Width = 266
-              Anchors = [akTop, akLeft, akRight, akBottom]
-              BorderSpacing.Bottom = 28
-              ItemHeight = 0
-              MultiSelect = True
+              Left = 238
+              Height = 27
+              Hint = 'Удалить выделенные'
+              Top = 243
+              Width = 28
+              Anchors = [akRight, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 6
+              ParentShowHint = False
+              ShowHint = True
               TabOrder = 0
             end
             object BtnRestoreDatabase: TBitBtn
@@ -216,28 +129,25 @@ object MainForm: TMainForm
               ShowHint = True
               TabOrder = 1
             end
-            object BtnDeleteBackup: TBitBtn
+            object ListDatabaseBackups: TListBox
+              AnchorSideLeft.Control = GBRestoreDatabases
+              AnchorSideTop.Control = GBRestoreDatabases
               AnchorSideRight.Control = GBRestoreDatabases
               AnchorSideRight.Side = asrBottom
               AnchorSideBottom.Control = GBRestoreDatabases
               AnchorSideBottom.Side = asrBottom
-              Left = 238
-              Height = 27
-              Hint = 'Удалить выделенные'
-              Top = 243
-              Width = 28
-              Anchors = [akRight, akBottom]
-              Enabled = False
-              Images = ImageList
-              ImageIndex = 6
-              ParentShowHint = False
-              ShowHint = True
+              Left = 0
+              Height = 242
+              Top = 0
+              Width = 266
+              Anchors = [akTop, akLeft, akRight, akBottom]
+              BorderSpacing.Bottom = 28
+              ItemHeight = 0
+              MultiSelect = True
               TabOrder = 2
             end
           end
           object GBDatabases: TGroupBox
-            AnchorSideLeft.Control = TabSheet2
-            AnchorSideTop.Control = TabSheet2
             Left = 0
             Height = 300
             Top = 0
@@ -246,6 +156,19 @@ object MainForm: TMainForm
             ClientHeight = 270
             ClientWidth = 268
             TabOrder = 1
+            object ListDatabases: TDBLookupListBox
+              Left = 0
+              Height = 242
+              Top = 0
+              Width = 268
+              Align = alClient
+              BorderSpacing.Bottom = 28
+              KeyField = 'databases'
+              ListFieldIndex = 0
+              ListSource = TarDataModule.DSAllDatabases
+              LookupCache = False
+              TabOrder = 0
+            end
             object BtnNewDatabase: TBitBtn
               AnchorSideLeft.Control = GBDatabases
               AnchorSideBottom.Control = GBDatabases
@@ -261,10 +184,9 @@ object MainForm: TMainForm
               OnClick = BtnNewDatabaseClick
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 0
+              TabOrder = 1
             end
             object BtnDuplicateDatabase: TBitBtn
-              AnchorSideLeft.Control = BtnRenameDatabase
               AnchorSideLeft.Side = asrBottom
               AnchorSideBottom.Control = GBDatabases
               AnchorSideBottom.Side = asrBottom
@@ -279,10 +201,9 @@ object MainForm: TMainForm
               ImageIndex = 4
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 1
+              TabOrder = 2
             end
             object BtnImportFromFOXPRO: TBitBtn
-              AnchorSideLeft.Control = BtnJoinWithCurrentDataBase
               AnchorSideLeft.Side = asrBottom
               AnchorSideBottom.Control = GBDatabases
               AnchorSideBottom.Side = asrBottom
@@ -296,10 +217,9 @@ object MainForm: TMainForm
               ImageIndex = 3
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 2
+              TabOrder = 3
             end
             object BtnJoinWithCurrentDataBase: TBitBtn
-              AnchorSideLeft.Control = BtnDuplicateDatabase
               AnchorSideLeft.Side = asrBottom
               AnchorSideBottom.Control = GBDatabases
               AnchorSideBottom.Side = asrBottom
@@ -314,7 +234,7 @@ object MainForm: TMainForm
               ImageIndex = 8
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 3
+              TabOrder = 4
             end
             object BtnDeleteDatabase: TBitBtn
               AnchorSideRight.Control = GBDatabases
@@ -332,10 +252,9 @@ object MainForm: TMainForm
               OnClick = BtnDeleteDatabaseClick
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 4
+              TabOrder = 5
             end
             object BtnBackupDatabase: TBitBtn
-              AnchorSideLeft.Control = BtnImportFromFOXPRO
               AnchorSideLeft.Side = asrBottom
               AnchorSideBottom.Control = GBDatabases
               AnchorSideBottom.Side = asrBottom
@@ -350,10 +269,9 @@ object MainForm: TMainForm
               ImageIndex = 2
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 5
+              TabOrder = 6
             end
             object BtnRenameDatabase: TBitBtn
-              AnchorSideLeft.Control = BtnNewDatabase
               AnchorSideLeft.Side = asrBottom
               AnchorSideBottom.Control = GBDatabases
               AnchorSideBottom.Side = asrBottom
@@ -368,19 +286,6 @@ object MainForm: TMainForm
               OnClick = BtnRenameDatabaseClick
               ParentShowHint = False
               ShowHint = True
-              TabOrder = 6
-            end
-            object ListDatabases: TDBLookupListBox
-              Left = 0
-              Height = 242
-              Top = 0
-              Width = 268
-              Align = alClient
-              BorderSpacing.Bottom = 28
-              KeyField = 'databases'
-              ListFieldIndex = 0
-              ListSource = TarDataModule.DSAllDatabases
-              LookupCache = False
               TabOrder = 7
             end
           end
@@ -497,7 +402,7 @@ object MainForm: TMainForm
         end
         object TabSheet3: TTabSheet
           Caption = 'Настройки подключения'
-          ClientHeight = 640
+          ClientHeight = 612
           ClientWidth = 1262
           ParentBiDiMode = False
           object GBLoginPassword: TGroupBox
@@ -599,24 +504,6 @@ object MainForm: TMainForm
             end
           end
         end
-      end
-      object InfoTarDbConnection: TCheckBox
-        AnchorSideLeft.Control = Service
-        AnchorSideTop.Side = asrBottom
-        AnchorSideBottom.Control = Service
-        AnchorSideBottom.Side = asrBottom
-        Left = 0
-        Height = 22
-        Top = 653
-        Width = 258
-        Anchors = [akLeft, akBottom]
-        BidiMode = bdRightToLeft
-        Caption = 'Состояние подключения к серверу: '
-        Enabled = False
-        ParentFont = False
-        ParentBidiMode = False
-        TabOrder = 1
-        TabStop = False
       end
     end
   end
