@@ -3,12 +3,11 @@ unit main_form;
 {$mode objfpc}{$H+}
 
 interface
-
 uses
   Classes, SysUtils, Crt, PQConnection, SQLDB, DB, dbf, Forms, Controls,
-  Graphics, Dialogs, ComCtrls, PairSplitter, ExtCtrls, StdCtrls, DBCtrls,
-  DBGrids, IniPropStorage, ActnList, Buttons, Menus,
-  fpspreadsheetctrls, fpspreadsheetgrid;
+  Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, DBCtrls,
+  DBGrids, IniPropStorage, ActnList, Buttons, Menus, ExtDlgs,
+  tarifikaciya_frame, otchety_frame, spravochniky_frame;
 
 type
 
@@ -16,201 +15,192 @@ type
 
   TMainForm = class(TForm)
     BtnBackupDatabase: TBitBtn;
-    BtnConnectToHost: TBitBtn;
+    BtnConnectToHost: TButton;
     BtnDeleteBackup: TBitBtn;
     BtnDeleteDatabase: TBitBtn;
     BtnDeleteTarTable: TBitBtn;
-    BtnDoljnosty: TButton;
-    BtnDoplaty: TButton;
     BtnDuplicateDatabase: TBitBtn;
     BtnDuplicateTarTable: TBitBtn;
     BtnImportFromFOXPRO: TBitBtn;
     BtnJoinWithCurrentDataBase: TBitBtn;
-    BtnNadbavky: TButton;
     BtnNewDatabase: TBitBtn;
     BtnNewTarTable: TBitBtn;
-    BtnOrganizations: TButton;
-    BtnOrgGrups: TButton;
-    BtnPersons: TButton;
-    BtnPredmety: TButton;
     BtnRenameDatabase: TBitBtn;
     BtnRestoreDatabase: TBitBtn;
-    BtnStavky: TButton;
-    DBGrid1: TDBGrid;
-    GBSpravochniki: TGroupBox;
-    GBOrganizations: TGroupBox;
-    Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    CurrentTarifikationDate: TComboBox;
-    CurrentDatabase: TComboBox;
-    EditDbDb: TEdit;
-    EditDbHost: TEdit;
-    EditDbLogin: TEdit;
-    EditDbPassword: TEdit;
+    CalendarDialog1: TCalendarDialog;
+    GBTarifikaciyaTables: TGroupBox;
+    ListCurrentDatabase: TDBLookupComboBox;
+    EditHostDbName: TEdit;
+    EditHostIP: TEdit;
+    EditHostLogin: TEdit;
+    EditHostPassword: TEdit;
     GBCurrentDatabase: TGroupBox;
     GBDatabases: TGroupBox;
     GBLoginPassword: TGroupBox;
     GBRestoreDatabases: TGroupBox;
-    GBTarifikaciyaTables: TGroupBox;
-    GroupBox1: TGroupBox;
+    ListCurrentTarifikationDate: TComboBox;
     ImageList: TImageList;
-    DataSource1: TDataSource;
-    Dbf1: TDbf;
-    IniPropStorage: TIniPropStorage;
+    InfoTarDbConnection: TCheckBox;
+    Ini: TIniPropStorage;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    ListOrganizations: TListBox;
-    ListDatabases: TListBox;
     ListDatabaseBackups: TListBox;
+    ListDatabases: TDBLookupListBox;
     ListTarTables: TListBox;
-    Otchety: TTabSheet;
+    OtchetyFrame1: TOtchetyFrame;
+    OtchetyTab: TTabSheet;
     MainPageControl: TPageControl;
-    PairSplitter1: TPairSplitter;
-    PairSplitter2: TPairSplitter;
-    PQMainConnection: TPQConnection;
-    PSDown: TPairSplitterSide;
-    PSSOrganizatons: TPairSplitterSide;
-    PSSRight: TPairSplitterSide;
-    PSUp: TPairSplitterSide;
-    Settings: TTabSheet;
-    Spravochniki: TTabSheet;
-    SQLQuery1: TSQLQuery;
-    SQLScript1: TSQLScript;
-    SQLTransaction1: TSQLTransaction;
-    sWorkbookSource1: TsWorkbookSource;
-    sWorksheetGrid1: TsWorksheetGrid;
-    TabControl1: TTabControl;
-    TabControl2: TTabControl;
+    ServicePageControl: TPageControl;
+    SelectDirectoryDialog1: TSelectDirectoryDialog;
+    SpravochnikyTab: TTabSheet;
+    SpravochnikyFrame1: TSpravochnikyFrame;
     Service: TTabSheet;
-    Tarifikaciya: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    TarifikaciyaFrame1: TTarifikaciyaFrame;
+    TarifikaciyaTab: TTabSheet;
 
     procedure BtnConnectToHostClick(Sender: TObject);
-    procedure CurrentDatabaseChange(Sender: TObject);
-    procedure CurrentTarifikationDateChange(Sender: TObject);
-    procedure EditDbDbChange(Sender: TObject);
-    procedure EditDbHostChange(Sender: TObject);
-    procedure EditDbLoginChange(Sender: TObject);
-    procedure EditDbPasswordChange(Sender: TObject);
+    procedure BtnDeleteDatabaseClick(Sender: TObject);
+    procedure BtnNewDatabaseClick(Sender: TObject);
+    procedure BtnRenameDatabaseClick(Sender: TObject);
+    procedure ListCurrentDatabaseChange(Sender: TObject);
+    procedure ListCurrentTarifikationDateChange(Sender: TObject);
+    procedure EditHostDbNameEditingDone(Sender: TObject);
+    procedure EditHostIPEditingDone(Sender: TObject);
+    procedure EditHostLoginEditingDone(Sender: TObject);
+    procedure EditHostPasswordEditingDone(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure FormWindowStateChange(Sender: TObject);
+
+    procedure OnConnect(sender: TObject);
+    procedure OnDisconnect(sender: TObject);
+    procedure SetCaptionToCurrDatabaseName;
 
     procedure LoadSettings;
     procedure SaveSettings;
-
-    procedure ConnectToHost;
-    procedure ChangeCurrentDatabase;
-    procedure PrepareDatabaseList;
+    function  ValidateDatabaseName(dbname: String): String;
     procedure PrepareDatabaseBackupsList;
     procedure ChangeCurrentTarifikationDate;
-    procedure PrepareCurrentDatabaseLists;
   private
     NeedSaveSettings: Boolean;
+    mCurrentDatabaseName: String;
+    CurrentTarifikationDate: String;
+
+    procedure SetCurrentDatabaseName(dbname: String);
 
   public
-
+    property CurrentDatabaseName: String read mCurrentDatabaseName write SetCurrentDatabaseName;
   end;
 
 var
   MainForm: TMainForm;
 
 implementation
-
 {$R *.frm}
+
+uses
+  data_module;
 
 { TMainForm }
 
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  MainPageControl.TabIndex := 0;
+  TarDataModule.MainConnection.AfterConnect := @OnConnect;
+  TarDataModule.MainConnection.BeforeDisconnect := @OnDisconnect;
+  //MainPageControl.TabIndex := 0;
   LoadSettings;
 end;
 
 procedure TMainForm.BtnConnectToHostClick(Sender: TObject);
 begin
-  ConnectToHost;
-  if PQMainConnection.Connected then
-    BtnConnectToHost.Enabled := False;
+  TarDataModule.ConnectToHost(
+    EditHostIP.Text,
+    EditHostLogin.Text,
+    EditHostPassword.Text,
+    EditHostDbName.Text);
 end;
 
-procedure TMainForm.CurrentDatabaseChange(Sender: TObject);
+procedure TMainForm.BtnDeleteDatabaseClick(Sender: TObject);
 begin
-  ChangeCurrentDatabase;
+  if ListDatabases.ItemIndex < 0 then Exit;
+
+  TarDataModule.DeleteDatabase(ListDatabases.GetSelectedText);
 end;
 
-procedure TMainForm.CurrentTarifikationDateChange(Sender: TObject);
+procedure TMainForm.BtnNewDatabaseClick(Sender: TObject);
+var
+  dbname: String;
 begin
+  if not InputQuery('Создание новой базы данных', 'Новое название:', dbname)
+  then Exit;
+
+  dbname := ValidateDatabaseName(dbname);
+
+  if dbname = '' Then Exit;
+
+  TarDataModule.NewDatabase(dbname);
+end;
+
+procedure TMainForm.BtnRenameDatabaseClick(Sender: TObject);
+var
+  OldName, NewName, TitleText: String;
+begin
+  if ListDatabases.ItemIndex < 0 then Exit;
+  OldName := ListDatabases.GetSelectedText;
+
+  TitleText := 'Переименовать базу данных - "' + OldName + '"';
+  if not InputQuery(TitleText, 'Новое название:', NewName)
+  then Exit;
+
+  NewName := ValidateDatabaseName(NewName);
+
+  if NewName = '' Then Exit;
+
+  TarDataModule.RenameDatabase(OldName, NewName);
+end;
+
+procedure TMainForm.ListCurrentDatabaseChange(Sender: TObject);
+begin
+  CurrentDatabaseName := ListCurrentDatabase.Text;
+end;
+
+procedure TMainForm.ListCurrentTarifikationDateChange(Sender: TObject);
+begin
+  CurrentTarifikationDate := '';
   ChangeCurrentTarifikationDate;
-end;
-
-procedure TMainForm.EditDbDbChange(Sender: TObject);
-begin
   NeedSaveSettings := True;
-  BtnConnectToHost.Enabled := True;
 end;
 
-procedure TMainForm.EditDbHostChange(Sender: TObject);
+procedure TMainForm.EditHostDbNameEditingDone(Sender: TObject);
 begin
+  if EditHostDbName.Text = TarDataModule.MainConnection.DatabaseName
+  then Exit;
   NeedSaveSettings := True;
-  BtnConnectToHost.Enabled := True;
 end;
 
-procedure TMainForm.EditDbLoginChange(Sender: TObject);
+procedure TMainForm.EditHostIPEditingDone(Sender: TObject);
 begin
+  if EditHostIP.Text = TarDataModule.MainConnection.HostName
+  then Exit;
   NeedSaveSettings := True;
-  BtnConnectToHost.Enabled := True;
 end;
 
-procedure TMainForm.EditDbPasswordChange(Sender: TObject);
+procedure TMainForm.EditHostLoginEditingDone(Sender: TObject);
 begin
+  if EditHostLogin.Text = TarDataModule.MainConnection.UserName
+  then Exit;
   NeedSaveSettings := True;
-  BtnConnectToHost.Enabled := True;
 end;
 
-procedure TMainForm.ConnectToHost;
+procedure TMainForm.EditHostPasswordEditingDone(Sender: TObject);
 begin
-  with PQMainConnection do
-  begin
-    Connected := False;
-
-    HostName := EditDbHost.Text;
-    Role := EditDbLogin.Text;
-    Password := EditDbPassword.Text;
-    DatabaseName := EditDbDb.Text;
-
-    Connected := True;
-  end;
-end;
-
-procedure TMainForm.ChangeCurrentDatabase;
-begin
+  if EditHostPassword.Text = TarDataModule.MainConnection.Password
+  then Exit;
   NeedSaveSettings := True;
-  if CurrentDatabase.Text = '' then Exit;
-
-  with PQMainConnection do
-  begin
-    Connected := False;
-    DatabaseName := CurrentDatabase.Text;
-    Connected := True;
-  end;
-end;
-
-procedure TMainForm.PrepareDatabaseList;
-begin
-//Получить список баз данных, установить в доступные и в текущую
-  with ListDatabases.Items do
-  begin
-    Clear;
-  end;
-  with CurrentDatabase.Items do
-  begin
-    Clear;
-    //Add('');
-  end;
 end;
 
 procedure TMainForm.PrepareDatabaseBackupsList;
@@ -220,49 +210,34 @@ end;
 
 procedure TMainForm.ChangeCurrentTarifikationDate;
 begin
-  NeedSaveSettings := True;
 end;
 
-procedure TMainForm.PrepareCurrentDatabaseLists;
+procedure TMainForm.SetCurrentDatabaseName(dbname: String);
+var
+  indexOfDbName: Integer;
 begin
-  if CurrentDatabase.Text = '' then Exit;
-//Получить список таблиц
-  with ListTarTables.Items do
-  begin
-    Clear;
-  end;
-//Получить список дат основных тарификаций
-  with CurrentTarifikationDate.Items do
-  begin
-    Clear;
-  end;
-//Получить список организаций
-  with ListOrganizations.Items do
-  begin
-    Clear;
-  end;
+  indexOfDbName := ListCurrentDatabase.Items.IndexOf(dbname);
+  if indexOfDbName < 0 then Exit;
+
+  mCurrentDatabaseName := dbname;
+  TarDataModule.ChangeCurrentDatabase(dbname);
+  TarDataModule.PrepQueries;
+
+  NeedSaveSettings := True;
 end;
 
 procedure TMainForm.LoadSettings;
 begin
-  with IniPropStorage do
+  with Ini do
   begin
-    IniSection := 'settings';
-    WindowState := StrToWindowState(ReadString('WindowState', 'wsMaximized'));
-    EditDbHost.Text := ReadString('host', 'localhost');
-    EditDbLogin.Text := ReadString('login', 'postgres');
-    EditDbPassword.Text := ReadString('password', '');
-    EditDbDb.Text := ReadString('database', 'postgres');
-    ConnectToHost;
+    EditHostIP.Text := ReadString('host', 'localhost');
+    EditHostLogin.Text := ReadString('login', 'postgres');
+    EditHostPassword.Text := ReadString('password', '');
+    EditHostDbName.Text := ReadString('host_database', 'postgres');
+    BtnConnectToHostClick(MainForm);
 
-    PrepareDatabaseList;
-
-    IniSection := 'client';
-    CurrentDatabase.Text := ReadString('database', '');
-    ChangeCurrentDatabase;
-    PrepareCurrentDatabaseLists;
-
-    CurrentTarifikationDate.Text := ReadString('TarifikationDate', '');
+    CurrentDatabaseName := ReadString('cur_database', '');
+    CurrentTarifikationDate := ReadString('TarifikationDate', '');
     ChangeCurrentTarifikationDate;
   end;
 
@@ -271,29 +246,60 @@ end;
 
 procedure TMainForm.SaveSettings;
 begin
-  with IniPropStorage do
+  with Ini do
   begin
-    IniSection := 'settings';
-    WriteString('host', EditDbHost.Text);
-    WriteString('login', EditDbLogin.Text);
-    WriteString('password', EditDbPassword.Text);
-    WriteString('database', EditDbDb.Text);
-    WriteString('WindowState', WindowStateToStr(WindowState));
+    WriteString('host', EditHostIP.Text);
+    WriteString('login', EditHostLogin.Text);
+    WriteString('password', EditHostPassword.Text);
+    WriteString('host_database', EditHostDbName.Text);
 
-    IniSection := 'client';
-    WriteString('database', CurrentDatabase.Text);
-    WriteString('TarifikationDate', CurrentTarifikationDate.Text);
+    WriteString('cur_database', CurrentDatabaseName);
+    WriteString('TarifikationDate', CurrentTarifikationDate);
   end;
 end;
 
-procedure TMainForm.FormWindowStateChange(Sender: TObject);
+function TMainForm.ValidateDatabaseName(dbname: String): String;
+var
+  NewName, SpecialChars, Ch : String;
 begin
-  NeedSaveSettings := True;
+  NewName := Trim(dbname);
+  while NewName.Contains('  ') do
+    NewName := NewName.Replace('  ', ' ', [rfReplaceAll]);
+
+  SpecialChars:='!?&*@$\/|:;{}<>()[]`''"';
+  for Ch in SpecialChars do
+    NewName := NewName.Replace(Ch, '_', [rfReplaceAll]);
+  Result := NewName;
 end;
+
+procedure TMainForm.SetCaptionToCurrDatabaseName;
+var
+  NewCaption: String;
+begin
+  NewCaption := 'Тарификация - "' + CurrentDatabaseName + '"';
+  MainForm.Caption := NewCaption;
+end;
+
+procedure TMainForm.OnConnect(sender: TObject);
+begin
+  TarDataModule.QAllDatabases.Active := True;
+  ListCurrentDatabase.Text := CurrentDatabaseName;
+  SetCaptionToCurrDatabaseName;
+
+  InfoTarDbConnection.Checked := True;
+end;
+
+procedure TMainForm.OnDisconnect(sender: TObject);
+begin
+  InfoTarDbConnection.Checked := False;
+end;
+
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   if NeedSaveSettings then SaveSettings;
+
+  TarDataModule.MainConnection.BeforeDisconnect := nil;
 end;
 
 end.

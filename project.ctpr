@@ -113,12 +113,49 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
+        <Filename Value="data_module.pas"/>
+        <FRMtype Value="300"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TarDataModule"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sql/list_databases.sql"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
         <Filename Value="main_form.pas"/>
         <FRMtype Value="200"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="spravochniky_frame.pas"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SpravochnikyFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="otchety_frame.pas"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OtchetyFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="tarifikaciya_frame.pas"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TarifikaciyaFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit>
     </Units>
   </ProjectOptions>

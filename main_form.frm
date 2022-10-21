@@ -3,29 +3,27 @@ object MainForm: TMainForm
   Height = 720
   Top = 256
   Width = 1280
-  HorzScrollBar.Increment = 117
-  HorzScrollBar.Page = 1175
+  HorzScrollBar.Increment = 84
+  HorzScrollBar.Page = 842
   HorzScrollBar.Smooth = True
   HorzScrollBar.Tracking = True
-  VertScrollBar.Increment = 59
-  VertScrollBar.Page = 597
+  VertScrollBar.Increment = 68
+  VertScrollBar.Page = 680
   VertScrollBar.Smooth = True
   VertScrollBar.Tracking = True
   AutoScroll = True
   BorderWidth = 5
-  Caption = 'Тарификация'
   ClientHeight = 720
   ClientWidth = 1280
   Constraints.MinHeight = 360
   Constraints.MinWidth = 640
   DefaultMonitor = dmDesktop
-  DockSite = True
   DoubleBuffered = False
   OnClose = FormClose
   OnCreate = FormCreate
-  OnWindowStateChange = FormWindowStateChange
   ParentDoubleBuffered = False
   Position = poScreenCenter
+  SessionProperties = 'WindowState'
   LCLVersion = '7.9'
   Visible = True
   object MainPageControl: TPageControl
@@ -38,781 +36,607 @@ object MainForm: TMainForm
     Images = ImageList
     TabIndex = 3
     TabOrder = 0
-    object Tarifikaciya: TTabSheet
+    object TarifikaciyaTab: TTabSheet
       Caption = 'Тарификация'
       ClientHeight = 675
       ClientWidth = 1266
-      object PairSplitter1: TPairSplitter
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Side = asrBottom
-        Left = 0
-        Height = 674
-        Top = 0
-        Width = 1265
-        Align = alClient
-        BorderSpacing.Right = 1
-        BorderSpacing.Bottom = 1
-        Position = 300
-        object PSSOrganizatons: TPairSplitterSide
-          Cursor = crArrow
-          Left = 0
+      inline TarifikaciyaFrame1: TTarifikaciyaFrame
+        Height = 675
+        Width = 1266
+        ClientHeight = 675
+        ClientWidth = 1266
+        inherited PairSplitter1: TPairSplitter
           Height = 674
-          Top = 0
-          Width = 300
-          ClientWidth = 300
-          ClientHeight = 674
-          Constraints.MaxWidth = 800
-          Constraints.MinWidth = 300
-          object GBOrganizations: TGroupBox
-            Left = 0
+          Width = 1265
+          inherited PSSOrganizatons: TPairSplitterSide
             Height = 674
-            Top = 0
-            Width = 300
-            Align = alClient
-            Caption = 'Организации'
-            ClientHeight = 644
-            ClientWidth = 296
-            TabOrder = 0
-            object ListOrganizations: TListBox
-              Left = 0
-              Height = 644
-              Top = 0
-              Width = 296
-              Align = alClient
-              BorderStyle = bsNone
-              ExtendedSelect = False
-              ItemHeight = 0
-              TabOrder = 0
-            end
-          end
-        end
-        object PSSRight: TPairSplitterSide
-          Cursor = crArrow
-          Left = 305
-          Height = 674
-          Top = 0
-          Width = 960
-          ClientWidth = 960
-          ClientHeight = 674
-          object PairSplitter2: TPairSplitter
-            Cursor = crVSplit
-            Left = 0
-            Height = 674
-            Top = 0
-            Width = 960
-            Align = alClient
-            Position = 350
-            SplitterType = pstVertical
-            object PSUp: TPairSplitterSide
-              Cursor = crArrow
-              Left = 0
-              Height = 350
-              Top = 0
-              Width = 960
-              ClientWidth = 960
-              ClientHeight = 350
-              Constraints.MinHeight = 200
-              object TabControl1: TTabControl
-                AnchorSideRight.Side = asrBottom
-                Left = 0
-                Height = 350
-                Top = 0
-                Width = 832
-                TabIndex = 0
-                Tabs.Strings = (
-                  'Основные'
-                  'Дополнительные'
-                )
-                Align = alLeft
-                TabOrder = 0
-                object DBGrid1: TDBGrid
-                  Left = 16
-                  Height = 108
-                  Top = 56
-                  Width = 376
-                  Color = clWindow
-                  Columns = <>
-                  TabOrder = 1
-                end
+            ClientHeight = 674
+            inherited GBOrganizations: TGroupBox
+              Height = 674
+              ClientHeight = 644
+              ClientWidth = 296
+              inherited ListOrganizations: TListBox
+                Height = 644
               end
             end
-            object PSDown: TPairSplitterSide
-              Cursor = crArrow
-              Left = 0
-              Height = 319
-              Top = 355
+          end
+          inherited PSSRight: TPairSplitterSide
+            Height = 674
+            Width = 960
+            ClientWidth = 960
+            ClientHeight = 674
+            inherited PairSplitter2: TPairSplitter
+              Height = 674
               Width = 960
+              inherited PSUp: TPairSplitterSide
+                Width = 960
+                ClientWidth = 960
+              end
+              inherited PSDown: TPairSplitterSide
+                Height = 319
+                Width = 960
+              end
             end
           end
         end
       end
     end
-    object Otchety: TTabSheet
+    object OtchetyTab: TTabSheet
       Caption = 'Отчёты'
       ClientHeight = 675
       ClientWidth = 1266
-      object sWorksheetGrid1: TsWorksheetGrid
-        Left = 248
-        Height = 432
-        Top = 8
-        Width = 936
-        FrozenCols = 0
-        FrozenRows = 0
-        PageBreakPen.Color = clBlue
-        PageBreakPen.Style = psDash
-        ReadFormulas = False
-        WorkbookSource = sWorkbookSource1
-        AutoAdvance = aaDown
-        DefaultColWidth = 64
-        DefaultRowHeight = 25
-        TabOrder = 0
+      inline OtchetyFrame1: TOtchetyFrame
+        Height = 675
+        Width = 1266
+        ClientHeight = 675
+        ClientWidth = 1266
+        inherited PageControl1: TPageControl
+          Height = 675
+          Width = 1266
+          inherited RequisiteTab: TTabSheet
+            ClientHeight = 640
+            ClientWidth = 1262
+            inherited GroupBox1: TGroupBox
+              Left = 333
+              Height = 185
+              Width = 596
+              ClientHeight = 155
+              ClientWidth = 592
+            end
+          end
+        end
       end
     end
-    object Spravochniki: TTabSheet
+    object SpravochnikyTab: TTabSheet
       Caption = 'Справочники'
       ClientHeight = 675
       ClientWidth = 1266
-      object GBSpravochniki: TGroupBox
-        Left = 0
+      inline SpravochnikyFrame1: TSpravochnikyFrame
         Height = 675
-        Top = 0
-        Width = 153
-        Align = alLeft
-        Caption = 'Справочники'
-        ClientHeight = 645
-        ClientWidth = 149
-        TabOrder = 0
-        object BtnOrganizations: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 0
-          Width = 149
-          Align = alTop
-          Caption = 'Организации'
-          TabOrder = 0
+        Width = 1266
+        ClientHeight = 675
+        ClientWidth = 1266
+        inherited GBSpravochniki: TGroupBox
+          Height = 675
+          ClientHeight = 645
+          ClientWidth = 149
         end
-        object BtnPredmety: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 120
-          Width = 149
-          Align = alTop
-          Caption = 'Предметы'
-          TabOrder = 1
+        inherited DBGrid1: TDBGrid
+          Height = 675
+          Width = 1113
+          Columns = <          
+            item
+              PickList.Strings = (              )
+              Title.Caption = 'id'
+              Width = 269
+              FieldName = 'id'
+            end          
+            item
+              PickList.Strings = (              )
+              Title.Caption = 'firstname'
+              Width = 269
+              FieldName = 'firstname'
+            end          
+            item
+              PickList.Strings = (              )
+              Title.Caption = 'middlename'
+              Width = 269
+              FieldName = 'middlename'
+            end          
+            item
+              PickList.Strings = (              )
+              Title.Caption = 'familyname'
+              Width = 269
+              FieldName = 'familyname'
+            end>
         end
-        object BtnDoljnosty: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 90
-          Width = 149
-          Align = alTop
-          Caption = 'Должности'
-          TabOrder = 2
-        end
-        object BtnNadbavky: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 180
-          Width = 149
-          Align = alTop
-          Caption = 'Надбавки'
-          TabOrder = 3
-        end
-        object BtnPersons: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 60
-          Width = 149
-          Align = alTop
-          Caption = 'Люди'
-          TabOrder = 4
-        end
-        object BtnDoplaty: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 210
-          Width = 149
-          Align = alTop
-          Caption = 'Доплаты'
-          TabOrder = 5
-        end
-        object BtnStavky: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 150
-          Width = 149
-          Align = alTop
-          Caption = 'Ставки'
-          TabOrder = 6
-        end
-        object BtnOrgGrups: TButton
-          AnchorSideRight.Side = asrBottom
-          Left = 0
-          Height = 30
-          Top = 30
-          Width = 149
-          Align = alTop
-          Caption = 'Орг. группы'
-          TabOrder = 7
-        end
-      end
-      object TabControl2: TTabControl
-        Left = 153
-        Height = 675
-        Top = 0
-        Width = 879
-        TabIndex = 0
-        Tabs.Strings = (
-          'Актуальные'
-          'Архивные'
-        )
-        Align = alLeft
-        TabOrder = 1
       end
     end
     object Service: TTabSheet
       Caption = 'Сервис'
       ClientHeight = 675
       ClientWidth = 1266
-      object GBCurrentDatabase: TGroupBox
+      object ServicePageControl: TPageControl
         Left = 0
-        Height = 72
+        Height = 675
         Top = 0
-        Width = 256
-        Caption = 'Текущая база данных'
-        ClientHeight = 42
-        ClientWidth = 252
+        Width = 1266
+        ActivePage = TabSheet2
+        Align = alClient
+        TabIndex = 0
         TabOrder = 0
-        object CurrentDatabase: TComboBox
-          Left = 5
-          Height = 32
-          Hint = 'выбрать БД для подключения'
-          Top = 5
-          Width = 242
-          Align = alTop
-          BorderSpacing.Around = 5
-          ItemHeight = 18
-          OnChange = CurrentDatabaseChange
-          ParentShowHint = False
-          ReadOnly = True
-          ShowHint = True
-          Style = csDropDownList
-          TabOrder = 0
+        object TabSheet2: TTabSheet
+          Caption = 'Базы данных'
+          ClientHeight = 640
+          ClientWidth = 1262
+          object GBRestoreDatabases: TGroupBox
+            AnchorSideLeft.Control = TabSheet2
+            AnchorSideRight.Control = TabSheet2
+            AnchorSideRight.Side = asrBottom
+            Left = 0
+            Height = 300
+            Top = 300
+            Width = 270
+            Caption = 'Резервные копии баз данных'
+            ClientHeight = 270
+            ClientWidth = 266
+            TabOrder = 0
+            object ListDatabaseBackups: TListBox
+              AnchorSideLeft.Control = GBRestoreDatabases
+              AnchorSideTop.Control = GBRestoreDatabases
+              AnchorSideRight.Control = GBRestoreDatabases
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBRestoreDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 242
+              Top = 0
+              Width = 266
+              Anchors = [akTop, akLeft, akRight, akBottom]
+              BorderSpacing.Bottom = 28
+              ItemHeight = 0
+              MultiSelect = True
+              TabOrder = 0
+            end
+            object BtnRestoreDatabase: TBitBtn
+              AnchorSideLeft.Control = GBRestoreDatabases
+              AnchorSideTop.Side = asrBottom
+              AnchorSideBottom.Control = GBRestoreDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 26
+              Hint = 'Восстановить выделенные'
+              Top = 244
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 7
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+            end
+            object BtnDeleteBackup: TBitBtn
+              AnchorSideRight.Control = GBRestoreDatabases
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBRestoreDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 238
+              Height = 27
+              Hint = 'Удалить выделенные'
+              Top = 243
+              Width = 28
+              Anchors = [akRight, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 6
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 2
+            end
+          end
+          object GBDatabases: TGroupBox
+            AnchorSideLeft.Control = TabSheet2
+            AnchorSideTop.Control = TabSheet2
+            Left = 0
+            Height = 300
+            Top = 0
+            Width = 272
+            Caption = 'Доступные базы данных'
+            ClientHeight = 270
+            ClientWidth = 268
+            TabOrder = 1
+            object BtnNewDatabase: TBitBtn
+              AnchorSideLeft.Control = GBDatabases
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 28
+              Hint = 'Новая'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Images = ImageList
+              ImageIndex = 5
+              OnClick = BtnNewDatabaseClick
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 0
+            end
+            object BtnDuplicateDatabase: TBitBtn
+              AnchorSideLeft.Control = BtnRenameDatabase
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 56
+              Height = 28
+              Hint = 'Дублировать выделенную'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 4
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+            end
+            object BtnImportFromFOXPRO: TBitBtn
+              AnchorSideLeft.Control = BtnJoinWithCurrentDataBase
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 112
+              Height = 28
+              Hint = 'Импорт из старой программы'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Images = ImageList
+              ImageIndex = 3
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 2
+            end
+            object BtnJoinWithCurrentDataBase: TBitBtn
+              AnchorSideLeft.Control = BtnDuplicateDatabase
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 84
+              Height = 28
+              Hint = 'Объеденить с текущей'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 8
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 3
+            end
+            object BtnDeleteDatabase: TBitBtn
+              AnchorSideRight.Control = GBDatabases
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 240
+              Height = 28
+              Hint = 'Удалить выделенную'
+              Top = 242
+              Width = 28
+              Anchors = [akRight, akBottom]
+              Images = ImageList
+              ImageIndex = 6
+              OnClick = BtnDeleteDatabaseClick
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 4
+            end
+            object BtnBackupDatabase: TBitBtn
+              AnchorSideLeft.Control = BtnImportFromFOXPRO
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 140
+              Height = 28
+              Hint = 'Резервное копирование выделенной'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 2
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 5
+            end
+            object BtnRenameDatabase: TBitBtn
+              AnchorSideLeft.Control = BtnNewDatabase
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideBottom.Control = GBDatabases
+              AnchorSideBottom.Side = asrBottom
+              Left = 28
+              Height = 28
+              Hint = 'Переименовать выделенную'
+              Top = 242
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Images = ImageList
+              ImageIndex = 1
+              OnClick = BtnRenameDatabaseClick
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 6
+            end
+            object ListDatabases: TDBLookupListBox
+              Left = 0
+              Height = 242
+              Top = 0
+              Width = 268
+              Align = alClient
+              BorderSpacing.Bottom = 28
+              KeyField = 'databases'
+              ListFieldIndex = 0
+              ListSource = TarDataModule.DSAllDatabases
+              LookupCache = False
+              TabOrder = 7
+            end
+          end
+          object GBCurrentDatabase: TGroupBox
+            AnchorSideLeft.Side = asrCenter
+            Left = 272
+            Height = 72
+            Top = 0
+            Width = 296
+            Caption = 'Текущая база данных'
+            ClientHeight = 42
+            ClientWidth = 292
+            TabOrder = 2
+            object ListCurrentDatabase: TDBLookupComboBox
+              Left = 5
+              Height = 32
+              Hint = 'выбрать БД для подключения'
+              Top = 5
+              Width = 282
+              Align = alTop
+              BorderSpacing.Around = 5
+              KeyField = 'databases'
+              ListFieldIndex = 0
+              ListSource = TarDataModule.DSAllDatabases
+              LookupCache = False
+              OnChange = ListCurrentDatabaseChange
+              ParentShowHint = False
+              ShowHint = True
+              Style = csDropDownList
+              TabOrder = 0
+            end
+          end
+          object GBTarifikaciyaTables: TGroupBox
+            AnchorSideTop.Side = asrBottom
+            Left = 568
+            Height = 312
+            Top = 0
+            Width = 256
+            Caption = 'Даты тарификаций'
+            ClientHeight = 282
+            ClientWidth = 252
+            TabOrder = 3
+            object ListTarTables: TListBox
+              AnchorSideLeft.Control = GBTarifikaciyaTables
+              AnchorSideTop.Control = GBTarifikaciyaTables
+              AnchorSideRight.Control = GBTarifikaciyaTables
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBTarifikaciyaTables
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 254
+              Top = 0
+              Width = 252
+              Anchors = [akTop, akLeft, akRight, akBottom]
+              BorderSpacing.Bottom = 28
+              ItemHeight = 0
+              MultiSelect = True
+              TabOrder = 0
+            end
+            object BtnDeleteTarTable: TBitBtn
+              AnchorSideRight.Control = GBTarifikaciyaTables
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBTarifikaciyaTables
+              AnchorSideBottom.Side = asrBottom
+              Left = 224
+              Height = 28
+              Hint = 'Удалить выделенные'
+              Top = 254
+              Width = 28
+              Anchors = [akRight, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 6
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 1
+            end
+            object BtnNewTarTable: TBitBtn
+              AnchorSideLeft.Control = GBTarifikaciyaTables
+              AnchorSideTop.Side = asrBottom
+              AnchorSideBottom.Control = GBTarifikaciyaTables
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 28
+              Hint = 'Новая'
+              Top = 254
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Images = ImageList
+              ImageIndex = 5
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 2
+            end
+            object BtnDuplicateTarTable: TBitBtn
+              AnchorSideLeft.Side = asrBottom
+              AnchorSideTop.Side = asrBottom
+              AnchorSideBottom.Control = GBTarifikaciyaTables
+              AnchorSideBottom.Side = asrBottom
+              Left = 28
+              Height = 28
+              Hint = 'Дублировать выделенные'
+              Top = 254
+              Width = 28
+              Anchors = [akLeft, akBottom]
+              Enabled = False
+              Images = ImageList
+              ImageIndex = 4
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 3
+            end
+          end
+        end
+        object TabSheet3: TTabSheet
+          Caption = 'Настройки подключения'
+          ClientHeight = 640
+          ClientWidth = 1262
+          ParentBiDiMode = False
+          object GBLoginPassword: TGroupBox
+            AnchorSideLeft.Control = TabSheet3
+            AnchorSideLeft.Side = asrCenter
+            AnchorSideTop.Control = TabSheet3
+            AnchorSideRight.Side = asrBottom
+            Left = 503
+            Height = 192
+            Top = 5
+            Width = 256
+            BorderSpacing.Top = 5
+            Caption = 'Подключение к БД Postgres 10.22'
+            ClientHeight = 162
+            ClientWidth = 252
+            TabOrder = 0
+            object Label3: TLabel
+              Left = 8
+              Height = 18
+              Top = 40
+              Width = 40
+              Caption = 'Логин'
+            end
+            object Label4: TLabel
+              AnchorSideTop.Side = asrBottom
+              Left = 8
+              Height = 18
+              Top = 72
+              Width = 48
+              Caption = 'Пароль'
+            end
+            object EditHostLogin: TEdit
+              Left = 63
+              Height = 32
+              Top = 32
+              Width = 181
+              OnEditingDone = EditHostLoginEditingDone
+              TabOrder = 1
+              TextHint = 'Логин'
+            end
+            object EditHostPassword: TEdit
+              Left = 63
+              Height = 32
+              Top = 64
+              Width = 181
+              OnEditingDone = EditHostPasswordEditingDone
+              TabOrder = 2
+              TextHint = 'Пароль'
+            end
+            object Label5: TLabel
+              Left = 8
+              Height = 18
+              Top = 8
+              Width = 28
+              Caption = 'Хост'
+            end
+            object EditHostIP: TEdit
+              Left = 63
+              Height = 32
+              Top = 0
+              Width = 181
+              OnEditingDone = EditHostIPEditingDone
+              TabOrder = 0
+              TextHint = 'Хост'
+            end
+            object Label6: TLabel
+              AnchorSideTop.Side = asrBottom
+              Left = 8
+              Height = 18
+              Top = 104
+              Width = 17
+              Caption = 'БД'
+            end
+            object EditHostDbName: TEdit
+              Left = 63
+              Height = 32
+              Top = 96
+              Width = 181
+              OnEditingDone = EditHostDbNameEditingDone
+              TabOrder = 3
+              TextHint = 'База данных'
+            end
+            object BtnConnectToHost: TButton
+              AnchorSideLeft.Control = GBLoginPassword
+              AnchorSideRight.Control = GBLoginPassword
+              AnchorSideRight.Side = asrBottom
+              AnchorSideBottom.Control = GBLoginPassword
+              AnchorSideBottom.Side = asrBottom
+              Left = 0
+              Height = 28
+              Top = 134
+              Width = 252
+              Anchors = [akLeft, akRight, akBottom]
+              Caption = 'Подключиться'
+              OnClick = BtnConnectToHostClick
+              ParentShowHint = False
+              ShowHint = True
+              TabOrder = 4
+            end
+          end
         end
       end
-      object GBDatabases: TGroupBox
+      object InfoTarDbConnection: TCheckBox
+        AnchorSideLeft.Control = Service
         AnchorSideTop.Side = asrBottom
-        Left = 256
-        Height = 280
-        Top = 0
-        Width = 256
-        Caption = 'Доступные базы данных'
-        ClientHeight = 250
-        ClientWidth = 252
+        AnchorSideBottom.Control = Service
+        AnchorSideBottom.Side = asrBottom
+        Left = 0
+        Height = 22
+        Top = 653
+        Width = 258
+        Anchors = [akLeft, akBottom]
+        BidiMode = bdRightToLeft
+        Caption = 'Состояние подключения к серверу: '
+        Enabled = False
+        ParentFont = False
+        ParentBidiMode = False
         TabOrder = 1
-        object ListDatabases: TListBox
-          AnchorSideLeft.Control = GBDatabases
-          AnchorSideTop.Control = GBDatabases
-          AnchorSideRight.Control = GBDatabases
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 222
-          Top = 0
-          Width = 252
-          Anchors = [akTop, akLeft, akRight, akBottom]
-          BorderSpacing.Bottom = 28
-          ItemHeight = 0
-          MultiSelect = True
-          TabOrder = 0
-        end
-        object BtnNewDatabase: TBitBtn
-          AnchorSideLeft.Control = GBDatabases
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 28
-          Hint = 'Новая'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Images = ImageList
-          ImageIndex = 5
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 1
-        end
-        object BtnDuplicateDatabase: TBitBtn
-          AnchorSideLeft.Control = BtnRenameDatabase
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 56
-          Height = 28
-          Hint = 'Дублировать выделенные'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 4
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-        end
-        object BtnImportFromFOXPRO: TBitBtn
-          AnchorSideLeft.Control = BtnJoinWithCurrentDataBase
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 112
-          Height = 28
-          Hint = 'Импорт из старой программы'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Images = ImageList
-          ImageIndex = 3
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 3
-        end
-        object BtnJoinWithCurrentDataBase: TBitBtn
-          AnchorSideLeft.Control = BtnDuplicateDatabase
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 84
-          Height = 28
-          Hint = 'Объеденить с текущей'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 8
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 4
-        end
-        object BtnDeleteDatabase: TBitBtn
-          AnchorSideRight.Control = GBDatabases
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 224
-          Height = 28
-          Hint = 'Удалить выделенные'
-          Top = 222
-          Width = 28
-          Anchors = [akRight, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 6
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 5
-        end
-        object BtnBackupDatabase: TBitBtn
-          AnchorSideLeft.Control = BtnImportFromFOXPRO
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 140
-          Height = 28
-          Hint = 'Резервное копирование выделенных'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 2
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 6
-        end
-        object BtnRenameDatabase: TBitBtn
-          AnchorSideLeft.Control = BtnNewDatabase
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideBottom.Control = GBDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 28
-          Height = 28
-          Hint = 'Переименовать выделенные'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 1
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 7
-        end
-      end
-      object GBTarifikaciyaTables: TGroupBox
-        AnchorSideTop.Side = asrBottom
-        Left = 0
-        Height = 280
-        Top = 72
-        Width = 256
-        Caption = 'Таблицы'
-        ClientHeight = 250
-        ClientWidth = 252
-        TabOrder = 2
-        object ListTarTables: TListBox
-          AnchorSideLeft.Control = GBTarifikaciyaTables
-          AnchorSideTop.Control = GBTarifikaciyaTables
-          AnchorSideRight.Control = GBTarifikaciyaTables
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBTarifikaciyaTables
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 222
-          Top = 0
-          Width = 252
-          Anchors = [akTop, akLeft, akRight, akBottom]
-          BorderSpacing.Bottom = 28
-          ItemHeight = 0
-          MultiSelect = True
-          TabOrder = 0
-        end
-        object BtnDeleteTarTable: TBitBtn
-          AnchorSideRight.Control = GBTarifikaciyaTables
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBTarifikaciyaTables
-          AnchorSideBottom.Side = asrBottom
-          Left = 224
-          Height = 28
-          Hint = 'Удалить выделенные'
-          Top = 222
-          Width = 28
-          Anchors = [akRight, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 6
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 1
-        end
-        object BtnNewTarTable: TBitBtn
-          AnchorSideLeft.Control = GBTarifikaciyaTables
-          AnchorSideTop.Side = asrBottom
-          AnchorSideBottom.Control = GBTarifikaciyaTables
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 28
-          Hint = 'Новая'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Images = ImageList
-          ImageIndex = 5
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-        end
-        object BtnDuplicateTarTable: TBitBtn
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideTop.Side = asrBottom
-          AnchorSideBottom.Control = GBTarifikaciyaTables
-          AnchorSideBottom.Side = asrBottom
-          Left = 28
-          Height = 28
-          Hint = 'Дублировать выделенные'
-          Top = 222
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 4
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 3
-        end
-      end
-      object GBRestoreDatabases: TGroupBox
-        AnchorSideTop.Side = asrBottom
-        Left = 256
-        Height = 272
-        Top = 280
-        Width = 256
-        Caption = 'Резервные копии баз данных'
-        ClientHeight = 242
-        ClientWidth = 252
-        TabOrder = 3
-        object ListDatabaseBackups: TListBox
-          AnchorSideLeft.Control = GBRestoreDatabases
-          AnchorSideTop.Control = GBRestoreDatabases
-          AnchorSideRight.Control = GBRestoreDatabases
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBRestoreDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 214
-          Top = 0
-          Width = 252
-          Anchors = [akTop, akLeft, akRight, akBottom]
-          BorderSpacing.Bottom = 28
-          ItemHeight = 0
-          MultiSelect = True
-          TabOrder = 0
-        end
-        object BtnRestoreDatabase: TBitBtn
-          AnchorSideLeft.Control = GBRestoreDatabases
-          AnchorSideTop.Side = asrBottom
-          AnchorSideBottom.Control = GBRestoreDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 26
-          Hint = 'Восстановить выделенные'
-          Top = 216
-          Width = 28
-          Anchors = [akLeft, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 7
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 1
-        end
-        object BtnDeleteBackup: TBitBtn
-          AnchorSideRight.Control = GBRestoreDatabases
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBRestoreDatabases
-          AnchorSideBottom.Side = asrBottom
-          Left = 224
-          Height = 27
-          Hint = 'Удалить выделенные'
-          Top = 215
-          Width = 28
-          Anchors = [akRight, akBottom]
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 6
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-        end
-      end
-      object GroupBox1: TGroupBox
-        Left = 512
-        Height = 281
-        Top = 0
-        Width = 649
-        Caption = 'Реквизиты'
-        ClientHeight = 251
-        ClientWidth = 645
-        TabOrder = 4
-        object Label7: TLabel
-          Left = 10
-          Height = 18
-          Top = 10
-          Width = 86
-          Caption = 'Организация'
-        end
-        object Label8: TLabel
-          Left = 10
-          Height = 18
-          Top = 72
-          Width = 89
-          Caption = 'Руководитель'
-        end
-        object Label9: TLabel
-          Left = 10
-          Height = 18
-          Top = 104
-          Width = 85
-          Caption = 'Исполнитель'
-        end
-      end
-    end
-    object Settings: TTabSheet
-      Caption = 'настройки'
-      ClientHeight = 675
-      ClientWidth = 1266
-      object GBLoginPassword: TGroupBox
-        AnchorSideLeft.Control = Settings
-        AnchorSideLeft.Side = asrCenter
-        AnchorSideTop.Control = Settings
-        AnchorSideRight.Side = asrBottom
-        Left = 505
-        Height = 192
-        Top = 5
-        Width = 256
-        BorderSpacing.Top = 5
-        Caption = 'Подключение к БД Postgres 10.22'
-        ClientHeight = 162
-        ClientWidth = 252
-        TabOrder = 0
-        object Label3: TLabel
-          Left = 8
-          Height = 18
-          Top = 40
-          Width = 40
-          Caption = 'Логин'
-        end
-        object Label4: TLabel
-          AnchorSideTop.Side = asrBottom
-          Left = 8
-          Height = 18
-          Top = 72
-          Width = 48
-          Caption = 'Пароль'
-        end
-        object EditDbLogin: TEdit
-          Left = 63
-          Height = 32
-          Top = 32
-          Width = 181
-          OnEditingDone = EditDbLoginChange
-          TabOrder = 1
-          TextHint = 'Логин'
-        end
-        object EditDbPassword: TEdit
-          Left = 63
-          Height = 32
-          Top = 64
-          Width = 181
-          OnEditingDone = EditDbPasswordChange
-          TabOrder = 2
-          TextHint = 'Пароль'
-        end
-        object Label5: TLabel
-          Left = 8
-          Height = 18
-          Top = 8
-          Width = 28
-          Caption = 'Хост'
-        end
-        object EditDbHost: TEdit
-          Left = 63
-          Height = 32
-          Top = 0
-          Width = 181
-          OnEditingDone = EditDbHostChange
-          TabOrder = 0
-          TextHint = 'Хост'
-        end
-        object BtnConnectToHost: TBitBtn
-          AnchorSideLeft.Control = GBLoginPassword
-          AnchorSideRight.Control = GBLoginPassword
-          AnchorSideRight.Side = asrBottom
-          AnchorSideBottom.Control = GBLoginPassword
-          AnchorSideBottom.Side = asrBottom
-          Left = 0
-          Height = 28
-          Top = 134
-          Width = 252
-          Anchors = [akLeft, akRight, akBottom]
-          Caption = 'Подключиться'
-          Enabled = False
-          Images = ImageList
-          ImageIndex = 0
-          OnClick = BtnConnectToHostClick
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 4
-        end
-        object Label6: TLabel
-          AnchorSideTop.Side = asrBottom
-          Left = 8
-          Height = 18
-          Top = 104
-          Width = 17
-          Caption = 'БД'
-        end
-        object EditDbDb: TEdit
-          Left = 63
-          Height = 32
-          Top = 96
-          Width = 181
-          OnEditingDone = EditDbDbChange
-          TabOrder = 3
-          TextHint = 'База данных'
-        end
+        TabStop = False
       end
     end
   end
-  object CurrentTarifikationDate: TComboBox
+  object ListCurrentTarifikationDate: TComboBox
     AnchorSideTop.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 560
+    Left = 480
     Height = 32
     Hint = 'Дата основной тарификации'
     Top = 5
     Width = 99
     ItemHeight = 18
-    OnChange = CurrentTarifikationDateChange
+    OnChange = ListCurrentTarifikationDateChange
     ParentShowHint = False
     ReadOnly = True
     ShowHint = True
     Style = csDropDownList
     TabOrder = 1
   end
-  object PQMainConnection: TPQConnection
-    Connected = False
-    LoginPrompt = False
-    KeepConnection = True
-    Transaction = SQLTransaction1
-    Left = 1248
-    Top = 37
-  end
-  object SQLScript1: TSQLScript
-    DataBase = PQMainConnection
-    Transaction = SQLTransaction1
-    Directives.Strings = (
-      'SET TERM'
-      'COMMIT WORK'
-      'COMMIT RETAIN'
-      'COMMIT'
-      '#IFDEF'
-      '#IFNDEF'
-      '#ELSE'
-      '#ENDIF'
-      '#DEFINE'
-      '#UNDEF'
-      '#UNDEFINE'
-    )
-    Terminator = ';'
-    Left = 1248
-    Top = 66
-  end
-  object SQLTransaction1: TSQLTransaction
-    Active = False
-    Database = PQMainConnection
-    Left = 1248
-    Top = 95
-  end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    Database = PQMainConnection
-    Transaction = SQLTransaction1
-    Left = 1248
-    Top = 124
-  end
-  object DataSource1: TDataSource
-    DataSet = SQLQuery1
-    Left = 1248
-    Top = 153
-  end
-  object Dbf1: TDbf
-    IndexDefs = <>
-    TableLevel = 4
-    UseAutoInc = True
-    FilterOptions = []
-    Left = 1248
-    Top = 182
-  end
-  object IniPropStorage: TIniPropStorage
+  object Ini: TIniPropStorage
     StoredValues = <>
     IniFileName = 'settings.ini'
     IniSection = 'settings'
@@ -874,10 +698,15 @@ object MainForm: TMainForm
       7B2AFF9197FFF068F46AFEF31FF4647F8F
     }
   end
-  object sWorkbookSource1: TsWorkbookSource
-    FileFormat = sfUser
-    Options = []
+  object CalendarDialog1: TCalendarDialog
+    Date = 44853
+    OKCaption = '&ОК'
+    CancelCaption = 'Отмена'
     Left = 1248
     Top = 269
+  end
+  object SelectDirectoryDialog1: TSelectDirectoryDialog
+    Left = 1248
+    Top = 298
   end
 end
