@@ -32,6 +32,7 @@ object MainForm: TMainForm
     Images = ImageList
     TabIndex = 3
     TabOrder = 0
+    OnChange = MainPageControlChange
     object TarifikaciyaTab: TTabSheet
       Caption = 'Тарификация'
     end
@@ -104,9 +105,9 @@ object MainForm: TMainForm
               Top = 243
               Width = 28
               Anchors = [akRight, akBottom]
-              Enabled = False
               Images = ImageList
               ImageIndex = 6
+              OnClick = BtnDeleteBackupClick
               ParentShowHint = False
               ShowHint = True
               TabOrder = 0
@@ -122,9 +123,9 @@ object MainForm: TMainForm
               Top = 244
               Width = 28
               Anchors = [akLeft, akBottom]
-              Enabled = False
               Images = ImageList
               ImageIndex = 7
+              OnClick = BtnRestoreDatabaseClick
               ParentShowHint = False
               ShowHint = True
               TabOrder = 1
@@ -196,9 +197,9 @@ object MainForm: TMainForm
               Top = 242
               Width = 28
               Anchors = [akLeft, akBottom]
-              Enabled = False
               Images = ImageList
               ImageIndex = 4
+              OnClick = BtnDuplicateDatabaseClick
               ParentShowHint = False
               ShowHint = True
               TabOrder = 2
@@ -215,6 +216,7 @@ object MainForm: TMainForm
               Anchors = [akLeft, akBottom]
               Images = ImageList
               ImageIndex = 3
+              OnClick = BtnImportFromFOXPROClick
               ParentShowHint = False
               ShowHint = True
               TabOrder = 3
@@ -264,9 +266,9 @@ object MainForm: TMainForm
               Top = 242
               Width = 28
               Anchors = [akLeft, akBottom]
-              Enabled = False
               Images = ImageList
               ImageIndex = 2
+              OnClick = BtnBackupDatabaseClick
               ParentShowHint = False
               ShowHint = True
               TabOrder = 6
@@ -507,7 +509,7 @@ object MainForm: TMainForm
       end
     end
   end
-  object ListCurrentTarifikationDate: TComboBox
+  object ListCurrentTarifikationDate: TDBLookupComboBox
     AnchorSideTop.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 480
@@ -515,7 +517,8 @@ object MainForm: TMainForm
     Hint = 'Дата основной тарификации'
     Top = 5
     Width = 99
-    ItemHeight = 18
+    ListFieldIndex = 0
+    LookupCache = False
     OnChange = ListCurrentTarifikationDateChange
     ParentShowHint = False
     ReadOnly = True
@@ -591,9 +594,5 @@ object MainForm: TMainForm
     CancelCaption = 'Отмена'
     Left = 1248
     Top = 269
-  end
-  object SelectDirectoryDialog1: TSelectDirectoryDialog
-    Left = 1248
-    Top = 298
   end
 end

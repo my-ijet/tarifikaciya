@@ -11,8 +11,9 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
+        <TopLine Value="4"/>
         <CursorPos X="47" Y="25"/>
-        <UsageCount Value="122"/>
+        <UsageCount Value="173"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -24,9 +25,9 @@
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos Y="57"/>
-        <UsageCount Value="80"/>
+        <TopLine Value="147"/>
+        <CursorPos X="33" Y="177"/>
+        <UsageCount Value="131"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -37,7 +38,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="79"/>
+        <UsageCount Value="130"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -47,11 +48,11 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <CursorPos X="57" Y="10"/>
-        <UsageCount Value="122"/>
+        <TopLine Value="286"/>
+        <CursorPos X="49" Y="305"/>
+        <UsageCount Value="173"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -62,11 +63,11 @@
         <ComponentName Value="SpravochnikyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="22"/>
-        <CursorPos X="49" Y="47"/>
-        <UsageCount Value="52"/>
+        <TopLine Value="56"/>
+        <CursorPos X="35" Y="74"/>
+        <UsageCount Value="103"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -77,10 +78,11 @@
         <ComponentName Value="OtchetyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
+        <TopLine Value="7"/>
         <CursorPos X="16" Y="16"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="103"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -91,10 +93,26 @@
         <ComponentName Value="TarifikaciyaFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="21" Y="16"/>
+        <UsageCount Value="103"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <FRMtype Value="200"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ImportFromFoxProForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="325"/>
+        <CursorPos X="31" Y="339"/>
         <UsageCount Value="52"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -108,7 +126,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos Y="17"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="30"/>
       </Unit>
       <Unit>
         <Filename Value="sql/create_database.sql"/>
@@ -116,7 +134,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="49"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="43"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -128,7 +146,7 @@
         <UnitName Value="Unit1"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="18"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/forms.pp"/>
@@ -138,7 +156,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1981"/>
         <CursorPos Y="1996"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/classes/classesh.inc"/>
@@ -147,7 +165,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="642"/>
         <CursorPos X="3" Y="620"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/pairsplitter.pas"/>
@@ -155,7 +173,7 @@
         <UnitName Value="PairSplitter"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/checklst.pas"/>
@@ -165,7 +183,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="154"/>
         <CursorPos X="3" Y="93"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/actnlist.pas"/>
@@ -175,7 +193,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="6" Y="16"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/stdctrls.pp"/>
@@ -185,7 +203,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="424"/>
         <CursorPos X="14" Y="436"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/propertystorage.pas"/>
@@ -195,7 +213,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="152"/>
         <CursorPos X="14" Y="165"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/inipropstorage.pas"/>
@@ -205,7 +223,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="132"/>
         <CursorPos X="24" Y="55"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/inc/objpash.inc"/>
@@ -214,7 +232,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="189"/>
         <CursorPos X="8" Y="203"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/components/packages_pl/pl_FpSpreadsheet/source/visual/fpspreadsheetctrls.pas"/>
@@ -223,7 +241,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="46"/>
         <CursorPos X="3" Y="60"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/components/packages_pl/pl_FpSpreadsheet/source/export/fpsexport.pas"/>
@@ -231,7 +249,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="19"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/types.pp"/>
@@ -240,7 +258,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="223"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/dbctrls.pp"/>
@@ -250,7 +268,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="461"/>
         <CursorPos X="44" Y="490"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/packages/fcl-db/src/sqldb/sqldb.pp"/>
@@ -259,7 +277,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="43"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/packages/fcl-db/src/base/sqlscript.pp"/>
@@ -269,7 +287,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="19" Y="66"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/lclclasses.pp"/>
@@ -278,7 +296,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="2"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/classes/stringl.inc"/>
@@ -287,7 +305,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1047"/>
         <CursorPos X="18" Y="1056"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/sysstrh.inc"/>
@@ -296,7 +314,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="137"/>
         <CursorPos X="10" Y="151"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/sysstr.inc"/>
@@ -305,7 +323,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1127"/>
         <CursorPos X="30" Y="1130"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/include/application.inc"/>
@@ -314,7 +332,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2177"/>
         <CursorPos Y="2194"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/extctrls.pp"/>
@@ -324,16 +342,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="6" Y="17"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/include/customform.inc"/>
         <FRMtype Value="0"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="911"/>
-        <CursorPos Y="925"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="2956"/>
+        <CursorPos Y="2967"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/widgetset/wsforms.pp"/>
@@ -343,7 +361,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="318"/>
         <CursorPos X="18" Y="323"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/widgetset/wsfactory.pas"/>
@@ -353,7 +371,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="95"/>
         <CursorPos X="21" Y="109"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/include/control.inc"/>
@@ -362,7 +380,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3983"/>
         <CursorPos Y="3996"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/controls.pp"/>
@@ -372,7 +390,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1197"/>
         <CursorPos X="12" Y="1209"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/nonwin32/messages.pp"/>
@@ -382,125 +400,166 @@
         <WindowIndex Value="0"/>
         <TopLine Value="60"/>
         <CursorPos X="35" Y="74"/>
+        <UsageCount Value="7"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../compress_tar_data/unit1.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="60"/>
+        <CursorPos X="27" Y="72"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/typhon/components/BaseUtils/lazutilities.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="LazUtilities"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <CursorPos X="34" Y="3"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/osutilsh.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="18"/>
+        <CursorPos X="11" Y="31"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/filutilh.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="205"/>
+        <CursorPos X="16" Y="218"/>
         <UsageCount Value="10"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="28">
+    <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="76" Column="43" TopLine="69"/>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="100" Column="69" TopLine="90"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="80" Column="43" TopLine="73"/>
+        <Caret Line="199" Column="28" TopLine="190"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="79" Column="43" TopLine="72"/>
+        <Caret Line="216" Column="29" TopLine="191"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="39" Column="46" TopLine="22"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="132" Column="3" TopLine="90"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="61" Column="6" TopLine="48"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="141" Column="6" TopLine="134"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="61" Column="6" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="138" Column="14" TopLine="125"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="140" Column="37" TopLine="130"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="155" Column="15" TopLine="132"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="78" Column="43" TopLine="71"/>
+        <Caret Line="154" Column="44" TopLine="150"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="77" Column="43" TopLine="70"/>
+        <Caret Line="214" Column="3" TopLine="212"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="76" Column="43" TopLine="69"/>
+        <Caret Line="91" Column="34" TopLine="78"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="75" Column="43" TopLine="68"/>
+        <Caret Line="290" Column="53" TopLine="268"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="74" Column="43" TopLine="67"/>
+        <Caret Line="284" Column="44" TopLine="271"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="73" Column="43" TopLine="66"/>
+        <Caret Line="276" Column="47" TopLine="248"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="72" Column="43" TopLine="65"/>
+        <Caret Line="304" Column="34" TopLine="273"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="71" Column="43" TopLine="64"/>
+        <Caret Line="19" Column="14" TopLine="6"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="80" Column="43" TopLine="73"/>
+        <Caret Line="20" Column="14" TopLine="6"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="79" Column="43" TopLine="72"/>
+        <Caret Line="21" Column="14" TopLine="6"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="78" Column="43" TopLine="71"/>
+        <Caret Line="68" Column="24" TopLine="47"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="80" Column="43" TopLine="73"/>
+        <Caret Line="69" Column="24" TopLine="48"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="79" Column="43" TopLine="72"/>
+        <Caret Line="154" Column="30" TopLine="132"/>
       </Position>
       <Position>
         <Filename Value="main_form.pas"/>
-        <Caret Line="78" Column="43" TopLine="71"/>
+        <Caret Line="165" Column="13" TopLine="147"/>
       </Position>
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="77" Column="43" TopLine="70"/>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="46" TopLine="25"/>
       </Position>
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="76" Column="43" TopLine="69"/>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="40" Column="57" TopLine="27"/>
       </Position>
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="75" Column="43" TopLine="68"/>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="162" Column="13" TopLine="149"/>
       </Position>
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="80" Column="43" TopLine="73"/>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="163" Column="19" TopLine="150"/>
       </Position>
       <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="79" Column="43" TopLine="72"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="47" Column="49" TopLine="21"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="48" Column="49" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="47" Column="49" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="48" Column="49" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="49" Column="49" TopLine="23"/>
-      </Position>
-      <Position>
-        <Filename Value="spravochniky_frame.pas"/>
-        <Caret Line="48" Column="49" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="79" Column="43" TopLine="72"/>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="154" Column="35" TopLine="140"/>
       </Position>
     </JumpHistory>
     <RunParams>

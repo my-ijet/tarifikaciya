@@ -5,27 +5,40 @@ unit data_module;
 interface
 
 uses
-  Classes, SysUtils, DB, PQConnection, SQLDB;
+  Classes, SysUtils, DB, PQConnection, SQLDB, Dialogs, Process;
 
 type
 
   { TTarDataModule }
 
   TTarDataModule = class(TDataModule)
-    DSSprPersons: TDataSource;
+    DSSpravochniky: TDataSource;
     DSAllDatabases: TDataSource;
     MainConnection: TPQConnection;
     QAllDatabases: TSQLQuery;
     MainTransaction: TSQLTransaction;
     SQLCreateTables: TSQLScript;
-    QSprPersons: TSQLQuery;
+    QPersons: TSQLQuery;
+    QOrganizations: TSQLQuery;
+    QOrgGroups: TSQLQuery;
+    QObrazovanie: TSQLQuery;
+    QDoljnost: TSQLQuery;
+    QKategories: TSQLQuery;
+    QPredmet: TSQLQuery;
+    QStavka: TSQLQuery;
+    QNadbavka: TSQLQuery;
+    QDoplata: TSQLQuery;
+    QPersonalGroups: TSQLQuery;
+    QAllTarDates: TSQLQuery;
 
     procedure ConnectToHost(NewHostName, NewUserName, NewPassword, NewDatabaseName : String);
-    procedure ChangeCurrentDatabase(NewDatabaseName : String);
 
     procedure NewDatabase(dbname: String);
-    procedure DeleteDatabase(dbname: String);
     procedure RenameDatabase(FromName, ToName: String);
+    procedure DuplicateDatabase(FromName, ToName: String);
+    procedure BackupDatabase(dbname: String);
+    procedure RestoreDatabase(BackupFile: String);
+    procedure DeleteDatabase(dbname: String);
   private
 
   public
@@ -39,35 +52,32 @@ var
 implementation
 {$R *.frm}
 
+uses
+  main_form;
+
 { TTarDataModule }
 
 procedure TTarDataModule.ConnectToHost(NewHostName, NewUserName, NewPassword, NewDatabaseName : String);
 begin
-  with MainConnection do
+  try with MainConnection do
   begin
+    Connected := False;
     HostName := NewHostName;
     UserName := NewUserName;
     Password := NewPassword;
     DatabaseName := NewDatabaseName;
-
-    Connected := False; Connected := True;
+    Connected := True;
   end;
-end;
-
-procedure TTarDataModule.ChangeCurrentDatabase(NewDatabaseName: String);
-begin
-  with MainConnection do
-  begin
-    DatabaseName := NewDatabaseName;
-
-    Connected := False; Connected := True;
+  except
+    ShowMessage('Неудаётся подключиться к серверу Postgres');
+    MainForm.MainPageControl.TabIndex := 3;
+    MainForm.ServicePageControl.TabIndex := 1;
   end;
 end;
 
 procedure TTarDataModule.NewDatabase(dbname: String);
 var
   SqlCreateDB: String;
-  currDbName: String;
 begin
   SqlCreateDB := 'create database ' + AnsiQuotedStr(dbname,'"');
 
@@ -77,31 +87,10 @@ begin
     ExecuteDirect(SqlCreateDB);
     ExecuteDirect('Begin Transaction');
 
-    currDbName := DatabaseName;
     DatabaseName := dbname;
-
     Connected := False; Connected := True;
 
     SQLCreateTables.Execute;
-    DatabaseName := currDbName;
-
-    Connected := False; Connected := True;
-  end;
-end;
-
-procedure TTarDataModule.DeleteDatabase(dbname: String);
-var
-  SqlDeleteDB: String;
-begin
-  SqlDeleteDB := 'drop database ' + AnsiQuotedStr(dbname,'"');
-
-  with MainConnection do
-  begin
-    ExecuteDirect('End Transaction');
-    ExecuteDirect(SqlDeleteDB);
-    ExecuteDirect('Begin Transaction');
-
-    Connected := False; Connected := True;
   end;
 end;
 
@@ -112,7 +101,7 @@ begin
   SqlCreateDB := 'ALTER DATABASE ' + AnsiQuotedStr(FromName,'"');
   SqlCreateDB += ' RENAME TO ' + AnsiQuotedStr(ToName,'"');
 
-  with MainConnection do
+  try with MainConnection do
   begin
     ExecuteDirect('End Transaction');
     ExecuteDirect(SqlCreateDB);
@@ -120,12 +109,100 @@ begin
 
     Connected := False; Connected := True;
   end;
+  except
+    ShowMessage('Рабочую базу данных переименовать нельзя');
+  end;
+end;
+
+procedure TTarDataModule.DuplicateDatabase(FromName, ToName: String);
+var
+  SqlDuplicateDB: String;
+begin
+  SqlDuplicateDB := 'CREATE DATABASE ' + AnsiQuotedStr(ToName,'"');
+  SqlDuplicateDB += ' WITH TEMPLATE ' + AnsiQuotedStr(FromName,'"');
+
+  try with MainConnection do
+  begin
+    ExecuteDirect('End Transaction');
+    ExecuteDirect(SqlDuplicateDB);
+    ExecuteDirect('Begin Transaction');
+
+    Connected := False; Connected := True;
+  end;
+  except
+    ShowMessage('Рабочую базу данных дублировать нельзя');
+  end;
+end;
+
+procedure TTarDataModule.BackupDatabase(dbname: String);
+var
+  response,
+  pg_dump, host, dump_file,
+  BackupPath,
+  CommandBackupDB: String;
+begin
+  BackupPath := GetCurrentDir+DirectorySeparator+'Backups';
+  if not DirectoryExists(BackupPath)
+  Then CreateDir(BackupPath);
+
+  pg_dump := 'pg_dump -U ' + MainForm.EditHostLogin.Text;
+  host := ' -h ' + MainForm.EditHostIP.Text;
+  dump_file :=  '"' + BackupPath+DirectorySeparator;
+  dump_file += FormatDateTime('YY-MM-DD hh-mm-ss ', Now) + dbname+'.dump"';
+
+  CommandBackupDB := pg_dump+host+' -FC -d '+AnsiQuotedStr(dbname,'"')+' -f '+dump_file;
+
+  RunCommand(CommandBackupDB, response);
+end;
+
+procedure TTarDataModule.RestoreDatabase(BackupFile: String);
+var
+  response,
+  pg_restore, host, hostDB,
+  CommandRestoreDB: String;
+begin
+  pg_restore := 'pg_restore -U ' + MainForm.EditHostLogin.Text;
+  host := ' -h ' + MainForm.EditHostIP.Text;
+  hostDB := MainForm.EditHostDbName.Text;
+
+  CommandRestoreDB := pg_restore+host+' -C -c -d '+hostDB+' "'+BackupFile+'"';
+
+  RunCommand(CommandRestoreDB, response);
+end;
+
+procedure TTarDataModule.DeleteDatabase(dbname: String);
+var
+  SqlDeleteDB: String;
+begin
+  SqlDeleteDB := 'drop database ' + AnsiQuotedStr(dbname,'"');
+
+  try with MainConnection do
+  begin
+    ExecuteDirect('End Transaction');
+    ExecuteDirect(SqlDeleteDB);
+    ExecuteDirect('Begin Transaction');
+
+    Connected := False; Connected := True;
+  end;
+  except
+    ShowMessage('Рабочую базу данных удалить нельзя');
+  end;
 end;
 
 procedure TTarDataModule.PrepQueries;
 begin
-  QAllDatabases.Active := True;
-  QSprPersons.Active := True;
+  //QAllDatabases.Active := True;
+  QPersons.Active := True;
+  QOrganizations.Active := True;
+  QOrgGroups.Active := True;
+  QObrazovanie.Active := True;
+  QPersonalGroups.Active := True;
+  QDoljnost.Active := True;
+  QKategories.Active := True;
+  QPredmet.Active := True;
+  QStavka.Active := True;
+  QNadbavka.Active := True;
+  QDoplata.Active := True;
 end;
 
 end.

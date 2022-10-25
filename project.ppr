@@ -10,8 +10,8 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the CT adLCL widgetset
-  Forms,
-  main_form, data_module, spravochniky_frame, otchety_frame, tarifikaciya_frame;
+  Forms, main_form, data_module, spravochniky_frame, otchety_frame,
+  tarifikaciya_frame, import_from_foxpro_form;
 
 {$R *.res}
 
@@ -23,7 +23,7 @@ begin
 
   Application.CreateForm(TTarDataModule, TarDataModule);
   Application.CreateForm(TMainForm, MainForm);
-
+  Application.CreateForm(TImportFromFoxProForm, ImportFromFoxProForm);
   Application.Run;
 end.
 

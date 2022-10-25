@@ -9,7 +9,7 @@ object SpravochnikyFrame: TSpravochnikyFrame
   TabOrder = 0
   DesignLeft = 86
   DesignTop = 85
-  object RadioGroup1: TRadioGroup
+  object GroupActive: TRadioGroup
     AnchorSideLeft.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 121
@@ -32,6 +32,7 @@ object SpravochnikyFrame: TSpravochnikyFrame
       'Актуальные'
       'Архивные'
     )
+    OnSelectionChanged = GroupActiveSelectionChanged
     TabOrder = 0
   end
   object GBSpravochniki: TGroupBox
@@ -55,27 +56,29 @@ object SpravochnikyFrame: TSpravochnikyFrame
         'Организации'
         'Орг. группы'
         'Люди'
+        'Образование'
+        'Рабочие группы'
         'Должности'
+        'Категории'
         'Предметы'
         'Ставки'
         'Надбавки'
         'Доплаты'
       )
       ItemHeight = 24
-      ItemIndex = 0
       OnClick = ListTablesClick
       TabOrder = 0
     end
   end
-  object PageControl1: TPageControl
+  object PageControl: TPageControl
     Left = 121
     Height = 687
     Top = 33
     Width = 1159
-    ActivePage = TabOrganizations
+    ActivePage = TabStavky
     Align = alClient
     BorderSpacing.Top = 33
-    TabIndex = 0
+    TabIndex = 8
     TabOrder = 2
     object TabOrganizations: TTabSheet
       Caption = 'Организации'
@@ -88,15 +91,33 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Top = 0
         Width = 1155
         Align = alClient
+        AutoFillColumns = True
         Color = clWindow
         Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiselect]
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
     end
-    object TabSheet1: TTabSheet
+    object TabOrgGroups: TTabSheet
       Caption = 'Орг. группы'
+      ClientHeight = 650
+      ClientWidth = 1151
       TabVisible = False
+      object DBGrid3: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
     object TabPersons: TTabSheet
       Caption = 'Люди'
@@ -111,55 +132,187 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Align = alClient
         AutoFillColumns = True
         Color = clWindow
-        Columns = <        
-          item
-            Title.Caption = 'id'
-            Width = 285
-            FieldName = 'id'
-          end        
-          item
-            Title.Caption = 'familyname'
-            Width = 285
-            FieldName = 'familyname'
-          end        
-          item
-            Title.Caption = 'firstname'
-            Width = 285
-            FieldName = 'firstname'
-          end        
-          item
-            Title.Caption = 'middlename'
-            Width = 284
-            FieldName = 'middlename'
-          end>
-        DataSource = TarDataModule.DSSprPersons
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Flat = True
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
     end
-    object TabSheet2: TTabSheet
+    object TabObrazovanie: TTabSheet
+      Caption = 'Образования'
+      ClientHeight = 652
+      ClientWidth = 1155
+      TabVisible = False
+      object DBGrid4: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
+    end
+    object TabPersonalGroups: TTabSheet
+      Caption = 'Рабочие группы'
+      ClientHeight = 652
+      ClientWidth = 1155
+      TabVisible = False
+      object DBGrid5: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
+    end
+    object TabDoljnost: TTabSheet
       Caption = 'Должности'
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
+      object DBGrid6: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
-    object TabSheet3: TTabSheet
+    object TabKategories: TTabSheet
+      Caption = 'Категории'
+      ClientHeight = 652
+      ClientWidth = 1155
+      TabVisible = False
+      object DBGrid7: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
+    end
+    object TabPredmety: TTabSheet
       Caption = 'Предметы'
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
+      object DBGrid8: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
-    object TabSheet4: TTabSheet
-      Caption = 'TabSheet4'
+    object TabStavky: TTabSheet
+      Caption = 'Ставки'
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
+      object DBGrid9: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
-    object TabSheet5: TTabSheet
-      Caption = 'TabSheet5'
+    object TabNadbavky: TTabSheet
+      Caption = 'Надбавки'
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
+      object DBGrid10: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
-    object TabSheet6: TTabSheet
-      Caption = 'TabSheet6'
+    object TabDoplaty: TTabSheet
+      Caption = 'Доплаты'
+      ClientHeight = 650
+      ClientWidth = 1151
       TabVisible = False
+      object DBGrid11: TDBGrid
+        Left = 0
+        Height = 652
+        Top = 0
+        Width = 1155
+        Align = alClient
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = TarDataModule.DSSpravochniky
+        Scrollbars = ssAutoBoth
+        TabOrder = 0
+      end
     end
-    object TabSheet7: TTabSheet
-      Caption = 'TabSheet7'
-      TabVisible = False
-    end
+  end
+  object DBNavigator1: TDBNavigator
+    AnchorSideTop.Control = GroupActive
+    AnchorSideTop.Side = asrCenter
+    Left = 360
+    Height = 20
+    Top = 6
+    Width = 200
+    AutoSize = True
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.EnlargeVertical = crsScaleChilds
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 100
+    ClientHeight = 20
+    ClientWidth = 200
+    ConfirmDelete = False
+    DataSource = TarDataModule.DSSpravochniky
+    Options = []
+    TabOrder = 3
   end
 end
