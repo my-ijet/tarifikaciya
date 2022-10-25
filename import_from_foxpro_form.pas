@@ -5,7 +5,7 @@ unit import_from_foxpro_form;
 interface
 
 uses
-  Classes, SysUtils, DB, Dbf, Dbf_common, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
+  Classes, SysUtils, DB, Dbf, Forms, Controls, Graphics, Dialogs, StdCtrls, EditBtn,
   ExtCtrls, LConvEncoding, SQLDB, FileUtil;
 
 type
@@ -63,6 +63,10 @@ uses
 procedure TImportFromFoxProForm.FormCreate(Sender: TObject);
 begin
   FoxProDbf.OnTranslate := @DbfTranslate;
+
+  {$IfDef ONRELEASE}
+  DirFoxPro.Text := '';
+  {$EndIf}
 end;
 
 procedure TImportFromFoxProForm.BtnOkClick(Sender: TObject);
@@ -191,6 +195,10 @@ var
   tmpstr, familyname, firstname, middlename: String;
   splittedstr: array of String;
 begin
+  familyname := '';
+  firstname := '';
+  middlename := '';
+
   with QInsertFromFoxPro do
   begin
   SQL.Text := 'insert into person';

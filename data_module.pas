@@ -145,7 +145,8 @@ begin
   if not DirectoryExists(BackupPath)
   Then CreateDir(BackupPath);
 
-  pg_dump := 'pg_dump -U ' + MainForm.EditHostLogin.Text;
+  pg_dump := 'pg_dump' {$IfDef WINDOWS} + '.exe'{$EndIf};
+  pg_dump += ' -U ' + MainForm.EditHostLogin.Text;
   host := ' -h ' + MainForm.EditHostIP.Text;
   dump_file :=  '"' + BackupPath+DirectorySeparator;
   dump_file += FormatDateTime('YY-MM-DD hh-mm-ss ', Now) + dbname+'.dump"';
@@ -161,7 +162,8 @@ var
   pg_restore, host, hostDB,
   CommandRestoreDB: String;
 begin
-  pg_restore := 'pg_restore -U ' + MainForm.EditHostLogin.Text;
+  pg_restore := 'pg_restore' {$IfDef WINDOWS} + '.exe'{$EndIf};
+  pg_restore += ' -U ' + MainForm.EditHostLogin.Text;
   host := ' -h ' + MainForm.EditHostIP.Text;
   hostDB := MainForm.EditHostDbName.Text;
 

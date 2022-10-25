@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Crt, PQConnection, SQLDB, DB, dbf, Forms, Controls,
-  Graphics, Dialogs, ComCtrls, PairSplitter, ExtCtrls, StdCtrls, DBCtrls,
+  Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, DBCtrls,
   DBGrids, ActnList, Buttons, Menus;
 
 type
