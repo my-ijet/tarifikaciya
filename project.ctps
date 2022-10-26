@@ -9,12 +9,11 @@
         <Filename Value="project.ppr"/>
         <FRMtype Value="0"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="47" Y="25"/>
-        <UsageCount Value="174"/>
+        <UsageCount Value="178"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -26,9 +25,9 @@
         <ResourceBaseClass Value="DataModule"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="150"/>
-        <CursorPos Y="171"/>
-        <UsageCount Value="132"/>
+        <TopLine Value="8"/>
+        <CursorPos X="9" Y="21"/>
+        <UsageCount Value="136"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -39,7 +38,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="131"/>
+        <UsageCount Value="135"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -51,9 +50,9 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="113"/>
-        <CursorPos X="3" Y="131"/>
-        <UsageCount Value="174"/>
+        <TopLine Value="126"/>
+        <CursorPos X="30" Y="138"/>
+        <UsageCount Value="178"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -64,11 +63,12 @@
         <ComponentName Value="SpravochnikyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="56"/>
-        <CursorPos X="35" Y="74"/>
-        <UsageCount Value="104"/>
+        <TopLine Value="78"/>
+        <CursorPos X="29" Y="96"/>
+        <UsageCount Value="108"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -82,7 +82,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="108"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -96,7 +96,7 @@
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <CursorPos X="48" Y="8"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="108"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -109,11 +109,20 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="91"/>
-        <CursorPos X="24" Y="68"/>
-        <UsageCount Value="53"/>
+        <TopLine Value="106"/>
+        <CursorPos X="25" Y="119"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sql/clear_after_import_from_foxpro.sql"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <UsageCount Value="22"/>
+        <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
         <Filename Value="dbf_tar_data_module.pas"/>
@@ -161,9 +170,9 @@
         <FRMtype Value="0"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="642"/>
-        <CursorPos X="3" Y="620"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="854"/>
+        <CursorPos X="19" Y="859"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/typhon/lcl/pairsplitter.pas"/>
@@ -440,74 +449,6 @@
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="61" Column="6" TopLine="48"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="141" Column="6" TopLine="134"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="61" Column="6" TopLine="57"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="138" Column="14" TopLine="125"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="140" Column="37" TopLine="130"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="155" Column="15" TopLine="132"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="154" Column="44" TopLine="150"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="214" Column="3" TopLine="212"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="91" Column="34" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="290" Column="53" TopLine="268"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="284" Column="44" TopLine="271"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="276" Column="47" TopLine="248"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="304" Column="34" TopLine="273"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="19" Column="14" TopLine="6"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="20" Column="14" TopLine="6"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="21" Column="14" TopLine="6"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="68" Column="24" TopLine="47"/>
-      </Position>
-      <Position>
         <Filename Value="main_form.pas"/>
         <Caret Line="69" Column="24" TopLine="48"/>
       </Position>
@@ -559,22 +500,91 @@
         <Filename Value="otchety_frame.pas"/>
         <Caret Line="9" Column="32"/>
       </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="73" Column="30" TopLine="62"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="159" Column="23" TopLine="147"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="73" Column="15" TopLine="61"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="159" Column="25" TopLine="153"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="91" Column="15" TopLine="79"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="285" Column="32" TopLine="263"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="269" Column="32" TopLine="263"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="97" Column="16" TopLine="91"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="118" Column="40" TopLine="99"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="105" Column="29" TopLine="99"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="165" Column="23" TopLine="149"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="396" Column="6" TopLine="294"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="140" TopLine="130"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="18" Column="21" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="main_form.pas"/>
+        <Caret Line="66" Column="34" TopLine="63"/>
+      </Position>
+      <Position>
+        <Filename Value="spravochniky_frame.pas"/>
+        <Caret Line="72" Column="28" TopLine="59"/>
+      </Position>
+      <Position>
+        <Filename Value="spravochniky_frame.pas"/>
+        <Caret Line="96" Column="19" TopLine="75"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes ActiveMode="default">
         <Mode Name="default">
           <local>
-            <WorkingDirectory Value="/home/ijet/GitHub/tarifikaciya/bin"/>
+            <WorkingDirectory Value="$ProjPath()bin"/>
           </local>
         </Mode>
       </Modes>
     </RunParams>
     <HistoryLists>
-      <List Name="WorkingDirectory" Type="File" Count="3">
-        <Item1 Value="/home/ijet/GitHub/tarifikaciya/bin"/>
-        <Item2 Value="/home/ijet/GitHub/tarifikaciya"/>
-        <Item3 Value="./bin"/>
+      <List Name="WorkingDirectory" Type="File" Count="4">
+        <Item1 Value="$ProjPath()bin"/>
+        <Item2 Value="/home/ijet/GitHub/tarifikaciya/bin"/>
+        <Item3 Value="/home/ijet/GitHub/tarifikaciya"/>
+        <Item4 Value="./bin"/>
       </List>
       <List Name="LaunchingApplication" Type="File" Count="5">
         <Item1 Value="/usr/bin/xterm -T &apos;Typhon Run Output&apos; -e $(TargetCmdLine)"/>

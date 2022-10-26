@@ -63,7 +63,6 @@ type
     OtchetyFrame: TOtchetyFrame;
     SpravochnikyFrame: TSpravochnikyFrame;
 
-    procedure BtnBackupDatabaseClick(Sender: TObject);
     procedure BtnConnectToHostClick(Sender: TObject);
     procedure BtnDeleteBackupClick(Sender: TObject);
     procedure BtnDeleteDatabaseClick(Sender: TObject);
@@ -71,6 +70,7 @@ type
     procedure BtnImportFromFOXPROClick(Sender: TObject);
     procedure BtnNewDatabaseClick(Sender: TObject);
     procedure BtnRenameDatabaseClick(Sender: TObject);
+    procedure BtnBackupDatabaseClick(Sender: TObject);
     procedure BtnRestoreDatabaseClick(Sender: TObject);
     procedure ListCurrentDatabaseChange(Sender: TObject);
     procedure ListCurrentTarifikationDateChange(Sender: TObject);
@@ -135,9 +135,12 @@ end;
 
 procedure TMainForm.MainPageControlChange(Sender: TObject);
 begin
+  if ListCurrentDatabase.Text = ''
+  then Exit;
+
   if MainPageControl.TabIndex = 2
   then
-  TarDataModule.PrepQueries;
+    TarDataModule.PrepQueries;
 end;
 
 procedure TMainForm.BtnConnectToHostClick(Sender: TObject);
@@ -282,6 +285,7 @@ begin
       BackupFileName := BackupFileName.TrimRight('.dump');
       ListDatabaseBackups.Items.Add(BackupFileName);
   end;
+  FreeAndNil(FoundBackupFiles);
 end;
 
 procedure TMainForm.BtnRestoreDatabaseClick(Sender: TObject);

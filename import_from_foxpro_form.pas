@@ -23,6 +23,7 @@ type
     Log: TMemo;
     GNewOrCurrentDB: TRadioGroup;
     QInsertFromFoxPro: TSQLQuery;
+    SQLClearTables: TSQLScript;
     procedure FormCreate(Sender: TObject);
     procedure BtnOkClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
@@ -115,7 +116,9 @@ begin
     DbfFileName := ExtractFileName(DbfFilePath);
     PrepareToImportDbf(DbfFileName);
   end;
+  SQLClearTables.Execute;
   TarDataModule.MainTransaction.Commit;
+  FreeAndNil(FoundDbfFiles);
 end;
 
 procedure TImportFromFoxProForm.PrepareToImportDbf(DbfFileName: String);

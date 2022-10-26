@@ -5,7 +5,7 @@ object TarDataModule: TTarDataModule
   VerticalOffset = 85
   Width = 150
   object MainConnection: TPQConnection
-    Connected = False
+    Connected = True
     LoginPrompt = False
     DatabaseName = 'www'
     KeepConnection = True
@@ -18,7 +18,7 @@ object TarDataModule: TTarDataModule
     Top = 37
   end
   object MainTransaction: TSQLTransaction
-    Active = False
+    Active = True
     Database = MainConnection
     Left = 1248
     Top = 95

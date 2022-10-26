@@ -5,7 +5,7 @@ object MainForm: TMainForm
   Width = 1280
   HorzScrollBar.Page = 842
   HorzScrollBar.Tracking = True
-  VertScrollBar.Page = 708
+  VertScrollBar.Page = 706
   VertScrollBar.Tracking = True
   AutoScroll = True
   BorderWidth = 5
@@ -44,12 +44,12 @@ object MainForm: TMainForm
     end
     object Service: TTabSheet
       Caption = 'Сервис'
-      ClientHeight = 675
+      ClientHeight = 676
       ClientWidth = 1266
       object Panel1: TPanel
         Left = 0
         Height = 28
-        Top = 647
+        Top = 648
         Width = 1266
         Align = alBottom
         BevelOuter = bvNone
@@ -73,7 +73,7 @@ object MainForm: TMainForm
       end
       object ServicePageControl: TPageControl
         Left = 0
-        Height = 647
+        Height = 648
         Top = 0
         Width = 1266
         ActivePage = TabSheet2
@@ -82,7 +82,7 @@ object MainForm: TMainForm
         TabOrder = 1
         object TabSheet2: TTabSheet
           Caption = 'Базы данных'
-          ClientHeight = 612
+          ClientHeight = 614
           ClientWidth = 1262
           object GBRestoreDatabases: TGroupBox
             AnchorSideRight.Side = asrBottom

@@ -136,40 +136,34 @@ end;
 
 procedure TTarDataModule.BackupDatabase(dbname: String);
 var
-  response,
-  pg_dump, host, dump_file,
-  BackupPath,
-  CommandBackupDB: String;
+  response, BackupPath, dump_file: String;
 begin
   BackupPath := GetCurrentDir+DirectorySeparator+'Backups';
   if not DirectoryExists(BackupPath)
   Then CreateDir(BackupPath);
 
-  pg_dump := 'pg_dump' {$IfDef WINDOWS} + '.exe'{$EndIf};
-  pg_dump += ' -U ' + MainForm.EditHostLogin.Text;
-  host := ' -h ' + MainForm.EditHostIP.Text;
-  dump_file :=  '"' + BackupPath+DirectorySeparator;
-  dump_file += FormatDateTime('YY-MM-DD hh-mm-ss ', Now) + dbname+'.dump"';
+  dump_file := BackupPath+DirectorySeparator;
+  dump_file += FormatDateTime('YY-MM-DD hh-mm-ss ', Now) + dbname+'.dump';
 
-  CommandBackupDB := pg_dump+host+' -FC -d '+AnsiQuotedStr(dbname,'"')+' -f '+dump_file;
-
-  RunCommand(CommandBackupDB, response);
+  RunCommand('pg_dump',
+  ['-U', MainForm.EditHostLogin.Text,
+  '-h', MainForm.EditHostIP.Text,
+  '-d', dbname,'-FC',
+  '-f', dump_file],
+  response, [], swoHIDE);
 end;
 
 procedure TTarDataModule.RestoreDatabase(BackupFile: String);
 var
-  response,
-  pg_restore, host, hostDB,
-  CommandRestoreDB: String;
+  response: String;
 begin
-  pg_restore := 'pg_restore' {$IfDef WINDOWS} + '.exe'{$EndIf};
-  pg_restore += ' -U ' + MainForm.EditHostLogin.Text;
-  host := ' -h ' + MainForm.EditHostIP.Text;
-  hostDB := MainForm.EditHostDbName.Text;
 
-  CommandRestoreDB := pg_restore+host+' -C -c -d '+hostDB+' "'+BackupFile+'"';
-
-  RunCommand(CommandRestoreDB, response);
+  RunCommand('pg_restore',
+  ['-U', MainForm.EditHostLogin.Text,
+  '-h', MainForm.EditHostIP.Text,
+  '-d', MainForm.EditHostDbName.Text,
+  '-C', '-c', BackupFile],
+  response, [], swoHIDE);
 end;
 
 procedure TTarDataModule.DeleteDatabase(dbname: String);
