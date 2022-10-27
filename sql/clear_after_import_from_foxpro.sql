@@ -1,6 +1,7 @@
 
 alter table organization
-drop column FOXPRO_KOD;
+drop column FOXPRO_KOD,
+drop column pg;
 
 alter table org_group
 drop column FOXPRO_KOD;

@@ -25,6 +25,7 @@ type
     QInsertFromFoxPro: TSQLQuery;
     SQLClearTables: TSQLScript;
     SQLPrepareTables: TSQLScript;
+    SQLUpdateTables: TSQLScript;
     procedure FormCreate(Sender: TObject);
     procedure BtnOkClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
@@ -118,6 +119,7 @@ begin
     DbfFileName := ExtractFileName(DbfFilePath);
     PrepareToImportDbf(DbfFileName);
   end;
+  SQLUpdateTables.Execute;
   SQLClearTables.Execute;
   TarDataModule.MainTransaction.Commit;
   FreeAndNil(FoundDbfFiles);
@@ -167,7 +169,7 @@ begin
   begin
     ParamByName('short_name').AsString := FoxProDbf.FieldByName('NAIM').AsString;
     ParamByName('foxpro_kod').AsString := FoxProDbf.FieldByName('KOD').AsString;
-    ParamByName('pg').AsInteger := FoxProDbf.FieldByName('PG').AsInteger;
+    ParamByName('pg').AsString := FoxProDbf.FieldByName('PG').AsString;
     ParamByName('gr').AsInteger := FoxProDbf.FieldByName('GR').AsInteger;
     ExecSQL;
 

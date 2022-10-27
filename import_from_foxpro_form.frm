@@ -153,7 +153,8 @@ object ImportFromFoxProForm: TImportFromFoxProForm
     Script.Strings = (
       ''
       'alter table organization'
-      'drop column FOXPRO_KOD;'
+      'drop column FOXPRO_KOD,'
+      'drop column pg;'
       ''
       'alter table org_group'
       'drop column FOXPRO_KOD;'
@@ -181,7 +182,6 @@ object ImportFromFoxProForm: TImportFromFoxProForm
       ''
       'alter table doplata'
       'drop column FOXPRO_KOD;'
-      ''
       ''
     )
     Terminator = ';'
@@ -207,38 +207,67 @@ object ImportFromFoxProForm: TImportFromFoxProForm
     Script.Strings = (
       ''
       'alter table organization'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5),'
+      'add pg varchar(5);'
       ''
       'alter table org_group'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table person'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table obrazovanie'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table personal_group'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table doljnost'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table kategory'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table predmet'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table nadbavka'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
       'alter table doplata'
-      'ADD FOXPRO_KOD varchar(5);'
+      'add FOXPRO_KOD varchar(5);'
       ''
     )
     Terminator = ';'
     Left = 97
+    Top = 10
+  end
+  object SQLUpdateTables: TSQLScript
+    DataBase = TarDataModule.MainConnection
+    Transaction = TarDataModule.MainTransaction
+    Directives.Strings = (
+      'SET TERM'
+      'COMMIT WORK'
+      'COMMIT RETAIN'
+      'COMMIT'
+      '#IFDEF'
+      '#IFNDEF'
+      '#ELSE'
+      '#ENDIF'
+      '#DEFINE'
+      '#UNDEF'
+      '#UNDEFINE'
+    )
+    Script.Strings = (
+      ''
+      'UPDATE organization'
+      '  SET group_id = org_group.id'
+      '  FROM org_group'
+      '  where organization.pg = org_group.FOXPRO_KOD;'
+      ''
+    )
+    Terminator = ';'
+    Left = 126
     Top = 10
   end
 end

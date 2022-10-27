@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="12"/>
     <ManyBuildModesSelection Value="Debug,Release,ReleaseWin32"/>
-    <BuildModes Active="Release"/>
+    <BuildModes Active="Debug"/>
     <Units>
       <Unit>
         <Filename Value="project.ppr"/>
@@ -13,7 +13,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="47" Y="25"/>
-        <UsageCount Value="179"/>
+        <UsageCount Value="181"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -23,11 +23,12 @@
         <ComponentName Value="TarDataModule"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="8"/>
         <CursorPos X="9" Y="21"/>
-        <UsageCount Value="137"/>
+        <UsageCount Value="139"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -38,7 +39,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="136"/>
+        <UsageCount Value="138"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -48,12 +49,11 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="126"/>
         <CursorPos X="30" Y="138"/>
-        <UsageCount Value="179"/>
+        <UsageCount Value="181"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -68,7 +68,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="29" Y="96"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -82,7 +82,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -96,7 +96,7 @@
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <CursorPos X="48" Y="8"/>
-        <UsageCount Value="109"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -109,9 +109,9 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="100"/>
-        <CursorPos X="28" Y="115"/>
-        <UsageCount Value="58"/>
+        <TopLine Value="150"/>
+        <CursorPos X="60" Y="172"/>
+        <UsageCount Value="60"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -121,7 +121,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="25"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -130,7 +130,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -455,36 +455,17 @@
         <CursorPos X="16" Y="218"/>
         <UsageCount Value="10"/>
       </Unit>
+      <Unit>
+        <Filename Value="sql/update_after_import_from_foxpro.sql"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <UsageCount Value="22"/>
+        <DefaultSyntaxHighlighter Value="SQL"/>
+      </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="154" Column="30" TopLine="132"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="165" Column="13" TopLine="147"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="46" TopLine="25"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="40" Column="57" TopLine="27"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="162" Column="13" TopLine="149"/>
-      </Position>
-      <Position>
-        <Filename Value="data_module.pas"/>
-        <Caret Line="163" Column="19" TopLine="150"/>
-      </Position>
-      <Position>
-        <Filename Value="import_from_foxpro_form.pas"/>
-        <Caret Line="154" Column="35" TopLine="140"/>
-      </Position>
       <Position>
         <Filename Value="import_from_foxpro_form.pas"/>
         <Caret Line="339" Column="31" TopLine="325"/>
@@ -576,6 +557,34 @@
       <Position>
         <Filename Value="import_from_foxpro_form.pas"/>
         <Caret Line="104" Column="53" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="115" TopLine="108"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="145" Column="9" TopLine="123"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="172" Column="72" TopLine="158"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="145" Column="9" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="165" Column="42" TopLine="143"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="166" Column="52" TopLine="144"/>
+      </Position>
+      <Position>
+        <Filename Value="import_from_foxpro_form.pas"/>
+        <Caret Line="172" Column="20" TopLine="150"/>
       </Position>
     </JumpHistory>
     <RunParams>
