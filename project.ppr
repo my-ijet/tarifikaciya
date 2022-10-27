@@ -10,7 +10,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the CT adLCL widgetset
-  Forms, main_form, data_module, spravochniky_frame, otchety_frame,
+  Forms, main_form, data_module, spravochniky_frame, otchety_frame, clocale,
   tarifikaciya_frame, import_from_foxpro_form;
 
 {$R *.res}

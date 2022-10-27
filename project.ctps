@@ -11,9 +11,8 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
-        <CursorPos X="47" Y="25"/>
-        <UsageCount Value="181"/>
+        <CursorPos X="77" Y="13"/>
+        <UsageCount Value="185"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -23,12 +22,11 @@
         <ComponentName Value="TarDataModule"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="8"/>
-        <CursorPos X="9" Y="21"/>
-        <UsageCount Value="139"/>
+        <TopLine Value="73"/>
+        <CursorPos X="25" Y="84"/>
+        <UsageCount Value="143"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -39,7 +37,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="138"/>
+        <UsageCount Value="142"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -53,7 +51,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="126"/>
         <CursorPos X="30" Y="138"/>
-        <UsageCount Value="181"/>
+        <UsageCount Value="185"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -64,11 +62,12 @@
         <ComponentName Value="SpravochnikyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="78"/>
-        <CursorPos X="29" Y="96"/>
-        <UsageCount Value="111"/>
+        <TopLine Value="53"/>
+        <CursorPos X="48" Y="65"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -82,7 +81,7 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -96,7 +95,7 @@
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <CursorPos X="48" Y="8"/>
-        <UsageCount Value="111"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -111,7 +110,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="150"/>
         <CursorPos X="60" Y="172"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -121,7 +120,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="29"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -130,7 +129,16 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="27"/>
+        <DefaultSyntaxHighlighter Value="SQL"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sql/update_after_import_from_foxpro.sql"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="0"/>
+        <UsageCount Value="26"/>
         <DefaultSyntaxHighlighter Value="SQL"/>
       </Unit>
       <Unit>
@@ -170,9 +178,9 @@
         <UnitName Value="Forms"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1981"/>
-        <CursorPos Y="1996"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="1648"/>
+        <CursorPos X="95" Y="1660"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/classes/classesh.inc"/>
@@ -456,44 +464,17 @@
         <UsageCount Value="10"/>
       </Unit>
       <Unit>
-        <Filename Value="sql/update_after_import_from_foxpro.sql"/>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/sysinth.inc"/>
         <FRMtype Value="0"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <UsageCount Value="22"/>
-        <DefaultSyntaxHighlighter Value="SQL"/>
+        <TopLine Value="54"/>
+        <CursorPos X="3" Y="57"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="import_from_foxpro_form.pas"/>
-        <Caret Line="339" Column="31" TopLine="325"/>
-      </Position>
-      <Position>
-        <Filename Value="import_from_foxpro_form.pas"/>
-        <Caret Line="210" Column="40" TopLine="210"/>
-      </Position>
-      <Position>
-        <Filename Value="tarifikaciya_frame.pas"/>
-        <Caret Line="8" Column="48"/>
-      </Position>
-      <Position>
-        <Filename Value="otchety_frame.pas"/>
-        <Caret Line="8" Column="48"/>
-      </Position>
-      <Position>
-        <Filename Value="otchety_frame.pas"/>
-        <Caret Line="9" Column="32"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="73" Column="30" TopLine="62"/>
-      </Position>
-      <Position>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="159" Column="23" TopLine="147"/>
-      </Position>
+    <JumpHistory HistoryIndex="28">
       <Position>
         <Filename Value="main_form.pas"/>
         <Caret Line="73" Column="15" TopLine="61"/>
@@ -585,6 +566,30 @@
       <Position>
         <Filename Value="import_from_foxpro_form.pas"/>
         <Caret Line="172" Column="20" TopLine="150"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="82" Column="95" TopLine="72"/>
+      </Position>
+      <Position>
+        <Filename Value="data_module.pas"/>
+        <Caret Line="83" Column="72" TopLine="72"/>
+      </Position>
+      <Position>
+        <Filename Value="spravochniky_frame.pas"/>
+        <Caret Line="66" Column="22" TopLine="55"/>
+      </Position>
+      <Position>
+        <Filename Value="/usr/local/codetyphon/fpcsrc/rtl/objpas/sysutils/sysinth.inc"/>
+        <Caret Line="93" Column="53" TopLine="80"/>
+      </Position>
+      <Position>
+        <Filename Value="project.ppr"/>
+        <Caret Line="23" Column="39" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="project.ppr"/>
+        <Caret Line="13" Column="77"/>
       </Position>
     </JumpHistory>
     <RunParams>

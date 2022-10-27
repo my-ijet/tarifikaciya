@@ -91,10 +91,34 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Top = 0
         Width = 1155
         Align = alClient
-        AutoFillColumns = True
         BorderStyle = bsNone
         Color = clWindow
-        Columns = <>
+        Columns = <        
+          item
+            Title.Caption = 'Сокращенное наименование'
+            Width = 229
+            FieldName = 'short_name'
+          end        
+          item
+            Title.Caption = 'Полное наименование'
+            Width = 229
+            FieldName = 'full_name'
+          end        
+          item
+            Title.Caption = 'Группа'
+            Width = 229
+            FieldName = 'group_id'
+          end        
+          item
+            Title.Caption = 'В архиве'
+            Width = 228
+            FieldName = 'archived'
+          end        
+          item
+            Title.Caption = 'gr'
+            Width = 228
+            FieldName = 'gr'
+          end>
         DataSource = TarDataModule.DSSpravochniky
         DoubleBuffered = False
         Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
@@ -105,8 +129,8 @@ object SpravochnikyFrame: TSpravochnikyFrame
     end
     object TabOrgGroups: TTabSheet
       Caption = 'Орг. группы'
-      ClientHeight = 650
-      ClientWidth = 1151
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
       object DBGrid3: TDBGrid
         Left = 0
@@ -128,8 +152,8 @@ object SpravochnikyFrame: TSpravochnikyFrame
     end
     object TabPersons: TTabSheet
       Caption = 'Люди'
-      ClientHeight = 650
-      ClientWidth = 1151
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
       object DBGrid1: TDBGrid
         Left = 0
@@ -312,8 +336,8 @@ object SpravochnikyFrame: TSpravochnikyFrame
     end
     object TabDoplaty: TTabSheet
       Caption = 'Доплаты'
-      ClientHeight = 650
-      ClientWidth = 1151
+      ClientHeight = 652
+      ClientWidth = 1155
       TabVisible = False
       object DBGrid11: TDBGrid
         Left = 0

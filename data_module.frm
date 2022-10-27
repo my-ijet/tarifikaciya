@@ -12,6 +12,7 @@ object TarDataModule: TTarDataModule
     Password = 'postgres'
     Transaction = MainTransaction
     UserName = 'postgres'
+    CharSet = 'ru_Ru'
     HostName = 'localhost'
     VerboseErrors = False
     Left = 1248
@@ -176,39 +177,7 @@ object TarDataModule: TTarDataModule
     PacketRecords = -1
     IndexName = 'DEFAULT_ORDER'
     MaxIndexesCount = 4
-    FieldDefs = <    
-      item
-        Name = 'id'
-        DataType = ftInteger
-        Precision = -1
-      end    
-      item
-        Name = 'short_name'
-        DataType = ftString
-        Precision = -1
-        Size = 8192
-      end    
-      item
-        Name = 'full_name'
-        DataType = ftString
-        Precision = -1
-        Size = 8192
-      end    
-      item
-        Name = 'archived'
-        DataType = ftBoolean
-        Precision = -1
-      end    
-      item
-        Name = 'pg'
-        DataType = ftSmallint
-        Precision = -1
-      end    
-      item
-        Name = 'gr'
-        DataType = ftSmallint
-        Precision = -1
-      end>
+    FieldDefs = <>
     Database = MainConnection
     Transaction = MainTransaction
     SQL.Strings = (
