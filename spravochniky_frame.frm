@@ -75,10 +75,10 @@ object SpravochnikyFrame: TSpravochnikyFrame
     Height = 687
     Top = 33
     Width = 1159
-    ActivePage = TabStavky
+    ActivePage = TabOrganizations
     Align = alClient
     BorderSpacing.Top = 33
-    TabIndex = 8
+    TabIndex = 0
     TabOrder = 2
     object TabOrganizations: TTabSheet
       Caption = 'Организации'
@@ -92,10 +92,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
-        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiselect]
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -112,17 +115,21 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
     end
     object TabPersons: TTabSheet
       Caption = 'Люди'
-      ClientHeight = 652
-      ClientWidth = 1155
+      ClientHeight = 650
+      ClientWidth = 1151
       TabVisible = False
       object DBGrid1: TDBGrid
         Left = 0
@@ -131,11 +138,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
-        Flat = True
-        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -152,9 +161,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -171,9 +184,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -190,9 +207,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -209,9 +230,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -228,9 +253,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -247,9 +276,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -266,9 +299,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end
@@ -285,9 +322,13 @@ object SpravochnikyFrame: TSpravochnikyFrame
         Width = 1155
         Align = alClient
         AutoFillColumns = True
+        BorderStyle = bsNone
         Color = clWindow
         Columns = <>
         DataSource = TarDataModule.DSSpravochniky
+        DoubleBuffered = False
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgRowHighlight]
+        ParentDoubleBuffered = False
         Scrollbars = ssAutoBoth
         TabOrder = 0
       end

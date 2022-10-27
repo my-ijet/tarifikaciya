@@ -24,6 +24,7 @@ type
     GNewOrCurrentDB: TRadioGroup;
     QInsertFromFoxPro: TSQLQuery;
     SQLClearTables: TSQLScript;
+    SQLPrepareTables: TSQLScript;
     procedure FormCreate(Sender: TObject);
     procedure BtnOkClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
@@ -111,6 +112,7 @@ begin
   FoundDbfFiles := FindAllFiles(DirFoxPro.Text, '*.DBF', False);
   Self.Refresh;
 
+  SQLPrepareTables.Execute;
   for DbfFilePath in FoundDbfFiles do
   begin
     DbfFileName := ExtractFileName(DbfFilePath);

@@ -5,7 +5,6 @@ create table organization(
   short_name varchar,
   full_name varchar,
   archived boolean not null default false,
-  FOXPRO_KOD varchar(5),
   pg int2,
   gr int2
 );
@@ -13,7 +12,6 @@ create table organization(
 create table org_group(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false
 );
 -- SPRFIO
@@ -22,21 +20,18 @@ create table person(
   familyname varchar,
   firstname varchar,
   middlename varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false
 );
 -- SPROBR
 create table obrazovanie(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false
 );
 -- SPRGR
 create table personal_group(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false
 );
 -- SPRDL
@@ -47,21 +42,18 @@ create table doljnost(
   kolvo int2,
   por int2,
   pk int2,
-  FOXPRO_KOD varchar(5),
   gopl int2
 );
 -- SPRKAT
 create table kategory(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false
 );
 -- SPRPREDM
 create table predmet(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   clock int2,
   archived boolean not null default false
 );
@@ -76,7 +68,6 @@ create table stavka(
 create table nadbavka(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false,
   proc numeric(4,1),
   por int2,
@@ -86,7 +77,6 @@ create table nadbavka(
 create table doplata(
   id serial primary key,
   name varchar,
-  FOXPRO_KOD varchar(5),
   archived boolean not null default false,
   por int2,
   pk int2,

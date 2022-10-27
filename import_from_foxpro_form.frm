@@ -188,4 +188,57 @@ object ImportFromFoxProForm: TImportFromFoxProForm
     Left = 68
     Top = 10
   end
+  object SQLPrepareTables: TSQLScript
+    DataBase = TarDataModule.MainConnection
+    Transaction = TarDataModule.MainTransaction
+    Directives.Strings = (
+      'SET TERM'
+      'COMMIT WORK'
+      'COMMIT RETAIN'
+      'COMMIT'
+      '#IFDEF'
+      '#IFNDEF'
+      '#ELSE'
+      '#ENDIF'
+      '#DEFINE'
+      '#UNDEF'
+      '#UNDEFINE'
+    )
+    Script.Strings = (
+      ''
+      'alter table organization'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table org_group'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table person'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table obrazovanie'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table personal_group'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table doljnost'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table kategory'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table predmet'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table nadbavka'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+      'alter table doplata'
+      'ADD FOXPRO_KOD varchar(5);'
+      ''
+    )
+    Terminator = ';'
+    Left = 97
+    Top = 10
+  end
 end
