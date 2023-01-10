@@ -1,7 +1,3 @@
-lib
-bin
-GPATH
-GRTAGS
-GTAGS
 *.exe
-*.dbg
+*.dll
+*.db

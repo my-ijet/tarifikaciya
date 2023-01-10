@@ -1,3 +1,3 @@
 # Программа для тарификации
 
-Developed in CodeTyphon Studio https://pilotlogic.com/
+Developed in My Visual Database http://myvisualdatabase.com
