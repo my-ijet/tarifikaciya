@@ -3,6 +3,8 @@ object Form2: TForm2
   Height = 162
   Top = 31
   Width = 320
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsDialog
   Caption = 'Выбор базы данных FoxPro'
   ClientHeight = 162
   ClientWidth = 320
