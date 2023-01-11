@@ -16,12 +16,25 @@ end;
 
 procedure Tarifikation_BtnClearFilterOrganizations_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  Tarifikation.ListFilterOrgGroup.Clear;
+  Tarifikation.ListFilterOrgGroup.ItemIndex := 0;
   Tarifikation.EditFilterOrgShortName.Clear;
   Tarifikation.CheckFilterOrganizationArchived.State := 0;
   Tarifikation.BtnFilterOrganizations.Click;
 end;
 // Организации
+
+// Группы организаций
+procedure Tarifikation_EditFilterOrgGroups_OnChange (Sender: TObject);
+begin
+  Tarifikation.BtnFilterOrgGroups.Click;
+end;
+
+procedure Tarifikation_BtnClearFilterOrgGroups_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.EditFilterOrgGroups.Clear;
+  Tarifikation.BtnFilterOrgGroups.Click;
+end;
+// Группы организаций
 
 // Сотрудники
 procedure Tarifikation_EditFilterPersonsFamilyname_OnChange (Sender: TObject);
@@ -54,6 +67,30 @@ begin
 end;
 // Сотрудники
 
+// Группы сотрудников
+// Группы сотрудников
+
+// Должности
+// Должности
+
+// Образования
+// Образования
+
+// Предметы
+// Предметы
+
+// Надбавки
+// Надбавки
+
+// Доплаты
+// Доплаты
+
+// Ставки
+// Ставки
+
+// Категории
+// Категории
+
 begin
   Tarifikation.BtnFilterOrganizations.Click;
   Tarifikation.BtnFilterOrgGroups.Click;
@@ -62,7 +99,8 @@ begin
   Tarifikation.BtnFilterDoljnosty.Click;
   Tarifikation.BtnFilterObrazovaniya.Click;
   Tarifikation.BtnFilterPredmety.Click;
-  Tarifikation.BtnFilterNadbavkyDoplaty.Click;
+  Tarifikation.BtnFilterNadbavky.Click;
+  Tarifikation.BtnFilterDoplaty.Click;
   Tarifikation.BtnFilterStavky.Click;
   Tarifikation.BtnFilterKategory.Click;
 end.

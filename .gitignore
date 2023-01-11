@@ -1,3 +1,5 @@
 *.exe
 *.dll
 *.db
+import_from_foxpro/backup
+import_from_foxpro/lib
