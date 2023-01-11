@@ -91,6 +91,7 @@ end;
 // Категории
 // Категории
 
+procedure PrepareSpravochniky;
 begin
   Tarifikation.BtnFilterOrganizations.Click;
   Tarifikation.BtnFilterOrgGroups.Click;
@@ -103,4 +104,7 @@ begin
   Tarifikation.BtnFilterDoplaty.Click;
   Tarifikation.BtnFilterStavky.Click;
   Tarifikation.BtnFilterKategory.Click;
+end;
+
+begin
 end.

@@ -1,4 +1,6 @@
-﻿
+﻿uses
+  'spravochniky.pas';
+
 procedure DoFilterTableTarifikaciya;
 begin
   if Tarifikation.TableTarOrganizations.SelectedRow = -1 then begin
@@ -79,6 +81,11 @@ begin
 end;
 
 
+
+procedure Tarifikation_OnShow (Sender: TObject; Action: string);
 begin
-  //Tarifikation.TableTarNadbavky.dbParentTable := 'tarifikaciya';
+  PrepareSpravochniky;
+end;
+
+begin
 end.
