@@ -243,6 +243,15 @@ begin
   Tarifikation.GroupBtnTarNadbavky.Visible := False;
 end;
 
+procedure Tarifikation_OnMouseLeave (Sender: TObject);
+begin
+  Tarifikation.GroupBtnTarOrganizations.Visible := False;
+  Tarifikation.GroupBtnTarifikaciya.Visible := False;
+  Tarifikation.GroupBtnTarJobs.Visible := False;
+  Tarifikation.GroupBtnTarNadbavky.Visible := False;
+  Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+end;
+
 
 // Подготовка всех таблиц тарификации
 procedure Tarifikation_PrepareTarTables;
