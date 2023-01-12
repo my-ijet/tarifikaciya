@@ -1,5 +1,5 @@
 ﻿var
-  SettingsFilePath, DatabaseFilePath : string;
+  DatabaseFilePath : string;
 
 function GetSettingsFilePath: string;
 var
@@ -26,7 +26,7 @@ function GetDatabaseFilePath: string;
 var
    ini: TIniFile;
 begin
-     ini := TiniFile.Create (SettingsFilePath);
+     ini := TiniFile.Create (Application.SettingsFile);
      result := ini.ReadString('Options', 'server', 'sqlite.db');
      ini.Free;
 end;
@@ -37,6 +37,5 @@ begin
 end;
 
 begin
-  SettingsFilePath := GetSettingsFilePath;
   DatabaseFilePath := GetDatabaseFilePath;
 end.
