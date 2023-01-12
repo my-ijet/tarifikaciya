@@ -12,21 +12,22 @@ begin
   if Tarifikation.TableTarOrganizations.SelectedRow = -1 then begin
     Tarifikation.TableTarifikaciya.ClearRows;
     Tarifikation.TableTarNadbavky.ClearRows;
+    Tarifikation.TableTarJobs.ClearRows;
+    Tarifikation.TableTarJobDoblaty.ClearRows;
   end;
 end;
 
 // Фильтр таблицы Тарификации
 procedure Tarifikation_DoFilterTableTarifikaciya;
 begin
-  if Tarifikation.TableTarOrganizations.SelectedRow = -1 then begin
-    Tarifikation.TableTarifikaciya.ClearRows;
-    Tarifikation.TableTarNadbavky.ClearRows;
-    Exit;
-  end;
+  if Tarifikation.TableTarOrganizations.SelectedRow = -1 then Exit;
 
   Tarifikation.BtnFilterTarifikaciya.Click;
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
     Tarifikation.TableTarNadbavky.ClearRows;
+    Tarifikation.TableTarJobs.ClearRows;
+    Tarifikation.TableTarJobDoblaty.ClearRows;
+  end;
 end;
 
 procedure Tarifikation_TableTarOrganizations_OnCellClick (Sender: TObject; ACol, ARow: Integer);
@@ -65,34 +66,84 @@ begin
 end;
 // Фильтр таблицы Тарификации
 
-
 // Фильтр таблицы Надбавок тарификации
-procedure DoFilterTableTarNadbavky;
+procedure Tarifikation_DoFilterTableTarNadbavky;
 begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
-    Tarifikation.TableTarNadbavky.ClearRows;
-    Exit;
-  end;
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then Exit;
 
   Tarifikation.BtnFilterTarNadbavky.Click;
 end;
 
-procedure Tarifikation_TableTarifikaciya_OnCellClick (Sender: TObject; ACol, ARow: Integer);
-begin
-  DoFilterTableTarNadbavky;
-end;
-
 procedure Tarifikation_ListFilterTarNadbavky_OnChange (Sender: TObject);
 begin
-  DoFilterTableTarNadbavky;
+  Tarifikation_DoFilterTableTarNadbavky;
 end;
 
 procedure Tarifikation_BtnClearFilterTarNadbavky_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarNadbavky.ItemIndex := 0;
-  DoFilterTableTarNadbavky;
+  Tarifikation_DoFilterTableTarNadbavky;
 end;
 // Фильтр таблицы Надбавок тарификации
+
+// Фильтр таблицы Должностей
+procedure Tarifikation_DoFilterTableTarJobs;
+begin
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then Exit;
+
+  Tarifikation.BtnFilterTarJobs.Click;
+  if Tarifikation.TableTarJobs.SelectedRow = -1 then
+    Tarifikation.TableTarJobDoblaty.ClearRows;
+end;
+
+procedure Tarifikation_TableTarifikaciya_OnCellClick (Sender: TObject; ACol, ARow: Integer);
+begin
+  Tarifikation_DoFilterTableTarNadbavky;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+procedure Tarifikation_ListFilterTarJobDoljnosty_OnChange (Sender: TObject);
+begin
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+procedure Tarifikation_ListFilterTarJobPredmety_OnChange (Sender: TObject);
+begin
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+procedure Tarifikation_BtnClearFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.ListFilterTarJobDoljnosty.ItemIndex := 0;
+  Tarifikation.ListFilterTarJobPredmety.ItemIndex := 0;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+// Фильтр таблицы Должностей
+
+// Фильтр таблицы Доплат для Должностей
+procedure Tarifikation_DoFilterTableTarJobDoblaty;
+begin
+  if Tarifikation.TableTarJobs.SelectedRow = -1 then Exit;
+
+  Tarifikation.BtnFilterTarJobDoplaty.Click;
+end;
+
+procedure Tarifikation_TableTarJobs_OnCellClick (Sender: TObject; ACol, ARow: Integer);
+begin
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
+
+procedure Tarifikation_ListFilterTarJobDoplaty_OnChange (Sender: TObject);
+begin
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
+
+procedure Tarifikation_BtnClearFilterTarJobDoplaty_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.ListFilterTarJobDoplaty.ItemIndex := 0;
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
+// Фильтр таблицы Доплат для Должностей
 
 
 // Новая Тарификация
@@ -104,7 +155,7 @@ begin
   end;
   NewRecord(frmEditTarifikation);
 end;
-
+// При открытии формы редактирования тарификации подставляется ранее выбранная организация
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
 begin
   frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
@@ -118,6 +169,26 @@ begin
     Exit;
   end;
   NewRecord(frmEditTarNadbavka,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
+end;
+
+// Новая Должность тарификации
+procedure Tarifikation_BtnNewTarJob_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarJob,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
+end;
+
+// Новая Доплата для должности тарификации
+procedure Tarifikation_BtnNewTarJobDoplata_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarJobs.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись должности', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarJobDoplata,'tar_job', Tarifikation.TableTarJobs.dbItemID);
 end;
 
 
