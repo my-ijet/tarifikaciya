@@ -9,53 +9,54 @@ object Form1: TForm1
   ClientHeight = 80
   ClientWidth = 320
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
   Position = poDesktopCenter
+  LCLVersion = '2.3.0.0'
   Visible = True
-  object ProgressBar1: TProgressBar
-    Left = 0
-    Height = 80
-    Top = 0
-    Width = 320
-    Align = alClient
-    TabOrder = 0
-  end
-  object StaticText1: TStaticText
-    Left = 16
-    Height = 48
-    Top = 16
-    Width = 288
+  object Status: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = Owner
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrCenter
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrCenter
+    Left = 90
+    Height = 45
+    Top = 18
+    Width = 139
+    Align = alCustom
     Alignment = taCenter
-    BorderSpacing.CellAlignHorizontal = ccaCenter
-    BorderSpacing.CellAlignVertical = ccaCenter
-    Caption = 'Импорт'
-    Font.Height = -27
+    Anchors = [akTop, akRight]
+    Caption = 'Импорт..'
+    Font.Height = -32
     ParentFont = False
-    TabOrder = 1
   end
-  object SQLite3Connection1: TSQLite3Connection
+  object MainConnection: TSQLite3Connection
     Connected = False
     LoginPrompt = False
     KeepConnection = False
-    Transaction = SQLTransaction1
+    Transaction = MainTransaction
     AlwaysUseBigint = False
     Left = 10
     Top = 10
   end
-  object SQLQuery1: TSQLQuery
+  object QInsertFromFoxPro: TSQLQuery
     FieldDefs = <>
-    Database = SQLite3Connection1
-    Transaction = SQLTransaction1
+    Database = MainConnection
+    Transaction = MainTransaction
     Left = 39
     Top = 10
   end
-  object SQLTransaction1: TSQLTransaction
+  object MainTransaction: TSQLTransaction
     Active = False
-    Database = SQLite3Connection1
+    Database = MainConnection
     Left = 68
     Top = 10
   end
-  object Dbf1: TDbf
-    FilePath = '/home/'
+  object FoxProDbf: TDbf
     IndexDefs = <>
     MasterSource = DataSource1
     ReadOnly = True
@@ -69,10 +70,53 @@ object Form1: TForm1
     Left = 126
     Top = 10
   end
-  object Timer1: TTimer
+  object TimerQuit: TTimer
     Enabled = False
-    OnTimer = Timer1Timer
+    OnTimer = TimerQuitTimer
     Left = 155
-    Top = 17
+    Top = 10
+  end
+  object TimerStart: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerStartTimer
+    Left = 184
+    Top = 10
+  end
+  object SQL: TSQLScript
+    DataBase = MainConnection
+    Transaction = MainTransaction
+    Directives.Strings = (
+      'SET TERM'
+      'COMMIT WORK'
+      'COMMIT RETAIN'
+      'COMMIT'
+      '#IFDEF'
+      '#IFNDEF'
+      '#ELSE'
+      '#ENDIF'
+      '#DEFINE'
+      '#UNDEF'
+      '#UNDEFINE'
+    )
+    Terminator = ';'
+    Left = 213
+    Top = 10
+  end
+  object CallerProgramm: TProcess
+    Active = False
+    Options = [poNoConsole, poDetached]
+    Priority = ppNormal
+    StartupOptions = []
+    ShowWindow = swoNone
+    WindowColumns = 0
+    WindowHeight = 0
+    WindowLeft = 0
+    WindowRows = 0
+    WindowTop = 0
+    WindowWidth = 0
+    FillAttribute = 0
+    Left = 242
+    Top = 10
   end
 end

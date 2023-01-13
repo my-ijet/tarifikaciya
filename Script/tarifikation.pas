@@ -1,6 +1,7 @@
 ﻿uses
   'otchety.pas',
-  'spravochniky.pas';
+  'spravochniky.pas',
+  'service.pas';
 
 var
    mniUser: TMenuItem;
@@ -192,6 +193,34 @@ begin
 end;
 
 
+// Кнопки удаления на главной
+procedure Tarifikation_BtnDeleteTarOrganization_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarOrganizations);
+end;
+
+procedure Tarifikation_BtnDeleteTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarifikaciya);
+end;
+
+procedure Tarifikation_BtnDeleteTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarNadbavky);
+end;
+
+procedure Tarifikation_BtnDeleteTarJob_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarJobs);
+end;
+
+procedure Tarifikation_BtnDeleteTarJobDoplata_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarJobDoblaty);
+end;
+// Кнопки удаления на главной
+
+
 // Показ кнопок добавления, редактирования и удаления на главной
 procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
 begin
@@ -253,9 +282,10 @@ begin
 end;
 
 
-// Подготовка всех таблиц тарификации
+// Подготовка всех таблиц на главной
 procedure Tarifikation_PrepareTarTables;
 begin
+  Tarifikation.BtnFilterTarOrganizations.Click;
   Tarifikation.BtnFilterTarifikaciya.Click;
   Tarifikation.BtnFilterTarNadbavky.Click;
   Tarifikation.BtnFilterTarJobs.Click;
@@ -284,7 +314,7 @@ begin
 
   Tarifikation.Menu.Items.Add(mniUser);
 
-  Tarifikation_PrepareTarTables;      // Подготовка всех таблиц тарификации
+  Tarifikation_PrepareTarTables;      // Подготовка всех таблиц на главной
   FillRequisites;                     // Заполнение реквизитов из otchety.pas
   PrepareSpravochniky;                // Подготовка справочников из spravochniky.pas
 

@@ -22,6 +22,38 @@ begin
   result := tmpSettingsDir + 'settings.ini';
 end;
 
+procedure DeleteRecordFromTable(var table: TdbStringGridEx);
+var
+  rowIndex, numRows : Integer = 0;
+  tmpRow : TRow;
+begin
+// Считаем количество выделенных записей
+  for rowIndex:=0 to table.RowCount - 1 do begin
+    tmpRow := table.Row[rowIndex];
+    if tmpRow.Selected then begin
+      Inc(numRows);
+    end;
+  end;
+
+  if numRows = 0 then begin
+    MessageDlg('Не выбрана ни одна запись для удаления', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  if MessageDlg('Удалить запись ('+IntToStr(numRows)+'шт.)?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  then Exit;
+
+  table.BeginUpdate;
+  for rowIndex:=0 to table.RowCount - 1 do begin
+    tmpRow := table.Row[rowIndex];
+    if tmpRow.Selected then begin
+      SQLExecute('delete from '+table.dbGeneralTable+' where id = '+IntToStr(tmpRow.ID));
+    end;
+  end;
+  table.EndUpdate;
+
+  table.dbUpdate;
+end;
+
 function GetDatabaseFilePath: string;
 var
    ini: TIniFile;
@@ -33,7 +65,12 @@ end;
 
 procedure Tarifikation_BtnImportFromFoxPro_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  OpenFile( DatabaseFilePath, 'import_from_foxpro.exe');
+  OpenFile( DatabaseFilePath+' "'+Application.ExeName+'"', 'import_from_foxpro.exe');
+  Tarifikation.Close;
+end;
+
+procedure Tarifikation_BtnRemoveDatabase_OnClick (Sender: TObject; var Cancel: boolean);
+begin
 end;
 
 begin

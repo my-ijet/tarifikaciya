@@ -8,13 +8,14 @@ object Form2: TForm2
   Caption = 'Выбор базы данных FoxPro'
   ClientHeight = 162
   ClientWidth = 320
-  OnCreate = FormCreate
+  OnShow = FormShow
   Position = poDesktopCenter
   object DirectoryEdit1: TDirectoryEdit
     Left = 16
     Height = 27
     Top = 75
     Width = 288
+    Directory = 'tar'
     DialogTitle = 'Выбор базы данных FoxPro'
     DialogOptions = [ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     ShowHidden = False
@@ -22,6 +23,7 @@ object Form2: TForm2
     NumGlyphs = 1
     MaxLength = 0
     TabOrder = 0
+    Text = 'tar'
   end
   object FileNameEdit1: TFileNameEdit
     Left = 16
@@ -30,8 +32,10 @@ object Form2: TForm2
     Width = 288
     FileName = 'sqlite.db'
     DialogTitle = 'Выбор базы данных для импорта'
-    DialogOptions = [ofNoChangeDir, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    DialogOptions = [ofNoChangeDir, ofExtensionDifferent, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Filter = '*.db|*.db|*.sdb|*.sdb|*.sqlite|*.sqlite|*.db3|*.db3|*.s3db|*.s3db|*.sqlite3|*.sqlite3|All|*'
     FilterIndex = 0
+    DefaultExt = '*.db'
     HideDirectories = False
     ButtonWidth = 23
     NumGlyphs = 1

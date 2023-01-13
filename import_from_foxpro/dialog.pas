@@ -20,7 +20,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     procedure BtnOkClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
 
   public
@@ -38,14 +38,26 @@ uses
 
 { TForm2 }
 
-procedure TForm2.FormCreate(Sender: TObject);
-begin
-end;
-
 procedure TForm2.BtnOkClick(Sender: TObject);
 begin
+  if not FileExists(FileNameEdit1.Text) then begin
+    ModalResult := mrNone;
+    ShowMessage('Укажите файл базы данных');
+    Exit;
+  end;
+  if not DirectoryExists(DirectoryEdit1.Text) then begin
+    ModalResult := mrNone;
+    ShowMessage('Укажите путь до FoxPro базы данных');
+    Exit;
+  end;
   main.PathToDatabase := FileNameEdit1.Text;
   main.PathToFoxProDir := DirectoryEdit1.Text;
+end;
+
+procedure TForm2.FormShow(Sender: TObject);
+begin
+  if FileExists(main.PathToDatabase) then
+    FileNameEdit1.Text := main.PathToDatabase;
 end;
 
 end.

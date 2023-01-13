@@ -1,4 +1,7 @@
-﻿// Организации
+﻿uses
+  'service.pas';
+
+// Организации
 procedure Tarifikation_ListFilterOrgGroup_OnChange (Sender: TObject);
 begin
   Tarifikation.BtnFilterOrganizations.Click;
@@ -200,6 +203,65 @@ begin
   Tarifikation.BtnFilterKategory.Click;
 end;
 // Категории
+
+
+// Кнопки удаления справочников
+procedure Tarifikation_BtnDeleteKategory_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableKategory);
+end;
+
+procedure Tarifikation_BtnDeleteStavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableStavky);
+end;
+
+procedure Tarifikation_BtnDeleteDoplata_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableDoplaty);
+end;
+
+procedure Tarifikation_BtnDeleteNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableNadbavky);
+end;
+
+procedure Tarifikation_BtnDeletePredmet_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TablePredmety);
+end;
+
+procedure Tarifikation_BtnDeleteObrazovanie_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableObrazovaniya);
+end;
+
+procedure Tarifikation_BtnDeleteDoljnost_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableDoljnosty);
+end;
+
+procedure Tarifikation_BtnDeletePersonalGroup_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TablePersonalGroup);
+end;
+
+procedure Tarifikation_BtnDeletePerson_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TablePersons);
+end;
+
+procedure Tarifikation_BtnDeleteOrgGroup_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableOrgGroups);
+end;
+
+procedure Tarifikation_BtnDeleteOrganization_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableOrganizations);
+  Tarifikation.BtnFilterTarOrganizations.Click;
+end;
+// Кнопки удаления справочников
 
 procedure PrepareSpravochniky;
 begin
