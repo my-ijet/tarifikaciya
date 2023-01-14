@@ -113,6 +113,14 @@ begin
 
     AddText('alter table doljnost');
     AddText('drop column FOXPRO_KOD;');
+    AddText('alter table doljnost');
+    AddText('drop column kolvo;');
+    AddText('alter table doljnost');
+    AddText('drop column por;');
+    AddText('alter table doljnost');
+    AddText('drop column pk;');
+    AddText('alter table doljnost');
+    AddText('drop column gopl;');
 
     AddText('alter table obrazovanie');
     AddText('drop column FOXPRO_KOD;');
