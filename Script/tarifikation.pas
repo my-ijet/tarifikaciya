@@ -1,7 +1,7 @@
 ﻿uses
-  'otchety.pas',
+  'service.pas',
   'spravochniky.pas',
-  'service.pas';
+  'otchety.pas';
 
 var
    mniUser: TMenuItem;
@@ -281,6 +281,15 @@ begin
   Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
 end;
 
+// Запуск всех фильтров на главной
+procedure Tarifikation_FilterTarTables;
+begin
+  Tarifikation.BtnFilterTarOrganizations.Click;
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarNadbavky;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
 
 // Подготовка всех таблиц на главной
 procedure Tarifikation_PrepareTarTables;
@@ -297,16 +306,13 @@ begin
   Tarifikation.TableTarJobDoblaty.ClearRows;
 end;
 
-// Обработка переключения пользователя
-procedure mniUser_OnClick (sender: string);
-begin
-  frmDbCoreLogin.ShowModal;
-  mniUser.Caption := 'Пользователь: '+Application.User.Username;
-  FillRequisites;
-end;
-
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);
 begin
+// Дополнительная настройка БД
+  SQLExecute('pragma mmap_size = 268435456;');
+  SQLExecute('pragma temp_store = memory;');
+  SQLExecute('pragma journal_mode = WAL;');
+
 // Меню пользователя
   mniUser := TMenuItem.Create (Tarifikation);
   mniUser.Caption := 'Пользователь: '+Application.User.Username;
@@ -314,12 +320,17 @@ begin
 
   Tarifikation.Menu.Items.Add(mniUser);
 
-  Tarifikation_PrepareTarTables;      // Подготовка всех таблиц на главной
-  FillRequisites;                     // Заполнение реквизитов из otchety.pas
-  PrepareSpravochniky;                // Подготовка справочников из spravochniky.pas
+  Tarifikation.MainTabs.ActivePageIndex := 0;
+  Tarifikation_PrepareTarTables;
 
   Tarifikation.Menu.Items.Remove(Tarifikation.mniAbout);
 end;
 
+procedure Tarifikation_OnClose (Sender: TObject; Action: string);
 begin
+  SQLExecute('pragma optimize;');
+end;
+
+begin
+  // MessageDlg('Тарификация загружена!', mtInformation, mbOK, 0);
 end.

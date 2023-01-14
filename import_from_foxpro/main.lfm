@@ -12,7 +12,6 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '2.3.0.0'
   Visible = True
   object Status: TLabel
     AnchorSideLeft.Control = Owner
@@ -37,16 +36,18 @@ object Form1: TForm1
   object MainConnection: TSQLite3Connection
     Connected = False
     LoginPrompt = False
-    KeepConnection = False
+    KeepConnection = True
     Transaction = MainTransaction
     AlwaysUseBigint = False
     Left = 10
     Top = 10
   end
   object QInsertFromFoxPro: TSQLQuery
+    PacketRecords = -1
     FieldDefs = <>
     Database = MainConnection
     Transaction = MainTransaction
+    Options = [sqoAutoApplyUpdates]
     Left = 39
     Top = 10
   end
@@ -100,23 +101,8 @@ object Form1: TForm1
       '#UNDEFINE'
     )
     Terminator = ';'
+    OnException = SQLException
     Left = 213
-    Top = 10
-  end
-  object CallerProgramm: TProcess
-    Active = False
-    Options = [poNoConsole, poDetached]
-    Priority = ppNormal
-    StartupOptions = []
-    ShowWindow = swoNone
-    WindowColumns = 0
-    WindowHeight = 0
-    WindowLeft = 0
-    WindowRows = 0
-    WindowTop = 0
-    WindowWidth = 0
-    FillAttribute = 0
-    Left = 242
     Top = 10
   end
 end

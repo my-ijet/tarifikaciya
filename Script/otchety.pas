@@ -1,4 +1,9 @@
-﻿
+﻿uses
+  'service.pas',
+  'spravochniky.pas',
+  'tarifikation.pas';
+
+// Сохранение реквизитов
 procedure Tarifikation_ListRequisitePersons_OnChange (Sender: TObject);
 var
   itemId : Integer;
@@ -61,6 +66,6 @@ begin
   end;
 end;
 
-
 begin
+  // MessageDlg('Отчёты загружен!', mtInformation, mbOK, 0);
 end.

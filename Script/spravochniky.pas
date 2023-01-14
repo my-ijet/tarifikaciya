@@ -1,5 +1,7 @@
 ﻿uses
-  'service.pas';
+  'service.pas',
+  'otchety.pas',
+  'tarifikation.pas';
 
 // Организации
 procedure Tarifikation_ListFilterOrgGroup_OnChange (Sender: TObject);
@@ -259,7 +261,6 @@ end;
 procedure Tarifikation_BtnDeleteOrganization_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   DeleteRecordFromTable(Tarifikation.TableOrganizations);
-  Tarifikation.BtnFilterTarOrganizations.Click;
 end;
 // Кнопки удаления справочников
 
@@ -279,4 +280,5 @@ begin
 end;
 
 begin
+  // MessageDlg('Справочники загружены!', mtInformation, mbOK, 0);
 end.

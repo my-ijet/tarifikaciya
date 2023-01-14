@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, SQLite3Conn, SQLDB, dbf, DB, process, Forms, Controls,
   Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, FileUtil, dialog,
-  foxpro_tarifikation;
+  foxpro_tarifikation, SQLScript;
 
 type
 
@@ -16,7 +16,6 @@ type
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     FoxProDbf: TDbf;
-    CallerProgramm: TProcess;
     Status: TLabel;
     MainConnection: TSQLite3Connection;
     QInsertFromFoxPro: TSQLQuery;
@@ -27,6 +26,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure SQLException(Sender: TObject; Statement: TStrings;
+      TheException: Exception; var Continue: boolean);
     procedure TimerStartTimer(Sender: TObject);
     procedure TimerQuitTimer(Sender: TObject);
 
@@ -42,8 +43,6 @@ var
   FoxProUtil: TFoxProUtil;
   PathToDatabase: string = '';
   PathToFoxProDir: string = '';
-
-  PathToCallerProgramm: string = '';
 
 implementation
 
@@ -65,11 +64,6 @@ begin
   if ParamCount > 0 then begin
     PathToDatabase := ParamStr(1);
   end;
-  if ParamCount > 1 then begin
-    PathToCallerProgramm := ParamStr(2);
-  end;
-  CallerProgramm.Executable := PathToCallerProgramm;
-
 
   //Если ОК - продолжаем
   if dialog.Form2.ShowModal = 1 then
@@ -129,6 +123,7 @@ begin
     sql_commands.UpdateTables;
     sql_commands.ClearTables;
     MainTransaction.Commit;
+    sql_commands.OptimizeDatabase;
 
     Caption := 'Импорт завершен!';
     Status.Caption := 'Импорт завершен!';
@@ -148,8 +143,13 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  if PathToCallerProgramm <> '' then CallerProgramm.Execute;
   FreeAndNil(FoxProUtil);
+end;
+
+procedure TForm1.SQLException(Sender: TObject; Statement: TStrings;
+  TheException: Exception; var Continue: boolean);
+begin
+  Continue := True;
 end;
 
 end.

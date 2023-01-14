@@ -10,6 +10,7 @@ uses
 procedure PrepareTables;
 procedure UpdateTables;
 procedure ClearTables;
+procedure OptimizeDatabase;
 
 implementation
 
@@ -19,62 +20,40 @@ uses
 procedure PrepareTables;
 begin
   with Form1.SQL.Script do begin
-    Text := 'alter table organization';
-    AddText('add column FOXPRO_KOD varchar(5);');
-    AddText('alter table organization');
-    AddText('add column pg varchar(5);');
-    AddText('alter table organization');
-    AddText('add column gr varchar(5);');
+    Text := '';
+    AddText('alter table organization add column FOXPRO_KOD varchar(5);');
+    AddText('alter table organization add column pg varchar(5);');
+    AddText('alter table organization add column gr varchar(5);');
 
-    AddText('alter table org_group');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table org_group add column FOXPRO_KOD varchar(5);');
 
-    AddText('alter table person');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table person add column FOXPRO_KOD varchar(5);');
 
-    AddText('alter table personal_group');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table personal_group add column FOXPRO_KOD varchar(5);');
 
-    AddText('alter table doljnost');
-    AddText('add column FOXPRO_KOD varchar(5);');
-    AddText('alter table doljnost');
-    AddText('add column kolvo int;');
-    AddText('alter table doljnost');
-    AddText('add column por int;');
-    AddText('alter table doljnost');
-    AddText('add column pk int;');
-    AddText('alter table doljnost');
-    AddText('add column gopl int;');
+    AddText('alter table doljnost add column FOXPRO_KOD varchar(5);');
+    AddText('alter table doljnost add column kolvo int;');
+    AddText('alter table doljnost add column por int;');
+    AddText('alter table doljnost add column pk int;');
+    AddText('alter table doljnost add column gopl int;');
 
-    AddText('alter table obrazovanie');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table obrazovanie add column FOXPRO_KOD varchar(5);');
 
-    AddText('alter table predmet');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table predmet add column FOXPRO_KOD varchar(5);');
 
-    AddText('alter table nadbavka');
-    AddText('add column FOXPRO_KOD varchar(5);');
-    AddText('alter table nadbavka');
-    AddText('add column por int;');
-    AddText('alter table nadbavka');
-    AddText('add column pr varchar(5);');
+    AddText('alter table nadbavka add column FOXPRO_KOD varchar(5);');
+    AddText('alter table nadbavka add column por int;');
+    AddText('alter table nadbavka add column pr varchar(5);');
 
-    AddText('alter table doplata');
-    AddText('add column FOXPRO_KOD varchar(5);');
-    AddText('alter table doplata');
-    AddText('add column por int;');
-    AddText('alter table doplata');
-    AddText('add column pk int;');
-    AddText('alter table doplata');
-    AddText('add column pr varchar(5);');
+    AddText('alter table doplata add column FOXPRO_KOD varchar(5);');
+    AddText('alter table doplata add column por int;');
+    AddText('alter table doplata add column pk int;');
+    AddText('alter table doplata add column pr varchar(5);');
 
-    AddText('alter table stavka');
-    AddText('add column RAZR int;');
+    AddText('alter table stavka add column RAZR int;');
 
-    AddText('alter table kategory');
-    AddText('add column FOXPRO_KOD varchar(5);');
+    AddText('alter table kategory add column FOXPRO_KOD varchar(5);');
 
-    AddText('');
   end;
   Form1.SQL.Execute;
 end;
@@ -82,12 +61,12 @@ end;
 procedure UpdateTables;
 begin
   with Form1.SQL.Script do begin
-    Text := 'UPDATE organization';
+    Text := '';
+    AddText('UPDATE organization');
     AddText('SET id_org_group = org_group.id');
     AddText('FROM org_group');
     AddText('where organization.pg = org_group.FOXPRO_KOD;');
 
-    AddText('');
   end;
   Form1.SQL.Execute;
 end;
@@ -95,62 +74,50 @@ end;
 procedure ClearTables;
 begin
   with Form1.SQL.Script do begin
-    Text := 'alter table organization';
-    AddText('drop column FOXPRO_KOD;');
-    AddText('alter table organization');
-    AddText('drop column pg;');
-    AddText('alter table organization');
-    AddText('drop column gr;');
+    Text := '';
+    AddText('alter table organization drop column FOXPRO_KOD;');
+    AddText('alter table organization drop column pg;');
+    AddText('alter table organization drop column gr;');
 
-    AddText('alter table org_group');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table org_group drop column FOXPRO_KOD;');
 
-    AddText('alter table person');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table person drop column FOXPRO_KOD;');
 
-    AddText('alter table personal_group');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table personal_group drop column FOXPRO_KOD;');
 
-    AddText('alter table doljnost');
-    AddText('drop column FOXPRO_KOD;');
-    AddText('alter table doljnost');
-    AddText('drop column kolvo;');
-    AddText('alter table doljnost');
-    AddText('drop column por;');
-    AddText('alter table doljnost');
-    AddText('drop column pk;');
-    AddText('alter table doljnost');
-    AddText('drop column gopl;');
+    AddText('alter table doljnost drop column FOXPRO_KOD;');
+    AddText('alter table doljnost drop column kolvo;');
+    AddText('alter table doljnost drop column por;');
+    AddText('alter table doljnost drop column pk;');
+    AddText('alter table doljnost drop column gopl;');
 
-    AddText('alter table obrazovanie');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table obrazovanie drop column FOXPRO_KOD;');
 
-    AddText('alter table predmet');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table predmet drop column FOXPRO_KOD;');
 
-    AddText('alter table nadbavka');
-    AddText('drop column FOXPRO_KOD;');
-    AddText('alter table nadbavka');
-    AddText('drop column por;');
-    AddText('alter table nadbavka');
-    AddText('drop column pr;');
+    AddText('alter table nadbavka drop column FOXPRO_KOD;');
+    AddText('alter table nadbavka drop column por;');
+    AddText('alter table nadbavka drop column pr;');
 
-    AddText('alter table doplata');
-    AddText('drop column FOXPRO_KOD;');
-    AddText('alter table doplata');
-    AddText('drop column por;');
-    AddText('alter table doplata');
-    AddText('drop column pk;');
-    AddText('alter table doplata');
-    AddText('drop column pr;');
+    AddText('alter table doplata drop column FOXPRO_KOD;');
+    AddText('alter table doplata drop column por;');
+    AddText('alter table doplata drop column pk;');
+    AddText('alter table doplata drop column pr;');
 
-    AddText('alter table stavka');
-    AddText('drop column RAZR;');
+    AddText('alter table stavka drop column RAZR;');
 
-    AddText('alter table kategory');
-    AddText('drop column FOXPRO_KOD;');
+    AddText('alter table kategory drop column FOXPRO_KOD;');
 
-    AddText('');
+  end;
+  Form1.SQL.Execute;
+end;
+
+procedure OptimizeDatabase;
+begin
+  with Form1.MainConnection do begin
+    ExecuteDirect('End Transaction');
+    ExecuteDirect('VACUUM; pragma optimize;');
+    ExecuteDirect('Begin Transaction');
   end;
   Form1.SQL.Execute;
 end;

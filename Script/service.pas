@@ -1,8 +1,16 @@
 ﻿uses
-  'otchety.pas';
+  'spravochniky.pas',
+  'otchety.pas',
+  'tarifikation.pas';
 
 var
   DatabaseFilePath : string;
+
+procedure RestartApplication;
+begin
+  OpenFile('"'+Application.ExeName+'"');
+  Tarifikation.Close;
+end;
 
 function GetSettingsFilePath: string;
 var
@@ -25,64 +33,50 @@ begin
   result := tmpSettingsDir + 'settings.ini';
 end;
 
-procedure DeleteRecordFromTable(var table: TdbStringGridEx);
+// Убираем ошибку вовремя удаления связанной записи
+procedure FixTablesErrors;
+begin
+  SQLExecute('PRAGMA foreign_keys=OFF;');
+// новые таблицы
+  SQLExecute('CREATE TABLE "_user_new" (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, "username" TEXT NOT NULL DEFAULT "empty", "password" TEXT, "id__role" INTEGER, "is_admin" INTEGER, "is_active" INTEGER, "email" TEXT, "first_name" TEXT, "last_name" TEXT, "last_login" TEXT, "date_joined" TEXT, "id_doljnost" INTEGER, "id_organization" INTEGER, "id_person" INTEGER, FOREIGN KEY(id__role) REFERENCES "_role"(id), FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)');
+// запись значений в новые таблицы
+  SQLExecute('insert into _user_new select * from _user;');
+// удаление старых таблиц
+  SQLExecute('drop table _user;');
+// переименование новых таблиц
+  SQLExecute('alter table _user_new rename to _user;');
+
+  SQLExecute('PRAGMA foreign_keys=ON;');
+end;
+
+function CheckSelectedAndConfirm(var table: TdbStringGridEx) : Boolean;
 var
   rowIndex, numRows : Integer = 0;
-  tmpRow : TRow; tmpRowId : String;
-  _userUpdateSQL: String = '';
-  _userDataSet: TDataSet;
+  tmpRow : TRow;
 begin
 // Считаем количество выделенных записей
   for rowIndex:=0 to table.RowCount - 1 do begin
     tmpRow := table.Row[rowIndex];
-    if tmpRow.Selected then begin
-      Inc(numRows);
-    end;
+    if tmpRow.Selected then Inc(numRows);
   end;
 
   if numRows = 0 then begin
     MessageDlg('Не выбрана ни одна запись для удаления', mtInformation, mbOK, 0);
+    Result := False;
     Exit;
   end;
   if MessageDlg('Удалить запись ('+IntToStr(numRows)+'шт.)?', mtConfirmation, mbYes or mbNo, 0) = mrNo
-  then Exit;
+  then begin Result := False; Exit; end;
 
-// Обработка спец случаев
-  case table.dbGeneralTable of
-    'organization': begin
-        _userUpdateSQL := 'update _user set id_organization = NULL where id_organization = ';
-        SQLQuery('select id_organization from _user where id_organization not NULL', _userDataSet);
-      end;
-    'person': begin
-        _userUpdateSQL := 'update _user set id_person = NULL where id_person = ';
-        SQLQuery('select id_person from _user where id_person not NULL', _userDataSet);
-      end;
-    'doljnost': begin
-        _userUpdateSQL := 'update _user set id_doljnost = NULL where id_doljnost = ';
-        SQLQuery('select id_doljnost from _user where id_doljnost not NULL', _userDataSet);
-      end;
-  end;
-  table.BeginUpdate;
-  While not _userDataSet.EOF do begin
-    for rowIndex:=0 to table.RowCount - 1 do begin
-      tmpRow := table.Row[rowIndex];
-      if tmpRow.Selected then begin
-        tmpRowId := IntToStr(tmpRow.ID);
+  Result := True;
+end;
 
-        if _userDataSet.Fields[0].asString = tmpRowId then begin
-          SQLExecute(_userUpdateSQL + tmpRowId);
-          _userDataSet.Delete;
-
-          FillRequisites;
-          break;
-        end;
-      end;
-    end;
-
-    _userDataSet.Next;
-  end;
-  table.EndUpdate;
-// Обработка спец случаев
+procedure DeleteRecordFromTable(var table: TdbStringGridEx);
+var
+  rowIndex : Integer;
+  tmpRow : TRow; tmpRowId : String;
+begin
+  if not CheckSelectedAndConfirm(table) then Exit;
 
   table.BeginUpdate;
   for rowIndex:=0 to table.RowCount - 1 do begin
@@ -98,25 +92,122 @@ begin
   table.dbUpdate;
 end;
 
+procedure OptimizeDatabase;
+begin
+  SQLExecute('VACUUM');
+  SQLExecute('pragma optimize;');
+end;
+
 function GetDatabaseFilePath: string;
 var
    ini: TIniFile;
 begin
-     ini := TiniFile.Create (Application.SettingsFile);
-     result := ini.ReadString('Options', 'server', 'sqlite.db');
-     ini.Free;
+  ini := TiniFile.Create (Application.SettingsFile);
+  result := ini.ReadString('Options', 'server', 'sqlite.db');
+  ini.Free;
+end;
+
+procedure UpdateAllTables;
+begin
+  UpdateDatabase('org_head');
+  UpdateDatabase('org_group');
+  UpdateDatabase('organization');
+  UpdateDatabase('person');
+  UpdateDatabase('personal_group');
+  UpdateDatabase('doljnost');
+  UpdateDatabase('obrazovanie');
+  UpdateDatabase('predmet');
+  UpdateDatabase('nadbavka');
+  UpdateDatabase('doplata');
+  UpdateDatabase('stavka');
+  UpdateDatabase('kategory');
+  UpdateDatabase('tarifikaciya');
+  UpdateDatabase('tar_nadbavka');
+  UpdateDatabase('tar_job');
+  UpdateDatabase('tar_job_doplata');
+  UpdateDatabase('_user');
+  UpdateDatabase('_role');
 end;
 
 procedure Tarifikation_BtnImportFromFoxPro_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  OpenFile( DatabaseFilePath+' "'+Application.ExeName+'"', 'import_from_foxpro.exe');
-  Tarifikation.Close;
+  OpenFile( DatabaseFilePath, 'import_from_foxpro.exe');
 end;
 
-procedure Tarifikation_BtnRemoveDatabase_OnClick (Sender: TObject; var Cancel: boolean);
+procedure Tarifikation_BtnCleanDatabase_OnClick (Sender: TObject; var Cancel: boolean);
 begin
+  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ. Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  then Exit;
+
+  SQLExecute('delete from tarifikaciya;');
+  SQLExecute('delete from tar_nadbavka;');
+  SQLExecute('delete from tar_job;');
+  SQLExecute('delete from tar_job_doplata;');
+
+  SQLExecute('delete from org_head;');
+  SQLExecute('delete from organization;');
+  SQLExecute('delete from org_group;');
+  SQLExecute('delete from person;');
+  SQLExecute('delete from personal_group;');
+  SQLExecute('delete from doljnost;');
+  SQLExecute('delete from obrazovanie;');
+  SQLExecute('delete from predmet;');
+  SQLExecute('delete from nadbavka;');
+  SQLExecute('delete from doplata;');
+  SQLExecute('delete from stavka;');
+  SQLExecute('delete from kategory;');
+
+  OptimizeDatabase;
+
+  UpdateAllTables;
 end;
+
+procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  OptimizeDatabase;
+end;
+
+procedure Tarifikation_BtnFixTablesErrors_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  FixTablesErrors;
+end;
+
+procedure Tarifikation_BtnRefreshAllTables_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  UpdateAllTables;
+end;
+
+
+procedure Tarifikation_BtnDeleteUser_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  DeleteSQL: String;
+begin
+  if MessageDlg('Пользователь будет удалён. Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  then Exit;
+
+  DeleteSQL := 'delete from _user where id = '+IntToStr(Application.User.Id);
+  SQLExecute(DeleteSQL);
+
+  UserLogin;
+end;
+
+procedure frmEditUser_OnClose (Sender: TObject; Action: string);
+var
+  UpdateSQL, username, password, pswdHash: String;
+begin
+  username := frmEditUser.EditUserName.Text;
+  password := frmEditUser.EditPassword.Text;
+
+  pswdHash := strToMD5(password+username);
+
+  username := '"'+username+'"';
+  UpdateSQL := 'update _user set password = "'+pswdHash+'" where username = '+username;
+  SQLExecute(UpdateSQL);
+end;
+
 
 begin
   DatabaseFilePath := GetDatabaseFilePath;
+
+  // MessageDlg('Сервис загружен!', mtInformation, mbOK, 0);
 end.
