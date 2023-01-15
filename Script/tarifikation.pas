@@ -3,9 +3,6 @@
   'spravochniky.pas',
   'otchety.pas';
 
-var
-   mniUser: TMenuItem;
-
 // Фильтр списка организаций Тарификации
 procedure Tarifikation_ListFilterTarOrganizations_OnChange (Sender: TObject);
 begin
@@ -308,20 +305,10 @@ end;
 
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);
 begin
-// Дополнительная настройка БД
-  SQLExecute('pragma mmap_size = 268435456;');
-  SQLExecute('pragma temp_store = memory;');
-  SQLExecute('pragma journal_mode = WAL;');
-
-// Меню пользователя
-  mniUser := TMenuItem.Create (Tarifikation);
-  mniUser.Caption := 'Пользователь: '+Application.User.Username;
-  mniUser.OnClick := @mniUser_OnClick;
-
-  Tarifikation.Menu.Items.Add(mniUser);
-
   Tarifikation.MainTabs.ActivePageIndex := 0;
   Tarifikation_PrepareTarTables;
+
+  UserLogin;
 
   Tarifikation.Menu.Items.Remove(Tarifikation.mniAbout);
 end;

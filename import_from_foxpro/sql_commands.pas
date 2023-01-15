@@ -54,6 +54,10 @@ begin
 
     AddText('alter table kategory add column FOXPRO_KOD varchar(5);');
 
+    AddText('alter table tarifikaciya add column FOXPRO_KU varchar(5);');
+    AddText('alter table tarifikaciya add column FOXPRO_TABN varchar(5);');
+    AddText('alter table tarifikaciya add column FOXPRO_OBR varchar(5);');
+
   end;
   Form1.SQL.Execute;
 end;
@@ -66,6 +70,19 @@ begin
     AddText('SET id_org_group = org_group.id');
     AddText('FROM org_group');
     AddText('where organization.pg = org_group.FOXPRO_KOD;');
+
+    AddText('UPDATE tarifikaciya');
+    AddText('SET id_organization = organization.id');
+    AddText('FROM organization');
+    AddText('where tarifikaciya.FOXPRO_KU = organization.FOXPRO_KOD;');
+    AddText('UPDATE tarifikaciya');
+    AddText('SET id_person = person.id');
+    AddText('FROM person');
+    AddText('where tarifikaciya.FOXPRO_TABN = person.FOXPRO_KOD;');
+    AddText('UPDATE tarifikaciya');
+    AddText('SET id_obrazovanie = obrazovanie.id');
+    AddText('FROM obrazovanie');
+    AddText('where tarifikaciya.FOXPRO_OBR = obrazovanie.FOXPRO_KOD;');
 
   end;
   Form1.SQL.Execute;
@@ -108,6 +125,10 @@ begin
 
     AddText('alter table kategory drop column FOXPRO_KOD;');
 
+    AddText('alter table tarifikaciya drop column FOXPRO_KU;');
+    AddText('alter table tarifikaciya drop column FOXPRO_TABN;');
+    AddText('alter table tarifikaciya drop column FOXPRO_OBR;');
+
   end;
   Form1.SQL.Execute;
 end;
@@ -119,7 +140,6 @@ begin
     ExecuteDirect('VACUUM; pragma optimize;');
     ExecuteDirect('Begin Transaction');
   end;
-  Form1.SQL.Execute;
 end;
 
 end.

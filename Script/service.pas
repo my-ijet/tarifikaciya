@@ -1,4 +1,5 @@
 ﻿uses
+  'users.pas',
   'spravochniky.pas',
   'otchety.pas',
   'tarifikation.pas';
@@ -33,9 +34,24 @@ begin
   result := tmpSettingsDir + 'settings.ini';
 end;
 
-// Убираем ошибку вовремя удаления связанной записи
-procedure FixTablesErrors;
+function GetDatabaseFilePath: string;
+var
+  ini: TIniFile;
 begin
+  ini := TiniFile.Create(Application.SettingsFile);
+  result := ini.ReadString('Options', 'server', 'sqlite.db');
+  ini.Free;
+end;
+
+procedure ApplyFixesOnNewDatabase;
+begin
+// Дополнительная настройка БД
+  SQLExecute('pragma mmap_size = 268435456;');
+  SQLExecute('pragma temp_store = memory;');
+  SQLExecute('pragma journal_mode = WAL;');
+
+
+// Убираем ошибку вовремя удаления связанной записи
   SQLExecute('PRAGMA foreign_keys=OFF;');
 // новые таблицы
   SQLExecute('CREATE TABLE "_user_new" (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, "username" TEXT NOT NULL DEFAULT "empty", "password" TEXT, "id__role" INTEGER, "is_admin" INTEGER, "is_active" INTEGER, "email" TEXT, "first_name" TEXT, "last_name" TEXT, "last_login" TEXT, "date_joined" TEXT, "id_doljnost" INTEGER, "id_organization" INTEGER, "id_person" INTEGER, FOREIGN KEY(id__role) REFERENCES "_role"(id), FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)');
@@ -47,6 +63,35 @@ begin
   SQLExecute('alter table _user_new rename to _user;');
 
   SQLExecute('PRAGMA foreign_keys=ON;');
+
+end;
+
+procedure UpdateAllTables;
+begin
+  UpdateDatabase('org_head');
+  UpdateDatabase('org_group');
+  UpdateDatabase('organization');
+  UpdateDatabase('person');
+  UpdateDatabase('personal_group');
+  UpdateDatabase('doljnost');
+  UpdateDatabase('obrazovanie');
+  UpdateDatabase('predmet');
+  UpdateDatabase('nadbavka');
+  UpdateDatabase('doplata');
+  UpdateDatabase('stavka');
+  UpdateDatabase('kategory');
+  UpdateDatabase('tarifikaciya');
+  UpdateDatabase('tar_nadbavka');
+  UpdateDatabase('tar_job');
+  UpdateDatabase('tar_job_doplata');
+  UpdateDatabase('_user');
+  UpdateDatabase('_role');
+end;
+
+procedure OptimizeDatabase;
+begin
+  SQLExecute('VACUUM');
+  SQLExecute('pragma optimize;');
 end;
 
 function CheckSelectedAndConfirm(var table: TdbStringGridEx) : Boolean;
@@ -89,49 +134,13 @@ begin
   end;
   table.EndUpdate;
 
-  table.dbUpdate;
+  UpdateDatabase(table.dbGeneralTable);
 end;
 
-procedure OptimizeDatabase;
-begin
-  SQLExecute('VACUUM');
-  SQLExecute('pragma optimize;');
-end;
-
-function GetDatabaseFilePath: string;
-var
-   ini: TIniFile;
-begin
-  ini := TiniFile.Create (Application.SettingsFile);
-  result := ini.ReadString('Options', 'server', 'sqlite.db');
-  ini.Free;
-end;
-
-procedure UpdateAllTables;
-begin
-  UpdateDatabase('org_head');
-  UpdateDatabase('org_group');
-  UpdateDatabase('organization');
-  UpdateDatabase('person');
-  UpdateDatabase('personal_group');
-  UpdateDatabase('doljnost');
-  UpdateDatabase('obrazovanie');
-  UpdateDatabase('predmet');
-  UpdateDatabase('nadbavka');
-  UpdateDatabase('doplata');
-  UpdateDatabase('stavka');
-  UpdateDatabase('kategory');
-  UpdateDatabase('tarifikaciya');
-  UpdateDatabase('tar_nadbavka');
-  UpdateDatabase('tar_job');
-  UpdateDatabase('tar_job_doplata');
-  UpdateDatabase('_user');
-  UpdateDatabase('_role');
-end;
-
+// Утилиты
 procedure Tarifikation_BtnImportFromFoxPro_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  OpenFile( DatabaseFilePath, 'import_from_foxpro.exe');
+  OpenFile(DatabaseFilePath, 'import_from_foxpro.exe');
 end;
 
 procedure Tarifikation_BtnCleanDatabase_OnClick (Sender: TObject; var Cancel: boolean);
@@ -167,43 +176,39 @@ begin
   OptimizeDatabase;
 end;
 
-procedure Tarifikation_BtnFixTablesErrors_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  FixTablesErrors;
-end;
-
 procedure Tarifikation_BtnRefreshAllTables_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   UpdateAllTables;
 end;
+// Утилиты
 
-
+// Пользователи
 procedure Tarifikation_BtnDeleteUser_OnClick (Sender: TObject; var Cancel: boolean);
 var
-  DeleteSQL: String;
+  ShouldLogin : Boolean = False;
+  tmpRow : TRow;
+  rowIndex : Integer;
+  DeleteSQL : String;
 begin
-  if MessageDlg('Пользователь будет удалён. Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
-  then Exit;
+
+  for rowIndex:=0 to Tarifikation.TableUsers.RowCount - 1 do begin
+    tmpRow := Tarifikation.TableUsers.Row[rowIndex];
+    if tmpRow.Selected then
+      ShouldLogin := tmpRow.ID = Application.User.Id;
+  end;
+
+  DeleteRecordFromTable(Tarifikation.TableUsers);
 
   DeleteSQL := 'delete from _user where id = '+IntToStr(Application.User.Id);
   SQLExecute(DeleteSQL);
 
-  UserLogin;
+  if ShouldLogin then begin
+    Application.User.Id := -1;
+    UserLogin;
+  end;
 end;
 
-procedure frmEditUser_OnClose (Sender: TObject; Action: string);
-var
-  UpdateSQL, username, password, pswdHash: String;
-begin
-  username := frmEditUser.EditUserName.Text;
-  password := frmEditUser.EditPassword.Text;
-
-  pswdHash := strToMD5(password+username);
-
-  username := '"'+username+'"';
-  UpdateSQL := 'update _user set password = "'+pswdHash+'" where username = '+username;
-  SQLExecute(UpdateSQL);
-end;
+// Пользователи
 
 
 begin

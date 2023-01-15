@@ -1,4 +1,5 @@
 ﻿uses
+  'users.pas',
   'service.pas',
   'spravochniky.pas',
   'otchety.pas',
@@ -14,20 +15,6 @@ begin
     3: begin end;
   end;
 
-end;
-
-
-// Переключения пользователя
-procedure UserLogin;
-begin
-  frmDbCoreLogin.ShowModal;
-  mniUser.Caption := 'Пользователь: '+Application.User.Username;
-  FillRequisites;
-end;
-
-procedure mniUser_OnClick (sender: string);
-begin
-  UserLogin;
 end;
 
 begin

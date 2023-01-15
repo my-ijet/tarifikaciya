@@ -15,7 +15,7 @@ type
   end;
 
 
-procedure ImportDbf(DbfFileName: String);
+procedure ImportDbf(DbfFilePath : String);
 procedure ImportOrganizations;
 procedure ImportOrgGroups;
 procedure ImportPersons;
@@ -28,15 +28,22 @@ procedure ImportStavka;
 procedure ImportNadbavka;
 procedure ImportDoplata;
 
+procedure ImportTarifikaciya;
+
 implementation
 
 uses
   main;
 
-procedure ImportDbf(DbfFileName: String);
+procedure ImportDbf(DbfFilePath : String);
 var
   i: Integer;
+  DbfFileName: String;
 begin
+  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
+
+  DbfFileName := ExtractFileName(DbfFilePath);
+  Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
   Form1.FoxProDbf.TableName := DbfFileName;
   Form1.FoxProDbf.Active := True;
 
@@ -58,8 +65,11 @@ begin
   'SPRDP.DBF': ImportDoplata;
   'STAVKI.DBF': ImportStavka;
   'SPRKAT.DBF': ImportKategories;
+
+  'T1_0109.DBF': ImportTarifikaciya; // TODOT Исправить, не универсально!
   end;
 
+  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
   Form1.FoxProDbf.Active := False;
 end;
 
@@ -284,6 +294,30 @@ begin
        ParamByName('name').AsString := Form1.FoxProDbf.FieldByName('NAIM').AsString;
        ParamByName('foxpro_kod').AsString := Form1.FoxProDbf.FieldByName('KOD').AsString;
        ExecSQL;
+
+      Form1.FoxProDbf.Next;
+    end;
+  end;
+end;
+
+procedure ImportTarifikaciya;
+begin
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := 'insert into tarifikaciya ';
+    SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_OBR, diplom, staj_year, staj_month, date)');
+    SQL.Append('values (:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_OBR, :diplom, :staj_year, :staj_month, :date);');
+
+    while not Form1.FoxProDbf.EOF do begin
+      ParamByName('FOXPRO_KU').AsString := Form1.FoxProDbf.FieldByName('KU').AsString;
+      ParamByName('FOXPRO_TABN').AsString := Form1.FoxProDbf.FieldByName('TABN').AsString;
+      ParamByName('FOXPRO_OBR').AsString := Form1.FoxProDbf.FieldByName('OBR').AsString;
+      ParamByName('diplom').AsString := Form1.FoxProDbf.FieldByName('NOMDIP').AsString;
+      ParamByName('staj_year').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
+      ParamByName('staj_month').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
+
+      ParamByName('date').AsString := FormatDateTime('YYYY-MM-DD HH:MM:SS.SSS',
+                                                     Form1.FoxProDbf.FieldByName('DATA').AsDateTime);
+      ExecSQL;
 
       Form1.FoxProDbf.Next;
     end;

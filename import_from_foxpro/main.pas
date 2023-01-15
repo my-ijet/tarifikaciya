@@ -5,9 +5,9 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, SQLite3Conn, SQLDB, dbf, DB, process, Forms, Controls,
+  Classes, SysUtils, SQLite3Conn, SQLDB, dbf, DB, Forms, Controls,
   Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, FileUtil, dialog,
-  foxpro_tarifikation, SQLScript;
+  foxpro_tarifikation;
 
 type
 
@@ -55,8 +55,6 @@ uses
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Visible := False;
-
   Application.CreateForm(TForm2, Form2);
 
   FoxProUtil := TFoxProUtil.Create;
@@ -64,13 +62,6 @@ begin
   if ParamCount > 0 then begin
     PathToDatabase := ParamStr(1);
   end;
-
-  //Если ОК - продолжаем
-  if dialog.Form2.ShowModal = 1 then
-    Form1.Visible := True
-  else Application.Terminate;
-
-  FoxProDbf.OnTranslate := @FoxProUtil.DbfTranslate;
 
 end;
 
@@ -82,6 +73,13 @@ end;
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
+
+  //Если ОК - продолжаем
+  if dialog.Form2.ShowModal = 1 then
+  else Application.Terminate;
+
+  FoxProDbf.OnTranslate := @FoxProUtil.DbfTranslate;
+
   TimerStart.Enabled := True;
 end;
 
@@ -99,8 +97,7 @@ begin
     Exit;
   end;
 
-  FoxProDbf.FilePath := PathToFoxProDir;
-  FoundDbfFiles := FindAllFiles(PathToFoxProDir, '*.DBF', False);
+  FoundDbfFiles := FindAllFiles(PathToFoxProDir, '*.DBF', True);
   numOfFoundedFiles := FoundDbfFiles.Capacity;
 
   if numOfFoundedFiles > 0 then begin
@@ -113,7 +110,7 @@ begin
                        ' | Осталось файлов: '+
                        IntToStr(numOfFoundedFiles);
 
-      foxpro_tarifikation.ImportDbf(DbfFileName);
+      foxpro_tarifikation.ImportDbf(DbfFilePath);
       Self.Refresh;
 
       Dec(numOfFoundedFiles);
