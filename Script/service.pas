@@ -169,6 +169,7 @@ begin
   OptimizeDatabase;
 
   UpdateAllTables;
+  Tarifikation_PrepareTarTables;
 end;
 
 procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
@@ -179,6 +180,7 @@ end;
 procedure Tarifikation_BtnRefreshAllTables_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   UpdateAllTables;
+  Tarifikation_PrepareTarTables;
 end;
 // Утилиты
 
