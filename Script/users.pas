@@ -8,7 +8,16 @@ var
   mniUser: TMenuItem;
   UserChanged : Boolean;
 
-procedure SaveCurrentAppUser;
+procedure SetCurrentAppUserFieldToList(var list: TdbComboBox; UserField: String;);
+var
+  SqlResult : string;
+begin
+  SqlResult := SQLExecute('select '+UserField+' from _user where id = '+ IntToStr(Application.User.id));
+  if SqlResult = '' then list.ItemIndex := -1
+  else list.dbItemID := StrToInt(SqlResult);
+end;
+
+procedure SaveCurrentAppUserID;
 var
   ini: TIniFile;
 begin
@@ -17,7 +26,7 @@ begin
   ini.Free;
 end;
 
-function LoadCurrentAppUser: Integer;
+function LoadCurrentAppUserID: Integer;
 var
   ini: TIniFile;
   UserID: String;
@@ -46,7 +55,7 @@ begin
 
   // Загрузка из конфига пользователя
   if FromSettings then begin
-    SettingsUserID := LoadCurrentAppUser;
+    SettingsUserID := LoadCurrentAppUserID;
     SettingsUserName := SQLExecute('select username from _user where id = '+IntToStr(SettingsUserID));
     if SettingsUserName <> '' then begin
       UpdateCurrentAppUser(SettingsUserID, SettingsUserName);
@@ -58,16 +67,17 @@ begin
   frmUserLogin.ShowModal;
 end;
 
-procedure UpdateCurrentAppUser(id: Integer; username: String);
+procedure UpdateCurrentAppUser(id: Integer; username: String; ShouldSave: Boolean = True);
 begin
   Application.User.Id := id;
   Application.User.UserName := username;
   mniUser.Caption := 'Пользователь: '+Application.User.Username;
 
   FillRequisites;
+  SQLExecute('update _user set last_login = "'+DateTimeToStr(Now)+'" where id = '+IntToStr(Application.User.id));
   UpdateDatabase('_user');
 
-  SaveCurrentAppUser;
+  if ShouldSave then SaveCurrentAppUserID;
 end;
 
 function GenerateUserPassword(username, password : String) : String;
@@ -103,7 +113,6 @@ end;
 procedure frmUserLogin_OnShow (Sender: TObject; Action: string);
 begin
   frmUserLogin.ListUsers.dbSQLExecute('select id, username from _user;');
-
   frmUserLogin.ListUsers.dbItemID := Application.User.ID;
 end;
 
@@ -112,8 +121,7 @@ begin
   if frmUserLogin.ListUsers.dbItemID = -1 then Exit;
 
   UpdateCurrentAppUser(frmUserLogin.ListUsers.dbItemID,
-                       frmUserLogin.ListUsers.Text
-                      );
+                       frmUserLogin.ListUsers.Text);
 end;
 
 procedure frmUserLogin_BtnCancel_OnClick (Sender: TObject; var Cancel: boolean);
