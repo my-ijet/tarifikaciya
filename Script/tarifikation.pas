@@ -218,65 +218,85 @@ end;
 // Кнопки удаления на главной
 
 
-// Показ кнопок добавления, редактирования и удаления на главной
-procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
+// Логика показа кнопок добавления, редактирования и удаления
+procedure Tarifikation_HideGroupsEditButtons;
 begin
-  Tarifikation.GroupBtnTarOrganizations.Visible := True;
-
+  Tarifikation.GroupBtnTarOrganizations.Visible := False;
   Tarifikation.GroupBtnTarifikaciya.Visible := False;
   Tarifikation.GroupBtnTarJobs.Visible := False;
   Tarifikation.GroupBtnTarNadbavky.Visible := False;
   Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+
+  Tarifikation.GroupBtnUsers.Visible := False;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnTarOrganizations_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnTarOrganizations.Visible := True;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnTarifikaciya_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnTarifikaciya.Visible := True;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnTarJobs_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnTarJobs.Visible := True;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnTarNadbavky_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnTarNadbavky.Visible := True;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnTarJobDoblaty_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnTarJobDoblaty.Visible := True;
+end;
+
+procedure Tarifikation_BtnShowGroupBtnUsers_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnUsers.Visible := True;
+end;
+
+
+procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
 end;
 
 procedure Tarifikation_TableTarifikaciya_OnMouseEnter (Sender: TObject);
 begin
-  Tarifikation.GroupBtnTarifikaciya.Visible := True;
-
-  Tarifikation.GroupBtnTarOrganizations.Visible := False;
-  Tarifikation.GroupBtnTarJobs.Visible := False;
-  Tarifikation.GroupBtnTarNadbavky.Visible := False;
-  Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+  Tarifikation_HideGroupsEditButtons;
 end;
 
 procedure Tarifikation_TableTarJobs_OnMouseEnter (Sender: TObject);
 begin
-  Tarifikation.GroupBtnTarJobs.Visible := True;
-
-  Tarifikation.GroupBtnTarOrganizations.Visible := False;
-  Tarifikation.GroupBtnTarifikaciya.Visible := False;
-  Tarifikation.GroupBtnTarNadbavky.Visible := False;
-  Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+  Tarifikation_HideGroupsEditButtons;
 end;
 
 procedure Tarifikation_TableTarNadbavky_OnMouseEnter (Sender: TObject);
 begin
-  Tarifikation.GroupBtnTarNadbavky.Visible := True;
-
-  Tarifikation.GroupBtnTarOrganizations.Visible := False;
-  Tarifikation.GroupBtnTarifikaciya.Visible := False;
-  Tarifikation.GroupBtnTarJobs.Visible := False;
-  Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+  Tarifikation_HideGroupsEditButtons;
 end;
 
 procedure Tarifikation_TableTarJobDoblaty_OnMouseEnter (Sender: TObject);
 begin
-  Tarifikation.GroupBtnTarJobDoblaty.Visible := True;
-
-  Tarifikation.GroupBtnTarOrganizations.Visible := False;
-  Tarifikation.GroupBtnTarifikaciya.Visible := False;
-  Tarifikation.GroupBtnTarJobs.Visible := False;
-  Tarifikation.GroupBtnTarNadbavky.Visible := False;
+  Tarifikation_HideGroupsEditButtons;
 end;
 
-procedure Tarifikation_OnMouseLeave (Sender: TObject);
+procedure Tarifikation_TableUsers_OnMouseEnter (Sender: TObject);
 begin
-  Tarifikation.GroupBtnTarOrganizations.Visible := False;
-  Tarifikation.GroupBtnTarifikaciya.Visible := False;
-  Tarifikation.GroupBtnTarJobs.Visible := False;
-  Tarifikation.GroupBtnTarNadbavky.Visible := False;
-  Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
+  Tarifikation_HideGroupsEditButtons;
 end;
+// Логика показа кнопок добавления, редактирования и удаления
 
 // Запуск всех фильтров на главной
 procedure Tarifikation_FilterTarTables;
@@ -308,7 +328,7 @@ begin
   Tarifikation.MainTabs.ActivePageIndex := 0;
   Tarifikation_PrepareTarTables;
 
-  UserLogin;
+  UserLogin(True);
 
   Tarifikation.Menu.Items.Remove(Tarifikation.mniAbout);
 end;

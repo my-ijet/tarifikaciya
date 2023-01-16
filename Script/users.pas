@@ -8,21 +8,50 @@ var
   mniUser: TMenuItem;
   UserChanged : Boolean;
 
+procedure SaveCurrentAppUser;
+var
+  ini: TIniFile;
+begin
+  ini := TiniFile.Create(Application.SettingsFile);
+  ini.WriteString('Settings', 'CurrentAppUserID', IntToStr(Application.User.Id));
+  ini.Free;
+end;
+
+function LoadCurrentAppUser: Integer;
+var
+  ini: TIniFile;
+  UserID: String;
+begin
+  ini := TiniFile.Create(Application.SettingsFile);
+  UserID := ini.ReadString('Settings', 'CurrentAppUserID', '-1');
+  Result := StrToInt(UserID);
+  ini.Free;
+end;
+
 // Переключение пользователя
-procedure UserLogin;
+procedure UserLogin(FromSettings: Boolean);
 var
   NumOfUsers : String;
+  SettingsUserID : Integer;
+  SettingsUserName : String;
 begin
-  // TODO Загрузка из конфига пользователя
-  frmUserLogin.ListUsers.dbItemID := Application.User.Id;
-
   // Если нет пользователей создаём стандартного и выходим
   NumOfUsers := SQLExecute('select count(*) from _user');
+
   if NumOfUsers = '0' then begin
     ApplyFixesOnNewDatabase;
     CreateDefaultUser;
-    UpdateDatabase('_user');
     Exit;
+  end;
+
+  // Загрузка из конфига пользователя
+  if FromSettings then begin
+    SettingsUserID := LoadCurrentAppUser;
+    SettingsUserName := SQLExecute('select username from _user where id = '+IntToStr(SettingsUserID));
+    if SettingsUserName <> '' then begin
+      UpdateCurrentAppUser(SettingsUserID, SettingsUserName);
+      Exit;
+    end;
   end;
 
   // frmDbCoreLogin.ShowModal;
@@ -36,6 +65,9 @@ begin
   mniUser.Caption := 'Пользователь: '+Application.User.Username;
 
   FillRequisites;
+  UpdateDatabase('_user');
+
+  SaveCurrentAppUser;
 end;
 
 function GenerateUserPassword(username, password : String) : String;
@@ -64,13 +96,15 @@ end;
 
 procedure mniUser_OnClick (sender: string);
 begin
-  UserLogin;
+  UserLogin(False);
 end;
 
 // Форма входа
 procedure frmUserLogin_OnShow (Sender: TObject; Action: string);
 begin
   frmUserLogin.ListUsers.dbSQLExecute('select id, username from _user;');
+
+  frmUserLogin.ListUsers.dbItemID := Application.User.ID;
 end;
 
 procedure frmUserLogin_BtnOK_OnClick (Sender: TObject; var Cancel: boolean);
@@ -118,7 +152,6 @@ end;
 // Редактирование пользователя
 
 begin
-  // MessageDlg('Пользователь: '+IntToStr(Application.User.Id), mtInformation, mbOK, 0);
   mniUser := TMenuItem.Create (Tarifikation);
   mniUser.OnClick := @mniUser_OnClick;
 

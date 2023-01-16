@@ -190,21 +190,17 @@ var
   rowIndex : Integer;
   DeleteSQL : String;
 begin
-
   for rowIndex:=0 to Tarifikation.TableUsers.RowCount - 1 do begin
     tmpRow := Tarifikation.TableUsers.Row[rowIndex];
-    if tmpRow.Selected then
-      ShouldLogin := tmpRow.ID = Application.User.Id;
+    if tmpRow.Selected and (tmpRow.ID = Application.User.Id) then
+      ShouldLogin := True;
   end;
 
   DeleteRecordFromTable(Tarifikation.TableUsers);
 
-  DeleteSQL := 'delete from _user where id = '+IntToStr(Application.User.Id);
-  SQLExecute(DeleteSQL);
-
   if ShouldLogin then begin
     Application.User.Id := -1;
-    UserLogin;
+    UserLogin(False);
   end;
 end;
 

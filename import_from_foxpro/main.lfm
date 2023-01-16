@@ -12,6 +12,7 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDesktopCenter
+  LCLVersion = '2.3.0.0'
   Visible = True
   object Status: TLabel
     AnchorSideLeft.Control = Owner

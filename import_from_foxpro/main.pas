@@ -103,6 +103,7 @@ begin
   if numOfFoundedFiles > 0 then begin
     sql_commands.PrepareTables;
 
+    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
@@ -115,6 +116,7 @@ begin
 
       Dec(numOfFoundedFiles);
     end;
+    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     Caption := 'Импорт данных FoxPro';
 
     sql_commands.UpdateTables;

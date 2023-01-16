@@ -5,7 +5,7 @@ unit sql_commands;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, Dialogs;
 
 procedure PrepareTables;
 procedure UpdateTables;
@@ -89,7 +89,22 @@ begin
 end;
 
 procedure ClearTables;
+var
+  numMissedTarOrgs: String;
 begin
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := '';
+    SQL.Append('select count(*) as num ');
+    SQL.Append('from tarifikaciya where id_organization = 0;');
+    Open;
+    numMissedTarOrgs := FieldByName('num').AsString;
+    Close;
+  end;
+  if numMissedTarOrgs <> '0' then
+    ShowMessage('Для '+numMissedTarOrgs+
+                ' записей, организации в справочнике не найдены,'+LineEnding+
+                'они не будут импортированны!');
+
   with Form1.SQL.Script do begin
     Text := '';
     AddText('alter table organization drop column FOXPRO_KOD;');
@@ -129,6 +144,7 @@ begin
     AddText('alter table tarifikaciya drop column FOXPRO_TABN;');
     AddText('alter table tarifikaciya drop column FOXPRO_OBR;');
 
+    AddText('delete from tarifikaciya where id_organization = 0;');
   end;
   Form1.SQL.Execute;
 end;

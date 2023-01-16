@@ -40,8 +40,6 @@ var
   i: Integer;
   DbfFileName: String;
 begin
-  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
-
   DbfFileName := ExtractFileName(DbfFilePath);
   Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
   Form1.FoxProDbf.TableName := DbfFileName;
@@ -66,10 +64,11 @@ begin
   'STAVKI.DBF': ImportStavka;
   'SPRKAT.DBF': ImportKategories;
 
-  'T1_0109.DBF': ImportTarifikaciya; // TODOT Исправить, не универсально!
+  'T1_0109.DBF': ImportTarifikaciya; // TODOT Исправить
+// Добавить для каждого T1_* импорт тарификации и
+// для каждого T2_* импорт доп тар таблицы
   end;
 
-  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
   Form1.FoxProDbf.Active := False;
 end;
 
