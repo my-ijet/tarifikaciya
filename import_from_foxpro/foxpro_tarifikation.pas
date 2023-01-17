@@ -121,8 +121,6 @@ var
   tmpstr, familyname, firstname, middlename: String;
   splittedstr: array of String;
 begin
-  familyname := ''; firstname := ''; middlename:= '';
-
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into person';
     SQL.Append('(familyname, firstname, middlename, foxpro_kod)');
@@ -134,6 +132,7 @@ begin
         tmpstr := tmpstr.Replace('  ', ' ', [rfReplaceAll]);
 
       splittedstr := tmpstr.Split([' ']);
+      familyname := ''; firstname := ''; middlename:= '';
       case Length(splittedstr) of
         1: familyname := splittedstr[0];
         2: begin
@@ -182,8 +181,7 @@ begin
     SQL.Append('(name, kolvo, foxpro_kod, por, pk, gopl)');
     SQL.Append('values (:name, :kolvo, :foxpro_kod, :por, :pk, :gopl)');
 
-    while not Form1.FoxProDbf.EOF do
-    begin
+    while not Form1.FoxProDbf.EOF do begin
       ParamByName('name').AsString := Form1.FoxProDbf.FieldByName('NAIM').AsString;
       ParamByName('kolvo').AsInteger := Form1.FoxProDbf.FieldByName('KOLVO').AsInteger;
       ParamByName('por').AsInteger := Form1.FoxProDbf.FieldByName('POR').AsInteger;
