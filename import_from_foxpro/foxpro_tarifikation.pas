@@ -5,7 +5,7 @@ unit foxpro_tarifikation;
 interface
 
 uses
-  Classes, SysUtils, DB, Dbf, LConvEncoding, FileUtil;
+  Classes, SysUtils, Dialogs, DB, Dbf, LConvEncoding, FileUtil, StrUtils;
 
 type
   TFoxProUtil = class
@@ -38,7 +38,8 @@ uses
 procedure ImportDbf(DbfFilePath : String);
 var
   i: Integer;
-  DbfFileName: String;
+  DbfFileName, TarTableType: String;
+  DbfFileNameDelimited: TStringArray;
 begin
   DbfFileName := ExtractFileName(DbfFilePath);
   Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
@@ -51,6 +52,7 @@ begin
       TStringField(Form1.FoxProDbf.Fields[i]).Transliterate := true;
   Form1.Refresh;
 
+  // Импорт справочников
   case DbfFileName of
   'SU.DBF': ImportOrganizations;
   'SPRPG.DBF': ImportOrgGroups;
@@ -63,10 +65,15 @@ begin
   'SPRDP.DBF': ImportDoplata;
   'STAVKI.DBF': ImportStavka;
   'SPRKAT.DBF': ImportKategories;
+  end;
 
-  'T1_0109.DBF': ImportTarifikaciya; // TODOT Исправить
-// Добавить для каждого T1_* импорт тарификации и
-// для каждого T2_* импорт доп тар таблицы
+  // Импорт тарификационных таблиц
+  DbfFileNameDelimited := SplitString(DbfFileName, '_');
+  if Length(DbfFileNameDelimited) > 0 then
+    TarTableType := DbfFileNameDelimited[0];
+  case TarTableType of
+    'T1': ImportTarifikaciya;
+    'T2': ; // TODOT импорт доп тар таблицы
   end;
 
   Form1.FoxProDbf.Active := False;

@@ -17,55 +17,75 @@ implementation
 uses
   main;
 
-procedure PrepareTables;
+procedure SqlAddColumnsToTable(TableName: String;
+                               Columns: TStringArray);
+var
+  Column: String;
 begin
   with Form1.SQL.Script do begin
-    Text := '';
-    AddText('alter table organization add column FOXPRO_KOD varchar(5);');
-    AddText('alter table organization add column pg varchar(5);');
-    AddText('alter table organization add column gr varchar(5);');
-
-    AddText('alter table org_group add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table person add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table personal_group add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table doljnost add column FOXPRO_KOD varchar(5);');
-    AddText('alter table doljnost add column kolvo int;');
-    AddText('alter table doljnost add column por int;');
-    AddText('alter table doljnost add column pk int;');
-    AddText('alter table doljnost add column gopl int;');
-
-    AddText('alter table obrazovanie add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table predmet add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table nadbavka add column FOXPRO_KOD varchar(5);');
-    AddText('alter table nadbavka add column por int;');
-    AddText('alter table nadbavka add column pr varchar(5);');
-
-    AddText('alter table doplata add column FOXPRO_KOD varchar(5);');
-    AddText('alter table doplata add column por int;');
-    AddText('alter table doplata add column pk int;');
-    AddText('alter table doplata add column pr varchar(5);');
-
-    AddText('alter table stavka add column RAZR int;');
-
-    AddText('alter table kategory add column FOXPRO_KOD varchar(5);');
-
-    AddText('alter table tarifikaciya add column FOXPRO_KU varchar(5);');
-    AddText('alter table tarifikaciya add column FOXPRO_TABN varchar(5);');
-    AddText('alter table tarifikaciya add column FOXPRO_OBR varchar(5);');
-
+    for Column in Columns do begin
+      AddText('alter table '+TableName+' add column '+Column+';');
+    end;
   end;
+end;
+procedure SqlRemoveColumnsFromTable(TableName: String;
+                                    Columns: TStringArray);
+var
+  Column: String;
+begin
+  with Form1.SQL.Script do begin
+    for Column in Columns do begin
+      AddText('alter table '+TableName+' drop column '+Column+';');
+    end;
+  end;
+end;
+
+procedure PrepareTables;
+begin
+  Form1.SQL.Script.Clear;
+  SqlAddColumnsToTable('organization',
+    ['FOXPRO_KOD varchar(5)', 'pg varchar(5)', 'gr varchar(5)']);
+
+  SqlAddColumnsToTable('org_group',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('person',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('personal_group',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('doljnost',
+    ['FOXPRO_KOD varchar(5)', 'kolvo int', 'por int', 'pk int', 'gopl int']);
+
+  SqlAddColumnsToTable('obrazovanie',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('predmet',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('nadbavka',
+    ['FOXPRO_KOD varchar(5)', 'por int', 'pr varchar(5)']);
+
+  SqlAddColumnsToTable('doplata',
+    ['FOXPRO_KOD varchar(5)', 'por int', 'pk int', 'pr varchar(5)']);
+
+  SqlAddColumnsToTable('stavka',
+    ['RAZR int']);
+
+  SqlAddColumnsToTable('kategory',
+    ['FOXPRO_KOD varchar(5)']);
+
+  SqlAddColumnsToTable('tarifikaciya',
+    ['FOXPRO_KU varchar(5)', 'FOXPRO_TABN varchar(5)', 'FOXPRO_OBR varchar(5)']);
+
   Form1.SQL.Execute;
 end;
 
 procedure UpdateTables;
 begin
   with Form1.SQL.Script do begin
-    Text := '';
+    Clear;
     AddText('UPDATE organization');
     AddText('SET id_org_group = org_group.id');
     AddText('FROM org_group');
@@ -93,7 +113,7 @@ var
   numMissedTarOrgs: String;
 begin
   with Form1.QInsertFromFoxPro do begin
-    SQL.Text := '';
+    SQL.Clear;
     SQL.Append('select count(*) as num ');
     SQL.Append('from tarifikaciya where id_organization = 0;');
     Open;
@@ -103,49 +123,48 @@ begin
   if numMissedTarOrgs <> '0' then
     ShowMessage('Для '+numMissedTarOrgs+
                 ' записей, организации в справочнике не найдены,'+LineEnding+
-                'они не будут импортированны!');
-
+                'эти записи не будут импортированны!');
+  Form1.SQL.Script.Clear;
   with Form1.SQL.Script do begin
-    Text := '';
-    AddText('alter table organization drop column FOXPRO_KOD;');
-    AddText('alter table organization drop column pg;');
-    AddText('alter table organization drop column gr;');
-
-    AddText('alter table org_group drop column FOXPRO_KOD;');
-
-    AddText('alter table person drop column FOXPRO_KOD;');
-
-    AddText('alter table personal_group drop column FOXPRO_KOD;');
-
-    AddText('alter table doljnost drop column FOXPRO_KOD;');
-    AddText('alter table doljnost drop column kolvo;');
-    AddText('alter table doljnost drop column por;');
-    AddText('alter table doljnost drop column pk;');
-    AddText('alter table doljnost drop column gopl;');
-
-    AddText('alter table obrazovanie drop column FOXPRO_KOD;');
-
-    AddText('alter table predmet drop column FOXPRO_KOD;');
-
-    AddText('alter table nadbavka drop column FOXPRO_KOD;');
-    AddText('alter table nadbavka drop column por;');
-    AddText('alter table nadbavka drop column pr;');
-
-    AddText('alter table doplata drop column FOXPRO_KOD;');
-    AddText('alter table doplata drop column por;');
-    AddText('alter table doplata drop column pk;');
-    AddText('alter table doplata drop column pr;');
-
-    AddText('alter table stavka drop column RAZR;');
-
-    AddText('alter table kategory drop column FOXPRO_KOD;');
-
-    AddText('alter table tarifikaciya drop column FOXPRO_KU;');
-    AddText('alter table tarifikaciya drop column FOXPRO_TABN;');
-    AddText('alter table tarifikaciya drop column FOXPRO_OBR;');
-
     AddText('delete from tarifikaciya where id_organization = 0;');
   end;
+
+  SqlRemoveColumnsFromTable('organization',
+    ['FOXPRO_KOD', 'pg', 'gr']);
+
+  SqlRemoveColumnsFromTable('org_group',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('person',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('personal_group',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('doljnost',
+    ['FOXPRO_KOD', 'kolvo', 'por', 'pk', 'gopl']);
+
+  SqlRemoveColumnsFromTable('obrazovanie',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('predmet',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('nadbavka',
+    ['FOXPRO_KOD', 'por', 'pr']);
+
+  SqlRemoveColumnsFromTable('doplata',
+    ['FOXPRO_KOD', 'por', 'pk', 'pr']);
+
+  SqlRemoveColumnsFromTable('stavka',
+    ['RAZR']);
+
+  SqlRemoveColumnsFromTable('kategory',
+    ['FOXPRO_KOD']);
+
+  SqlRemoveColumnsFromTable('tarifikaciya',
+    ['FOXPRO_KU', 'FOXPRO_TABN', 'FOXPRO_OBR']);
+
   Form1.SQL.Execute;
 end;
 
