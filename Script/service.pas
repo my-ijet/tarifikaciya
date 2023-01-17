@@ -90,7 +90,8 @@ end;
 
 procedure OptimizeDatabase;
 begin
-  SQLExecute('VACUUM');
+  try SQLExecute('VACUUM');
+  except end;
   SQLExecute('pragma optimize;');
 end;
 
