@@ -1,5 +1,6 @@
 ﻿uses
-  'users.pas',
+  'service_users.pas',
+  'service_databases.pas',
   'spravochniky.pas',
   'otchety.pas',
   'tarifikation.pas';
@@ -41,58 +42,6 @@ begin
   ini := TiniFile.Create(Application.SettingsFile);
   result := ini.ReadString('Options', 'server', 'sqlite.db');
   ini.Free;
-end;
-
-procedure ApplyFixesOnNewDatabase;
-begin
-// Дополнительная настройка БД
-  SQLExecute('pragma mmap_size = 268435456;');
-  SQLExecute('pragma temp_store = memory;');
-  SQLExecute('pragma journal_mode = WAL;');
-
-
-// Убираем ошибку вовремя удаления связанной записи
-  SQLExecute('PRAGMA foreign_keys=OFF;');
-// новые таблицы
-  SQLExecute('CREATE TABLE "_user_new" (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, "username" TEXT NOT NULL DEFAULT "empty", "password" TEXT, "id__role" INTEGER, "is_admin" INTEGER, "is_active" INTEGER, "email" TEXT, "first_name" TEXT, "last_name" TEXT, "last_login" TEXT, "date_joined" TEXT, "id_doljnost" INTEGER, "id_organization" INTEGER, "id_person" INTEGER, FOREIGN KEY(id__role) REFERENCES "_role"(id), FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)');
-// запись значений в новые таблицы
-  SQLExecute('insert into _user_new select * from _user;');
-// удаление старых таблиц
-  SQLExecute('drop table _user;');
-// переименование новых таблиц
-  SQLExecute('alter table _user_new rename to _user;');
-
-  SQLExecute('PRAGMA foreign_keys=ON;');
-
-end;
-
-procedure UpdateAllTables;
-begin
-  UpdateDatabase('org_head');
-  UpdateDatabase('org_group');
-  UpdateDatabase('organization');
-  UpdateDatabase('person');
-  UpdateDatabase('personal_group');
-  UpdateDatabase('doljnost');
-  UpdateDatabase('obrazovanie');
-  UpdateDatabase('predmet');
-  UpdateDatabase('nadbavka');
-  UpdateDatabase('doplata');
-  UpdateDatabase('stavka');
-  UpdateDatabase('kategory');
-  UpdateDatabase('tarifikaciya');
-  UpdateDatabase('tar_nadbavka');
-  UpdateDatabase('tar_job');
-  UpdateDatabase('tar_job_doplata');
-  UpdateDatabase('_user');
-  UpdateDatabase('_role');
-end;
-
-procedure OptimizeDatabase;
-begin
-  try SQLExecute('VACUUM');
-  except end;
-  SQLExecute('pragma optimize;');
 end;
 
 function CheckSelectedAndConfirm(var table: TdbStringGridEx) : Boolean;
@@ -146,31 +95,7 @@ end;
 
 procedure Tarifikation_BtnCleanDatabase_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ. Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
-  then Exit;
-
-  SQLExecute('delete from tarifikaciya;');
-  SQLExecute('delete from tar_nadbavka;');
-  SQLExecute('delete from tar_job;');
-  SQLExecute('delete from tar_job_doplata;');
-
-  SQLExecute('delete from org_head;');
-  SQLExecute('delete from organization;');
-  SQLExecute('delete from org_group;');
-  SQLExecute('delete from person;');
-  SQLExecute('delete from personal_group;');
-  SQLExecute('delete from doljnost;');
-  SQLExecute('delete from obrazovanie;');
-  SQLExecute('delete from predmet;');
-  SQLExecute('delete from nadbavka;');
-  SQLExecute('delete from doplata;');
-  SQLExecute('delete from stavka;');
-  SQLExecute('delete from kategory;');
-
-  OptimizeDatabase;
-
-  UpdateAllTables;
-  Tarifikation_PrepareTarTables;
+  ClearDatabase;
 end;
 
 procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
@@ -206,8 +131,49 @@ begin
     UserLogin(False);
   end;
 end;
-
 // Пользователи
+
+// Бэкапы
+procedure Tarifikation_BtnNewDbBackup_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  NewDbBackup;
+  FillTableDbBackup;
+end;
+
+procedure Tarifikation_BtnRestoreDbBackup_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  row: Integer;
+  SelDbName: String;
+begin
+  row := Tarifikation.TableDbBackups.SelectedRow;
+  if row = -1 then begin
+    MessageDlg('Не выбрана запись резервной копии для восстановления', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  SelDbName := Tarifikation.TableDbBackups.Cells[0,row];
+
+  RestoreDbBackup(SelDbName);
+  RestartApplication;
+end;
+
+procedure Tarifikation_BtnDeleteDbBackup_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  tmpRow : TRow;
+  rowIndex : Integer;
+  SelDbName: String;
+begin
+  if not CheckSelectedAndConfirm(Tarifikation.TableDbBackups) then Exit;
+
+  for rowIndex:=0 to Tarifikation.TableDbBackups.RowCount - 1 do begin
+    tmpRow := Tarifikation.TableDbBackups.Row[rowIndex];
+    if tmpRow.Selected then begin
+      SelDbName := Tarifikation.TableDbBackups.Cells[0, rowIndex];
+      DeleteDbBackup(SelDbName);
+    end;
+  end;
+  FillTableDbBackup;
+end;
+// Бэкапы
 
 
 begin

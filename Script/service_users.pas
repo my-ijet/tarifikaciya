@@ -1,5 +1,6 @@
 ﻿uses
   'service.pas',
+  'service_databases.pas',
   'spravochniky.pas',
   'otchety.pas',
   'tarifikation.pas';

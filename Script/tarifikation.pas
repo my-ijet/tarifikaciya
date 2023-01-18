@@ -62,6 +62,20 @@ begin
   Tarifikation.DateFilterTarDate.Checked := False;
   Tarifikation_DoFilterTableTarifikaciya;
 end;
+
+procedure Tarifikation_CheckShowAllTarifikaions_OnClick (Sender: TObject);
+begin
+  if Tarifikation.CheckShowAllTarifikaions.Checked then begin
+    Tarifikation.DateFilterTarDate.Checked := False;
+    Tarifikation.DateTarStart.Checked := False;
+    Tarifikation.DateTarEnd.Checked := False;
+  end else begin
+    Tarifikation.DateFilterTarDate.Checked := True;
+    Tarifikation.DateTarStart.Checked := True;
+    Tarifikation.DateTarEnd.Checked := True;
+  end;
+  Tarifikation_DoFilterTableTarifikaciya;
+end;
 // Фильтр таблицы Тарификации
 
 // Фильтр таблицы Надбавок тарификации
@@ -153,10 +167,14 @@ begin
   end;
   NewRecord(frmEditTarifikation);
 end;
-// При открытии формы редактирования тарификации подставляется ранее выбранная организация
+// При открытии формы редактирования тарификации подставляется
+// ранее выбранная организация и текущая дата тарификации
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
 begin
   frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
+  if Tarifikation.DateFilterTarDate.Checked then
+    frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateFilterTarDate.DateTime
+  else frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateTarStart.DateTime;
 end;
 
 // Новая Надбавка тарификации
@@ -228,6 +246,7 @@ begin
   Tarifikation.GroupBtnTarJobDoblaty.Visible := False;
 
   Tarifikation.GroupBtnUsers.Visible := False;
+  Tarifikation.GroupBtnDbBackups.Visible := False;
 end;
 
 procedure Tarifikation_BtnShowGroupBtnTarOrganizations_OnMouseEnter (Sender: TObject);
@@ -266,6 +285,11 @@ begin
   Tarifikation.GroupBtnUsers.Visible := True;
 end;
 
+procedure Tarifikation_BtnShowGroupBtnDbBackups_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+  Tarifikation.GroupBtnDbBackups.Visible := True;
+end;
 
 procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
 begin
@@ -293,6 +317,11 @@ begin
 end;
 
 procedure Tarifikation_TableUsers_OnMouseEnter (Sender: TObject);
+begin
+  Tarifikation_HideGroupsEditButtons;
+end;
+
+procedure Tarifikation_TableDbBackups_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
 end;

@@ -1,5 +1,5 @@
 ﻿uses
-  'users.pas',
+  'service_users.pas',
   'service.pas',
   'spravochniky.pas',
   'tarifikation.pas';
