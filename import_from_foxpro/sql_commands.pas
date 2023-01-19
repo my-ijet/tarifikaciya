@@ -44,37 +44,37 @@ procedure PrepareTables;
 begin
   Form1.SQL.Script.Clear;
   SqlAddColumnsToTable('organization',
-    ['FOXPRO_KOD varchar(5)', 'pg varchar(5)', 'gr varchar(5)']);
+    ['pg varchar(5)', 'gr varchar(5)']);
 
-  SqlAddColumnsToTable('org_group',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('org_group',
+  //  ['FOXPRO_KOD varchar(5)']);
 
-  SqlAddColumnsToTable('person',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('person',
+  //  ['FOXPRO_KOD varchar(5)']);
 
-  SqlAddColumnsToTable('personal_group',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('personal_group',
+  //  ['FOXPRO_KOD varchar(5)']);
 
   SqlAddColumnsToTable('doljnost',
-    ['FOXPRO_KOD varchar(5)', 'kolvo int', 'por int', 'pk int', 'gopl int']);
+    ['kolvo int', 'por int', 'pk int', 'gopl int']);
 
-  SqlAddColumnsToTable('obrazovanie',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('obrazovanie',
+  //  ['FOXPRO_KOD varchar(5)']);
 
-  SqlAddColumnsToTable('predmet',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('predmet',
+  //  ['FOXPRO_KOD varchar(5)']);
 
   SqlAddColumnsToTable('nadbavka',
     ['FOXPRO_KOD varchar(5)', 'por int', 'pr varchar(5)']);
 
   SqlAddColumnsToTable('doplata',
-    ['FOXPRO_KOD varchar(5)', 'por int', 'pk int', 'pr varchar(5)']);
+    ['por int', 'pk int', 'pr varchar(5)']);
 
   SqlAddColumnsToTable('stavka',
     ['RAZR int']);
 
-  SqlAddColumnsToTable('kategory',
-    ['FOXPRO_KOD varchar(5)']);
+  //SqlAddColumnsToTable('kategory',
+  //  ['FOXPRO_KOD varchar(5)']);
 
   SqlAddColumnsToTable('tarifikaciya',
     ['FOXPRO_KU varchar(5)', 'FOXPRO_TABN varchar(5)', 'FOXPRO_OBR varchar(5)']);
@@ -130,37 +130,37 @@ begin
   end;
 
   SqlRemoveColumnsFromTable('organization',
-    ['FOXPRO_KOD', 'pg', 'gr']);
+    ['pg', 'gr']);
 
-  SqlRemoveColumnsFromTable('org_group',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('org_group',
+  //  ['FOXPRO_KOD']);
 
-  SqlRemoveColumnsFromTable('person',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('person',
+  //  ['FOXPRO_KOD']);
 
-  SqlRemoveColumnsFromTable('personal_group',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('personal_group',
+  //  ['FOXPRO_KOD']);
 
   SqlRemoveColumnsFromTable('doljnost',
-    ['FOXPRO_KOD', 'kolvo', 'por', 'pk', 'gopl']);
+    ['kolvo', 'por', 'pk', 'gopl']);
 
-  SqlRemoveColumnsFromTable('obrazovanie',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('obrazovanie',
+  //  ['FOXPRO_KOD']);
 
-  SqlRemoveColumnsFromTable('predmet',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('predmet',
+  //  ['FOXPRO_KOD']);
 
   SqlRemoveColumnsFromTable('nadbavka',
-    ['FOXPRO_KOD', 'por', 'pr']);
+    ['por', 'pr']);
 
   SqlRemoveColumnsFromTable('doplata',
-    ['FOXPRO_KOD', 'por', 'pk', 'pr']);
+    ['por', 'pk', 'pr']);
 
   SqlRemoveColumnsFromTable('stavka',
     ['RAZR']);
 
-  SqlRemoveColumnsFromTable('kategory',
-    ['FOXPRO_KOD']);
+  //SqlRemoveColumnsFromTable('kategory',
+  //  ['FOXPRO_KOD']);
 
   SqlRemoveColumnsFromTable('tarifikaciya',
     ['FOXPRO_KU', 'FOXPRO_TABN', 'FOXPRO_OBR']);

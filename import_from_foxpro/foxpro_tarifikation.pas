@@ -120,6 +120,7 @@ procedure ImportPersons;
 var
   tmpstr, familyname, firstname, middlename: String;
   splittedstr: array of String;
+  i: Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into person';
@@ -134,6 +135,7 @@ begin
       splittedstr := tmpstr.Split([' ']);
       familyname := ''; firstname := ''; middlename:= '';
       case Length(splittedstr) of
+        0: begin end;
         1: familyname := splittedstr[0];
         2: begin
           familyname := splittedstr[0];
@@ -143,6 +145,12 @@ begin
           familyname := splittedstr[0];
           firstname := splittedstr[1];
           middlename := splittedstr[2];
+        end;
+        else begin
+          familyname := splittedstr[0];
+          firstname := splittedstr[1];
+          middlename += splittedstr[2];
+          for i:=3 to Length(splittedstr)-1 do middlename += ' '+splittedstr[i];
         end;
       end;
 
