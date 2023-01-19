@@ -93,6 +93,35 @@ begin
   UpdateDatabase(table.dbGeneralTable);
 end;
 
+procedure RecordToArchiveFromTable(var table: TdbStringGridEx; archived: Integer);
+var
+  rowIndex, numRows : Integer = 0;
+  tmpRow : TRow; tmpRowId : String;
+begin
+// Считаем количество выделенных записей
+  for rowIndex:=0 to table.RowCount - 1 do begin
+    tmpRow := table.Row[rowIndex];
+    if tmpRow.Selected then Inc(numRows);
+  end;
+  if numRows = 0 then begin
+    MessageDlg('Не выбрана ни одна запись', mtInformation, mbOK, 0);
+    Exit;
+  end;
+
+  table.BeginUpdate;
+  for rowIndex:=0 to table.RowCount - 1 do begin
+    tmpRow := table.Row[rowIndex];
+    if tmpRow.Selected then begin
+      tmpRowId := IntToStr(tmpRow.ID);
+      SQLExecute('update '+table.dbGeneralTable+' set archived = '+IntToStr(archived)+' where id = '+tmpRowId);
+    end;
+  end;
+  table.EndUpdate;
+
+  UpdateDatabase(table.dbGeneralTable);
+end;
+
+
 // Утилиты
 procedure Tarifikation_BtnImportFromFoxPro_OnClick (Sender: TObject; var Cancel: boolean);
 begin

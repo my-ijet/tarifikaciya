@@ -27,16 +27,6 @@ begin
 end;
 
 // Организации
-procedure Tarifikation_ListFilterOrgGroup_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterOrganizations.Click;
-end;
-
-procedure Tarifikation_EditFilterOrgShortName_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterOrganizations.Click;
-end;
-
 procedure Tarifikation_CheckFilterOrganizationArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterOrganizations.Click;
@@ -47,16 +37,12 @@ begin
   Tarifikation.EditFilterOrgShortName.Clear;
   Tarifikation.ListFilterOrgGroup.ItemIndex := 0;
   Tarifikation.CheckFilterOrganizationArchived.State := 0;
+
   Tarifikation.BtnFilterOrganizations.Click;
 end;
 // Организации
 
 // Группы организаций
-procedure Tarifikation_EditFilterOrgGroups_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterOrgGroups.Click;
-end;
-
 procedure Tarifikation_BtnClearFilterOrgGroups_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.EditFilterOrgGroups.Clear;
@@ -65,21 +51,6 @@ end;
 // Группы организаций
 
 // Сотрудники
-procedure Tarifikation_EditFilterPersonsFamilyname_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterPersons.Click;
-end;
-
-procedure Tarifikation_EditFilterPersonsFirstname_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterPersons.Click;
-end;
-
-procedure Tarifikation_EditFilterPersonsMiddlename_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterPersons.Click;
-end;
-
 procedure Tarifikation_CheckFilterPersonArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterPersons.Click;
@@ -91,16 +62,12 @@ begin
   Tarifikation.EditFilterPersonsFirstname.Clear;
   Tarifikation.EditFilterPersonsMiddlename.Clear;
   Tarifikation.CheckFilterPersonArchived.State := 0;
+
   Tarifikation.BtnFilterPersons.Click;
 end;
 // Сотрудники
 
 // Группы сотрудников
-procedure Tarifikation_EditFilterPersonalGroups_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterPersonalGroups.Click;
-end;
-
 procedure Tarifikation_BtnClearFilterPersonalGroups_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.EditFilterPersonalGroups.Clear;
@@ -109,11 +76,6 @@ end;
 // Группы сотрудников
 
 // Должности
-procedure Tarifikation_EditFilterDoljnosty_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterDoljnosty.Click;
-end;
-
 procedure Tarifikation_CheckFilterDoljnostArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterDoljnosty.Click;
@@ -123,16 +85,12 @@ procedure Tarifikation_BtnClearFilterDoljnosty_OnClick (Sender: TObject; var Can
 begin
   Tarifikation.EditFilterDoljnosty.Clear;
   Tarifikation.CheckFilterDoljnostArchived.State := 0;
+
   Tarifikation.BtnFilterDoljnosty.Click;
 end;
 // Должности
 
 // Образования
-procedure Tarifikation_EditFilterObrazovaniya_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterObrazovaniya.Click;
-end;
-
 procedure Tarifikation_BtnClearFilterObrazovaniya_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.EditFilterObrazovaniya.Clear;
@@ -141,11 +99,6 @@ end;
 // Образования
 
 // Предметы
-procedure Tarifikation_EditFilterPredmety_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterPredmety.Click;
-end;
-
 procedure Tarifikation_CheckFilterPredmetArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterPredmety.Click;
@@ -155,16 +108,12 @@ procedure Tarifikation_BtnClearFilterPredmety_OnClick (Sender: TObject; var Canc
 begin
   Tarifikation.EditFilterPredmety.Clear;
   Tarifikation.CheckFilterPredmetArchived.State := 0;
+
   Tarifikation.BtnFilterPredmety.Click;
 end;
 // Предметы
 
 // Надбавки
-procedure Tarifikation_EditFilterNadbavky_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterNadbavky.Click;
-end;
-
 procedure Tarifikation_CheckFilterNadbavkaArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterNadbavky.Click;
@@ -174,16 +123,12 @@ procedure Tarifikation_BtnClearFilterNadbavky_OnClick (Sender: TObject; var Canc
 begin
   Tarifikation.EditFilterNadbavky.Clear;
   Tarifikation.CheckFilterNadbavkaArchived.State := 0;
+
   Tarifikation.BtnFilterNadbavky.Click;
 end;
 // Надбавки
 
 // Доплаты
-procedure Tarifikation_EditFilterDoplaty_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterDoplaty.Click;
-end;
-
 procedure Tarifikation_CheckFilterDoplataArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterDoplaty.Click;
@@ -193,16 +138,12 @@ procedure Tarifikation_BtnClearFilterDoplaty_OnClick (Sender: TObject; var Cance
 begin
   Tarifikation.EditFilterDoplaty.Clear;
   Tarifikation.CheckFilterDoplataArchived.State := 0;
+
   Tarifikation.BtnFilterDoplaty.Click;
 end;
 // Доплаты
 
 // Ставки
-procedure Tarifikation_EditFilterStavky_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterStavky.Click;
-end;
-
 procedure Tarifikation_CheckFilterStavkaArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterStavky.Click;
@@ -212,16 +153,12 @@ procedure Tarifikation_BtnClearFilterStavky_OnClick (Sender: TObject; var Cancel
 begin
   Tarifikation.EditFilterStavky.Clear;
   Tarifikation.CheckFilterStavkaArchived.State := 0;
+
   Tarifikation.BtnFilterStavky.Click;
 end;
 // Ставки
 
 // Категории
-procedure Tarifikation_EditFilterKategory_OnChange (Sender: TObject);
-begin
-  Tarifikation.BtnFilterKategory.Click;
-end;
-
 procedure Tarifikation_BtnClearFilterKategory_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.EditFilterKategory.Clear;
@@ -286,6 +223,68 @@ begin
   DeleteRecordFromTable(Tarifikation.TableOrganizations);
 end;
 // Кнопки удаления справочников
+
+// Кнопки отправки в архив
+procedure ChangeCaptionBtnToArchive;
+begin
+end;
+
+procedure Tarifikation_BtnStavkyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterStavkaArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TableStavky, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TableStavky, 1);
+end;
+
+procedure Tarifikation_BtnDoplatyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterDoplataArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TableDoplaty, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TableDoplaty, 1);
+end;
+
+procedure Tarifikation_BtnNadbavkyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterNadbavkaArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TableNadbavky, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TableNadbavky, 1);
+end;
+
+procedure Tarifikation_BtnPredmetyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterPredmetArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TablePredmety, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TablePredmety, 1);
+end;
+
+procedure Tarifikation_BtnDoljnostyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterDoljnostArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TableDoljnosty, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TableDoljnosty, 1);
+end;
+
+procedure Tarifikation_BtnPersonsToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterPersonArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TablePersons, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TablePersons, 1);
+end;
+
+procedure Tarifikation_BtnOrganizationsToArchive_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.CheckFilterOrganizationArchived.Checked then
+    RecordToArchiveFromTable(Tarifikation.TableOrganizations, 0)
+  else
+    RecordToArchiveFromTable(Tarifikation.TableOrganizations, 1);
+end;
+// Кнопки отправки в архив
 
 begin
   // MessageDlg('Справочники загружены!', mtInformation, mbOK, 0);
