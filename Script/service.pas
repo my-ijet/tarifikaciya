@@ -75,19 +75,22 @@ end;
 procedure DeleteRecordFromTable(var table: TdbStringGridEx);
 var
   rowIndex : Integer;
-  tmpRow : TRow; tmpRowId : String;
+  tmpRow : TRow; tmpRowId, tmpIdList : String = '';
 begin
   if not CheckSelectedAndConfirm(table) then Exit;
 
-  table.BeginUpdate;
+// Подготавливаем список ID
   for rowIndex:=0 to table.RowCount - 1 do begin
     tmpRow := table.Row[rowIndex];
     if tmpRow.Selected then begin
       tmpRowId := IntToStr(tmpRow.ID);
-
-      SQLExecute('delete from '+table.dbGeneralTable+' where id = '+tmpRowId);
+      tmpIdList := tmpIdList + ', ' +tmpRowId;
     end;
   end;
+  Delete(tmpIdList, 1, 2);
+
+  table.BeginUpdate;
+  SQLExecute('delete from '+table.dbGeneralTable+' where id in ('+tmpIdList+');');
   table.EndUpdate;
 
   UpdateDatabase(table.dbGeneralTable);
@@ -96,7 +99,7 @@ end;
 procedure RecordToArchiveFromTable(var table: TdbStringGridEx; archived: Integer);
 var
   rowIndex, numRows : Integer = 0;
-  tmpRow : TRow; tmpRowId : String;
+  tmpRow : TRow; tmpRowId, tmpIdList : String = '';
 begin
 // Считаем количество выделенных записей
   for rowIndex:=0 to table.RowCount - 1 do begin
@@ -108,14 +111,17 @@ begin
     Exit;
   end;
 
-  table.BeginUpdate;
   for rowIndex:=0 to table.RowCount - 1 do begin
     tmpRow := table.Row[rowIndex];
     if tmpRow.Selected then begin
       tmpRowId := IntToStr(tmpRow.ID);
-      SQLExecute('update '+table.dbGeneralTable+' set archived = '+IntToStr(archived)+' where id = '+tmpRowId);
+      tmpIdList := tmpIdList + ', ' +tmpRowId;
     end;
   end;
+  Delete(tmpIdList, 1, 2);
+
+  table.BeginUpdate;
+  SQLExecute('update '+table.dbGeneralTable+' set archived = '+IntToStr(archived)+' where id in ('+tmpIdList+');');
   table.EndUpdate;
 
   UpdateDatabase(table.dbGeneralTable);
@@ -149,19 +155,33 @@ end;
 procedure Tarifikation_DateTarStart_OnChange (Sender: TObject);
 var
   SelectedDate : String;
+  StartDateTime, CurrentDateTime : TDateTime;
 begin
   SelectedDate := Tarifikation.DateTarStart.sqlDate;
   SQLExecute('update _user set date_tar_start = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
-  Tarifikation.DateFilterTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
+
+  StartDateTime := Tarifikation.DateTarStart.DateTime;
+  CurrentDateTime := Tarifikation.DateFilterTarDate.DateTime;
+  if StartDateTime > CurrentDateTime then begin
+    Tarifikation.DateFilterTarDate.DateTime := StartDateTime;
+  end;
+  Tarifikation.DateFilterTarDate.MinDate := StartDateTime;
 end;
 
 procedure Tarifikation_DateTarEnd_OnChange (Sender: TObject);
 var
   SelectedDate : String;
+  EndDateTime, CurrentDateTime : TDateTime;
 begin
   SelectedDate := Tarifikation.DateTarEnd.sqlDate;
   SQLExecute('update _user set date_tar_end = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
-  Tarifikation.DateFilterTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
+
+  EndDateTime := Tarifikation.DateTarEnd.DateTime;
+  CurrentDateTime := Tarifikation.DateFilterTarDate.DateTime;
+  if EndDateTime < CurrentDateTime then begin
+    Tarifikation.DateFilterTarDate.DateTime := EndDateTime;
+  end;
+  Tarifikation.DateFilterTarDate.MaxDate := EndDateTime;
 end;
 // Период Тарификации
 
@@ -179,13 +199,13 @@ end;
 procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   OptimizeDatabase;
+  DbStatisticsCalculate;
 end;
 
 procedure Tarifikation_BtnRefreshAllTables_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   UpdateAllTables;
   Tarifikation_PrepareTarTables;
-  DbStatisticsCalculate;
 end;
 // Утилиты
 

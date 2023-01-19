@@ -12,7 +12,8 @@ begin
   Tarifikation.BtnFilterTarOrganizations.Click;
 
   SelectedOrgId := SQLExecute('select id_organization1 from _user where id = '+IntToStr(Application.User.id));
-  Tarifikation.TableTarOrganizations.dbItemID := StrToInt(SelectedOrgId);
+  if SelectedOrgId <> '' then
+    Tarifikation.TableTarOrganizations.dbItemID := StrToInt(SelectedOrgId);
   Tarifikation.BtnFilterTarifikaciya.Click;
 end;
 
