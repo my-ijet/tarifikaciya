@@ -3,13 +3,17 @@
   'spravochniky.pas',
   'otchety.pas';
 
-
+// Загрузка выбранной группы организаций и выбранной организации
 procedure FillCurAppUserSelections;
+var
+  SelectedOrgId: String;
 begin
   SetCurrentAppUserFieldToList(Tarifikation.ListFilterTarOrganizations, 'id_org_group');
   Tarifikation.BtnFilterTarOrganizations.Click;
 
-  Tarifikation.TableTarOrganizations; // TODO
+  SelectedOrgId := SQLExecute('select id_organization1 from _user where id = '+IntToStr(Application.User.id));
+  Tarifikation.TableTarOrganizations.dbItemID := StrToInt(SelectedOrgId);
+  Tarifikation.BtnFilterTarifikaciya.Click;
 end;
 
 // Сохранение текущей даты тарификации
@@ -27,6 +31,7 @@ var
   itemId : String;
 begin
   Tarifikation.BtnFilterTarOrganizations.Click;
+
 // Сохранение выбранной группы организаций
   itemId := Tarifikation.ListFilterTarOrganizations.sqlValue;
   SQLExecute('update _user set id_org_group = '+itemId+' where id = '+IntToStr(Application.User.id));
@@ -53,7 +58,13 @@ begin
 end;
 
 procedure Tarifikation_TableTarOrganizations_OnCellClick (Sender: TObject; ACol, ARow: Integer);
+var
+  itemId : Integer;
 begin
+// Сохранение выбранной организации
+  itemId := Tarifikation.TableTarOrganizations.dbItemID;
+  SQLExecute('update _user set id_organization1 = '+IntToStr(itemId)+' where id = '+IntToStr(Application.User.id));
+
   Tarifikation_DoFilterTableTarifikaciya;
 end;
 
@@ -267,7 +278,7 @@ begin
   Tarifikation.GroupBtnUsers.Visible := False;
   Tarifikation.GroupBtnDbBackups.Visible := False;
 end;
-
+// Проверка кнопок
 procedure Tarifikation_BtnShowGroupBtnTarOrganizations_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
@@ -309,40 +320,54 @@ begin
   Tarifikation_HideGroupsEditButtons;
   Tarifikation.GroupBtnDbBackups.Visible := True;
 end;
-
+// Проверка таблиц
 procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableTarOrganizations.CanFocus then
+    Tarifikation.TableTarOrganizations.SetFocus;
 end;
 
 procedure Tarifikation_TableTarifikaciya_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableTarifikaciya.CanFocus then
+    Tarifikation.TableTarifikaciya.SetFocus;
 end;
 
 procedure Tarifikation_TableTarJobs_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableTarJobs.CanFocus then
+    Tarifikation.TableTarJobs.SetFocus;
 end;
 
 procedure Tarifikation_TableTarNadbavky_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableTarNadbavky.CanFocus then
+    Tarifikation.TableTarNadbavky.SetFocus;
 end;
 
 procedure Tarifikation_TableTarJobDoblaty_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableTarJobDoblaty.CanFocus then
+    Tarifikation.TableTarJobDoblaty.SetFocus;
 end;
 
 procedure Tarifikation_TableUsers_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableUsers.CanFocus then
+    Tarifikation.TableUsers.SetFocus;
 end;
 
 procedure Tarifikation_TableDbBackups_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
+  if Tarifikation.TableDbBackups.CanFocus then
+    Tarifikation.TableDbBackups.SetFocus;
 end;
 // Логика показа кнопок добавления, редактирования и удаления
 

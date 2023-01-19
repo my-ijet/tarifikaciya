@@ -104,10 +104,12 @@ begin
   SqlCreateTable := SqlCreateTable+'"date_tar_end" TEXT, ';
   SqlCreateTable := SqlCreateTable+'"date_tar_current" TEXT, ';
   SqlCreateTable := SqlCreateTable+'"id_org_group" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"id_organization1" INTEGER, ';
   SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id__role) REFERENCES "_role"(id), ';
   SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, ';
   SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, ';
   SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_org_group) REFERENCES "doljnost"(id) ON DELETE SET NULL, ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_organization1) REFERENCES "organization"(id) ON DELETE SET NULL, ';
   SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_person) REFERENCES "org_group"(id) ON DELETE SET NULL)';
   SQLExecute(SqlCreateTable);
 
