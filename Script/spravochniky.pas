@@ -3,6 +3,29 @@
   'otchety.pas',
   'tarifikation.pas';
 
+
+procedure Tarifikation_SpravochnikyTabs_OnChange (Sender: TObject);
+begin
+  PrepareSpravochniky;
+end;
+
+procedure PrepareSpravochniky;
+begin
+  case Tarifikation.SpravochnikyTabs.ActivePageIndex of
+    0 : Tarifikation.BtnFilterOrganizations.Click;
+    1 : Tarifikation.BtnFilterOrgGroups.Click;
+    2 : Tarifikation.BtnFilterPersons.Click;
+    3 : Tarifikation.BtnFilterPersonalGroups.Click;
+    4 : Tarifikation.BtnFilterDoljnosty.Click;
+    5 : Tarifikation.BtnFilterObrazovaniya.Click;
+    6 : Tarifikation.BtnFilterPredmety.Click;
+    7 : Tarifikation.BtnFilterNadbavky.Click;
+    8 : Tarifikation.BtnFilterDoplaty.Click;
+    9 : Tarifikation.BtnFilterStavky.Click;
+    10 : Tarifikation.BtnFilterKategory.Click;
+  end;
+end;
+
 // Организации
 procedure Tarifikation_ListFilterOrgGroup_OnChange (Sender: TObject);
 begin
@@ -263,21 +286,6 @@ begin
   DeleteRecordFromTable(Tarifikation.TableOrganizations);
 end;
 // Кнопки удаления справочников
-
-procedure PrepareSpravochniky;
-begin
-  Tarifikation.BtnFilterOrganizations.Click;
-  Tarifikation.BtnFilterOrgGroups.Click;
-  Tarifikation.BtnFilterPersons.Click;
-  Tarifikation.BtnFilterPersonalGroups.Click;
-  Tarifikation.BtnFilterDoljnosty.Click;
-  Tarifikation.BtnFilterObrazovaniya.Click;
-  Tarifikation.BtnFilterPredmety.Click;
-  Tarifikation.BtnFilterNadbavky.Click;
-  Tarifikation.BtnFilterDoplaty.Click;
-  Tarifikation.BtnFilterStavky.Click;
-  Tarifikation.BtnFilterKategory.Click;
-end;
 
 begin
   // MessageDlg('Справочники загружены!', mtInformation, mbOK, 0);

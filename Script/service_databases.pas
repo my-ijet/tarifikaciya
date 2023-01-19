@@ -115,6 +115,15 @@ begin
   UpdateDatabase('tar_job_doplata');
   UpdateDatabase('_user');
   UpdateDatabase('_role');
+
+  CountDbRecords;
+end;
+
+procedure CountDbRecords;
+begin
+  Tarifikation.LabelNumTarifikations.Caption := SQLExecute('select count(*) from tarifikaciya;');
+  Tarifikation.LabelNumPersons.Caption := SQLExecute('select count(*) from person;');
+  Tarifikation.LabelNumOrganizations.Caption := SQLExecute('select count(*) from organization;');
 end;
 
 procedure OptimizeDatabase;
@@ -126,7 +135,7 @@ end;
 
 procedure ClearDatabase;
 begin
-  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ. Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
   then Exit;
 
   SQLExecute('delete from tarifikaciya;');

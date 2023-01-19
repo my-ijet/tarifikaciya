@@ -11,9 +11,9 @@ begin
 
   case Tarifikation.MainTabs.ActivePageIndex of
     0: begin Tarifikation_FilterTarTables; end;
-    1: begin FillRequisites; end;
+    1: begin PrepareOtchety; end;
     2: begin PrepareSpravochniky; end;
-    3: begin FillTableDbBackup;end;
+    3: begin PrepareService;end;
   end;
 
 end;

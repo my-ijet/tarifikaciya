@@ -8,6 +8,12 @@
 var
   DatabaseFilePath : string;
 
+procedure PrepareService;
+begin
+  FillTableDbBackup;
+  CountDbRecords;
+end;
+
 procedure RestartApplication;
 begin
   OpenFile('"'+Application.ExeName+'"');
@@ -150,6 +156,9 @@ begin
     MessageDlg('Не выбрана запись резервной копии для восстановления', mtInformation, mbOK, 0);
     Exit;
   end;
+  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  then Exit;
+
   SelDbName := Tarifikation.TableDbBackups.Cells[0,row];
 
   RestoreDbBackup(SelDbName);

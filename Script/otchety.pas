@@ -4,6 +4,11 @@
   'spravochniky.pas',
   'tarifikation.pas';
 
+procedure PrepareOtchety;
+begin
+  FillRequisites;
+end;
+
 // Сохранение реквизитов
 procedure Tarifikation_ListRequisitePersons_OnChange (Sender: TObject);
 var
