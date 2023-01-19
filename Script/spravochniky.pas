@@ -225,10 +225,6 @@ end;
 // Кнопки удаления справочников
 
 // Кнопки отправки в архив
-procedure ChangeCaptionBtnToArchive;
-begin
-end;
-
 procedure Tarifikation_BtnStavkyToArchive_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   if Tarifikation.CheckFilterStavkaArchived.Checked then

@@ -10,7 +10,7 @@ procedure Tarifikation_MainTabs_OnChange (Sender: TObject);
 begin
 
   case Tarifikation.MainTabs.ActivePageIndex of
-    0: begin Tarifikation_FilterTarTables; end;
+    0: begin Tarifikation_PrepareTarTables; end;
     1: begin PrepareOtchety; end;
     2: begin PrepareSpravochniky; end;
     3: begin PrepareService;end;

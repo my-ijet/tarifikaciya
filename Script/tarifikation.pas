@@ -3,10 +3,34 @@
   'spravochniky.pas',
   'otchety.pas';
 
+
+procedure FillCurAppUserSelections;
+begin
+  SetCurrentAppUserFieldToList(Tarifikation.ListFilterTarOrganizations, 'id_org_group');
+  Tarifikation.BtnFilterTarOrganizations.Click;
+
+  Tarifikation.TableTarOrganizations; // TODO
+end;
+
+// Сохранение текущей даты тарификации
+procedure Tarifikation_DateFilterTarDate_OnChange (Sender: TObject);
+var
+  SelectedDate : String;
+begin
+  SelectedDate := Tarifikation.DateFilterTarDate.sqlDate;
+  SQLExecute('update _user set date_tar_current = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
+end;
+
 // Фильтр списка организаций Тарификации
 procedure Tarifikation_ListFilterTarOrganizations_OnChange (Sender: TObject);
+var
+  itemId : String;
 begin
   Tarifikation.BtnFilterTarOrganizations.Click;
+// Сохранение выбранной группы организаций
+  itemId := Tarifikation.ListFilterTarOrganizations.sqlValue;
+  SQLExecute('update _user set id_org_group = '+itemId+' where id = '+IntToStr(Application.User.id));
+
   if Tarifikation.TableTarOrganizations.SelectedRow = -1 then begin
     Tarifikation.TableTarifikaciya.ClearRows;
     Tarifikation.TableTarNadbavky.ClearRows;
@@ -44,11 +68,6 @@ begin
 end;
 
 procedure Tarifikation_EditFilterTarStaj_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarifikaciya;
-end;
-
-procedure Tarifikation_DateFilterTarDate_OnChange (Sender: TObject);
 begin
   Tarifikation_DoFilterTableTarifikaciya;
 end;
@@ -345,11 +364,12 @@ begin
   Tarifikation.BtnFilterTarNadbavky.Click;
   Tarifikation.BtnFilterTarJobs.Click;
   Tarifikation.BtnFilterTarJobDoplaty.Click;
-
+{
   Tarifikation.TableTarifikaciya.ClearRows;
   Tarifikation.TableTarNadbavky.ClearRows;
   Tarifikation.TableTarJobs.ClearRows;
   Tarifikation.TableTarJobDoblaty.ClearRows;
+  }
 end;
 
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);

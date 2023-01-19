@@ -74,9 +74,9 @@ begin
   Application.User.UserName := username;
   mniUser.Caption := 'Пользователь: '+Application.User.Username;
 
-  FillRequisites;
   SQLExecute('update _user set last_login = "'+DateTimeToStr(Now)+'" where id = '+IntToStr(Application.User.id));
   UpdateDatabase('_user');
+  FillRequisites; FillTarPeriod; FillCurAppUserSelections;
 
   if ShouldSave then SaveCurrentAppUserID;
 end;

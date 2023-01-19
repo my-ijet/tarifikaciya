@@ -121,6 +121,49 @@ begin
   UpdateDatabase(table.dbGeneralTable);
 end;
 
+procedure FillTarPeriod;
+var
+  SqlResult : string;
+  DateStart, DateEnd : TDateTime;
+begin
+  SqlResult := SQLExecute('select date_tar_start from _user where id = '+ IntToStr(Application.User.id));
+  if SqlResult = '' then begin end
+  else DateStart := SQLDateTimeToDateTime(SqlResult);
+
+  SqlResult := SQLExecute('select date_tar_end from _user where id = '+ IntToStr(Application.User.id));
+  if SqlResult = '' then begin end
+  else DateEnd := SQLDateTimeToDateTime(SqlResult);
+
+  SqlResult := SQLExecute('select date_tar_current from _user where id = '+ IntToStr(Application.User.id));
+  if SqlResult = '' then begin end
+  else Tarifikation.DateFilterTarDate.DateTime := SQLDateTimeToDateTime(SqlResult);
+
+  Tarifikation.DateTarStart.DateTime := DateStart;
+  Tarifikation.DateTarEnd.DateTime := DateEnd;
+  Tarifikation.DateFilterTarDate.MinDate := DateStart;
+  Tarifikation.DateFilterTarDate.MaxDate := DateEnd;
+end;
+
+
+// Период Тарификации
+procedure Tarifikation_DateTarStart_OnChange (Sender: TObject);
+var
+  SelectedDate : String;
+begin
+  SelectedDate := Tarifikation.DateTarStart.sqlDate;
+  SQLExecute('update _user set date_tar_start = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
+  Tarifikation.DateFilterTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
+end;
+
+procedure Tarifikation_DateTarEnd_OnChange (Sender: TObject);
+var
+  SelectedDate : String;
+begin
+  SelectedDate := Tarifikation.DateTarEnd.sqlDate;
+  SQLExecute('update _user set date_tar_end = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
+  Tarifikation.DateFilterTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
+end;
+// Период Тарификации
 
 // Утилиты
 procedure Tarifikation_BtnImportFromFoxPro_OnClick (Sender: TObject; var Cancel: boolean);

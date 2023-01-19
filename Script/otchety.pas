@@ -7,6 +7,7 @@
 procedure PrepareOtchety;
 begin
   FillRequisites;
+  FillTarOtchetPeriod;
 end;
 
 // Сохранение реквизитов
@@ -41,6 +42,12 @@ begin
   SetCurrentAppUserFieldToList(Tarifikation.ListRequisitePersons, 'id_person');
   SetCurrentAppUserFieldToList(Tarifikation.ListRequisiteDoljnosty, 'id_doljnost');
   SetCurrentAppUserFieldToList(Tarifikation.ListRequisiteOrganizations, 'id_organization');
+end;
+
+procedure FillTarOtchetPeriod;
+begin
+  Tarifikation.DateTarOtchetStart.DateTime := Tarifikation.DateTarStart.DateTime;
+  Tarifikation.DateTarOtchetEnd.DateTime := Tarifikation.DateFilterTarDate.DateTime;
 end;
 
 begin

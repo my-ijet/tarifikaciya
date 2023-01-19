@@ -73,6 +73,8 @@ begin
 end;
 
 procedure ApplyFixesOnNewDatabase;
+var
+  SqlCreateTable: String;
 begin
 // Дополнительная настройка БД
   SQLExecute('pragma mmap_size = 268435456;');
@@ -83,7 +85,32 @@ begin
 // Убираем ошибку вовремя удаления связанной записи
   SQLExecute('PRAGMA foreign_keys=OFF;');
 // новые таблицы
-  SQLExecute('CREATE TABLE "_user_new" (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, "username" TEXT NOT NULL DEFAULT "empty", "password" TEXT, "id__role" INTEGER, "is_admin" INTEGER, "is_active" INTEGER, "email" TEXT, "first_name" TEXT, "last_name" TEXT, "last_login" TEXT, "date_joined" TEXT, "id_doljnost" INTEGER, "id_organization" INTEGER, "id_person" INTEGER, FOREIGN KEY(id__role) REFERENCES "_role"(id), FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)');
+  SqlCreateTable := 'CREATE TABLE "_user_new" ';
+  SqlCreateTable := SqlCreateTable+'(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, ';
+  SqlCreateTable := SqlCreateTable+'"username" TEXT NOT NULL DEFAULT "empty", ';
+  SqlCreateTable := SqlCreateTable+'"password" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"id__role" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"is_admin" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"is_active" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"email" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"first_name" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"last_name" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"last_login" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"date_joined" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"id_doljnost" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"id_organization" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"id_person" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'"date_tar_start" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"date_tar_end" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"date_tar_current" TEXT, ';
+  SqlCreateTable := SqlCreateTable+'"id_org_group" INTEGER, ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id__role) REFERENCES "_role"(id), ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_org_group) REFERENCES "doljnost"(id) ON DELETE SET NULL, ';
+  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_person) REFERENCES "org_group"(id) ON DELETE SET NULL)';
+  SQLExecute(SqlCreateTable);
+
 // запись значений в новые таблицы
   SQLExecute('insert into _user_new select * from _user;');
 // удаление старых таблиц
