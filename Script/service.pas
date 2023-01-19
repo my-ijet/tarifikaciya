@@ -11,7 +11,7 @@ var
 procedure PrepareService;
 begin
   FillTableDbBackup;
-  CountDbRecords;
+  DbStatisticsCalculate;
 end;
 
 procedure RestartApplication;
@@ -113,6 +113,7 @@ procedure Tarifikation_BtnRefreshAllTables_OnClick (Sender: TObject; var Cancel:
 begin
   UpdateAllTables;
   Tarifikation_PrepareTarTables;
+  DbStatisticsCalculate;
 end;
 // Утилиты
 

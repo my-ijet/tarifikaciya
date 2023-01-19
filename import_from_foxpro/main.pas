@@ -111,18 +111,23 @@ begin
                        ' | Осталось файлов: '+
                        IntToStr(numOfFoundedFiles);
 
-      foxpro_tarifikation.ImportDbf(DbfFilePath);
+      ImportDbf(DbfFilePath);
       Self.Refresh;
 
       Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
+    MainTransaction.Commit;
     Caption := 'Импорт данных FoxPro';
 
     sql_commands.UpdateTables;
+    MainTransaction.Commit;
+
     sql_commands.ClearTables;
     MainTransaction.Commit;
+
     sql_commands.OptimizeDatabase;
+    MainTransaction.Commit;
 
     Caption := 'Импорт завершен!';
     Status.Caption := 'Импорт завершен!';

@@ -172,7 +172,8 @@ procedure OptimizeDatabase;
 begin
   with Form1.MainConnection do begin
     ExecuteDirect('End Transaction');
-    ExecuteDirect('VACUUM; pragma optimize;');
+    ExecuteDirect('VACUUM');
+    ExecuteDirect('pragma optimize;');
     ExecuteDirect('Begin Transaction');
   end;
 end;

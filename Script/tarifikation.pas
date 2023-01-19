@@ -364,7 +364,7 @@ end;
 
 procedure Tarifikation_OnClose (Sender: TObject; Action: string);
 begin
-  SQLExecute('pragma optimize;');
+  OptimizeDatabase;
 end;
 
 begin

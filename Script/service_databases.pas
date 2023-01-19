@@ -116,14 +116,26 @@ begin
   UpdateDatabase('_user');
   UpdateDatabase('_role');
 
-  CountDbRecords;
+  DbStatisticsCalculate;
 end;
 
-procedure CountDbRecords;
+procedure DbStatisticsCalculate;
+var
+  filesize: Int64;
+  divider: Integer;
+  DbSize, Postfix: String;
 begin
   Tarifikation.LabelNumTarifikations.Caption := SQLExecute('select count(*) from tarifikaciya;');
   Tarifikation.LabelNumPersons.Caption := SQLExecute('select count(*) from person;');
   Tarifikation.LabelNumOrganizations.Caption := SQLExecute('select count(*) from organization;');
+
+  filesize := GetFileSize(DbFilePath);
+  if filesize < 1000 then DbSize := IntToStr(filesize)+' байт' else
+  if filesize < 1000000 then DbSize := IntToStr(filesize/1024)+' Кбайт' else
+  if filesize < 1000000000 then DbSize := IntToStr(filesize/1048576)+' Мбайт' else
+  if filesize < 1000000000000 then DbSize := IntToStr(filesize/1073741824)+' Гбайт';
+
+  Tarifikation.LabelDatabaseSize.Caption := DbSize;
 end;
 
 procedure OptimizeDatabase;
