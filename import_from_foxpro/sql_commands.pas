@@ -79,6 +79,13 @@ begin
   SqlAddColumnsToTable('tarifikaciya',
     ['FOXPRO_KU varchar(5)', 'FOXPRO_TABN varchar(5)', 'FOXPRO_OBR varchar(5)']);
 
+  with Form1.SQL.Script do begin
+    AddText('create table migration_table (');
+    AddText('table_name varchar(15),');
+    AddText('FOXPRO_KOD varchar(5),');
+    AddText('to_id int );');
+  end;
+
   Form1.SQL.Execute;
 end;
 
@@ -112,7 +119,7 @@ procedure ClearTables;
 var
   numMissedTarOrgs: String;
 begin
-  with Form1.QInsertFromFoxPro do begin
+  with Form1.QSelect do begin
     SQL.Clear;
     SQL.Append('select count(*) as num ');
     SQL.Append('from tarifikaciya where id_organization = 0;');
@@ -164,6 +171,10 @@ begin
 
   SqlRemoveColumnsFromTable('tarifikaciya',
     ['FOXPRO_KU', 'FOXPRO_TABN', 'FOXPRO_OBR']);
+
+  with Form1.SQL.Script do begin
+    //AddText('drop table migration_table;');
+  end;
 
   Form1.SQL.Execute;
 end;

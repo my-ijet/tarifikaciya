@@ -16,6 +16,7 @@ type
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     FoxProDbf: TDbf;
+    QSelect: TSQLQuery;
     Status: TLabel;
     MainConnection: TSQLite3Connection;
     QInsertFromFoxPro: TSQLQuery;
@@ -103,21 +104,34 @@ begin
   if numOfFoundedFiles > 0 then begin
     sql_commands.PrepareTables;
 
+// Импорт справочников
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
-      Caption := DbfFileName+
-                       ' | Осталось файлов: '+
-                       IntToStr(numOfFoundedFiles);
+      Caption := DbfFileName;
 
-      ImportDbf(DbfFilePath);
+      ImportSpravochniky(DbfFilePath);
       Self.Refresh;
-
-      Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     MainTransaction.Commit;
+// Импорт справочников
+
+// Импорт таблиц тарификации
+    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
+    for DbfFilePath in FoundDbfFiles do
+    begin
+      DbfFileName := ExtractFileName(DbfFilePath);
+      Caption := DbfFileName;
+
+      ImportTarifikations(DbfFilePath);
+      Self.Refresh;
+    end;
+    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
+    MainTransaction.Commit;
+// Импорт таблиц тарификации
+
     Caption := 'Импорт данных FoxPro';
 
     sql_commands.UpdateTables;
