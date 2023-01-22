@@ -174,15 +174,10 @@ begin
   SQLExecute('pragma optimize;');
 end;
 
-procedure ClearDatabase;
+procedure DeleteSpravochniky;
 begin
-  if MessageDlg('ВСЕ данные будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  if MessageDlg('ВСЕ справочники будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
   then Exit;
-
-  SQLExecute('delete from tarifikaciya;');
-  SQLExecute('delete from tar_nadbavka;');
-  SQLExecute('delete from tar_job;');
-  SQLExecute('delete from tar_job_doplata;');
 
   SQLExecute('delete from org_head;');
   SQLExecute('delete from organization;');
@@ -200,7 +195,21 @@ begin
   OptimizeDatabase;
 
   UpdateAllTables;
-  Tarifikation_PrepareTarTables;
+end;
+
+procedure DeleteTarifikations;
+begin
+  if MessageDlg('ВСЕ тарификации будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  then Exit;
+
+  SQLExecute('delete from tarifikaciya;');
+  SQLExecute('delete from tar_nadbavka;');
+  SQLExecute('delete from tar_job;');
+  SQLExecute('delete from tar_job_doplata;');
+
+  OptimizeDatabase;
+
+  UpdateAllTables;
 end;
 
 begin

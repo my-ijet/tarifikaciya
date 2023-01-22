@@ -191,9 +191,14 @@ begin
   OpenFile(DatabaseFilePath, 'import_from_foxpro.exe');
 end;
 
-procedure Tarifikation_BtnCleanDatabase_OnClick (Sender: TObject; var Cancel: boolean);
+procedure Tarifikation_BtnDelSpravochniky_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  ClearDatabase;
+  DeleteSpravochniky;
+end;
+
+procedure Tarifikation_BtnDelTarifikations_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteTarifikations;
 end;
 
 procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
