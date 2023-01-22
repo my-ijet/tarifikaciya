@@ -28,6 +28,31 @@ begin
     end;
   end;
 end;
+
+procedure SqlUpdateTarifikaciya(FieldName: String;
+                                TableName: String);
+begin
+  with Form1.SQL.Script do begin
+    AddText('UPDATE tarifikaciya');
+    AddText('SET id_'+TableName+' = '+TableName+'.id');
+    AddText('FROM '+TableName);
+    AddText('where tarifikaciya.'+FieldName+' = '+TableName+'.FOXPRO_KOD;');
+  end;
+end;
+
+procedure SqlApplyMigrationTable(TableName: String;
+                                 FieldName: String;
+                                 ChildTable: String);
+begin
+  with Form1.SQL.Script do begin
+    AddText('UPDATE '+TableName);
+    AddText('SET id_'+ChildTable+' = migration_table.to_id');
+    AddText('FROM migration_table');
+    AddText('where '+TableName+'.'+FieldName+' = migration_table.FOXPRO_KOD');
+    AddText('  and migration_table.table_name = "'+ChildTable+'";');
+  end;
+end;
+
 procedure SqlRemoveColumnsFromTable(TableName: String;
                                     Columns: TStringArray);
 var
@@ -97,19 +122,14 @@ begin
     AddText('SET id_org_group = org_group.id');
     AddText('FROM org_group');
     AddText('where organization.pg = org_group.FOXPRO_KOD;');
+    SqlApplyMigrationTable('organization', 'id_org_group', 'org_group');
 
-    AddText('UPDATE tarifikaciya');
-    AddText('SET id_organization = organization.id');
-    AddText('FROM organization');
-    AddText('where tarifikaciya.FOXPRO_KU = organization.FOXPRO_KOD;');
-    AddText('UPDATE tarifikaciya');
-    AddText('SET id_person = person.id');
-    AddText('FROM person');
-    AddText('where tarifikaciya.FOXPRO_TABN = person.FOXPRO_KOD;');
-    AddText('UPDATE tarifikaciya');
-    AddText('SET id_obrazovanie = obrazovanie.id');
-    AddText('FROM obrazovanie');
-    AddText('where tarifikaciya.FOXPRO_OBR = obrazovanie.FOXPRO_KOD;');
+    SqlUpdateTarifikaciya('FOXPRO_KU', 'organization');
+    SqlUpdateTarifikaciya('FOXPRO_TABN', 'person');
+    SqlUpdateTarifikaciya('FOXPRO_OBR', 'obrazovanie');
+    SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_KU', 'organization');
+    SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_TABN', 'person');
+    SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_OBR', 'obrazovanie');
 
   end;
   Form1.SQL.Execute;
@@ -173,7 +193,7 @@ begin
     ['FOXPRO_KU', 'FOXPRO_TABN', 'FOXPRO_OBR']);
 
   with Form1.SQL.Script do begin
-    //AddText('drop table migration_table;');
+    AddText('drop table migration_table;');
   end;
 
   Form1.SQL.Execute;
