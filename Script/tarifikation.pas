@@ -31,8 +31,6 @@ procedure Tarifikation_ListFilterTarOrganizations_OnChange (Sender: TObject);
 var
   itemId : String;
 begin
-  Tarifikation.BtnFilterTarOrganizations.Click;
-
 // Сохранение выбранной группы организаций
   itemId := Tarifikation.ListFilterTarOrganizations.sqlValue;
   SQLExecute('update _user set id_org_group = '+itemId+' where id = '+IntToStr(Application.User.id));
@@ -69,27 +67,11 @@ begin
   Tarifikation_DoFilterTableTarifikaciya;
 end;
 
-procedure Tarifikation_ListFilterTarFIO_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarifikaciya;
-end;
-
-procedure Tarifikation_ListFilterTarObrazovanie_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarifikaciya;
-end;
-
-procedure Tarifikation_EditFilterTarStaj_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarifikaciya;
-end;
-
 procedure Tarifikation_BtnClearFilterTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarFIO.ItemIndex := 0;
   Tarifikation.ListFilterTarObrazovanie.ItemIndex := 0;
   Tarifikation.EditFilterTarStaj.Clear;
-  Tarifikation.DateFilterTarDate.DateTime := Now;
   Tarifikation.DateFilterTarDate.Checked := False;
   Tarifikation_DoFilterTableTarifikaciya;
 end;
@@ -117,11 +99,6 @@ begin
   Tarifikation.BtnFilterTarNadbavky.Click;
 end;
 
-procedure Tarifikation_ListFilterTarNadbavky_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarNadbavky;
-end;
-
 procedure Tarifikation_BtnClearFilterTarNadbavky_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarNadbavky.ItemIndex := 0;
@@ -145,16 +122,6 @@ begin
   Tarifikation_DoFilterTableTarJobs;
 end;
 
-procedure Tarifikation_ListFilterTarJobDoljnosty_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarJobs;
-end;
-
-procedure Tarifikation_ListFilterTarJobPredmety_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarJobs;
-end;
-
 procedure Tarifikation_BtnClearFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarJobDoljnosty.ItemIndex := 0;
@@ -169,16 +136,6 @@ begin
   if Tarifikation.TableTarJobs.SelectedRow = -1 then Exit;
 
   Tarifikation.BtnFilterTarJobDoplaty.Click;
-end;
-
-procedure Tarifikation_TableTarJobs_OnCellClick (Sender: TObject; ACol, ARow: Integer);
-begin
-  Tarifikation_DoFilterTableTarJobDoblaty;
-end;
-
-procedure Tarifikation_ListFilterTarJobDoplaty_OnChange (Sender: TObject);
-begin
-  Tarifikation_DoFilterTableTarJobDoblaty;
 end;
 
 procedure Tarifikation_BtnClearFilterTarJobDoplaty_OnClick (Sender: TObject; var Cancel: boolean);
@@ -372,30 +329,14 @@ begin
 end;
 // Логика показа кнопок добавления, редактирования и удаления
 
-// Запуск всех фильтров на главной
-procedure Tarifikation_FilterTarTables;
+// Подготовка всех таблиц на главной
+procedure Tarifikation_PrepareTarTables;
 begin
   Tarifikation.BtnFilterTarOrganizations.Click;
   Tarifikation_DoFilterTableTarifikaciya;
   Tarifikation_DoFilterTableTarNadbavky;
   Tarifikation_DoFilterTableTarJobs;
   Tarifikation_DoFilterTableTarJobDoblaty;
-end;
-
-// Подготовка всех таблиц на главной
-procedure Tarifikation_PrepareTarTables;
-begin
-  Tarifikation.BtnFilterTarOrganizations.Click;
-  Tarifikation.BtnFilterTarifikaciya.Click;
-  Tarifikation.BtnFilterTarNadbavky.Click;
-  Tarifikation.BtnFilterTarJobs.Click;
-  Tarifikation.BtnFilterTarJobDoplaty.Click;
-{
-  Tarifikation.TableTarifikaciya.ClearRows;
-  Tarifikation.TableTarNadbavky.ClearRows;
-  Tarifikation.TableTarJobs.ClearRows;
-  Tarifikation.TableTarJobDoblaty.ClearRows;
-  }
 end;
 
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);
