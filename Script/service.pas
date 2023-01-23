@@ -136,18 +136,16 @@ begin
   if SqlResult = '' then begin end
   else DateStart := SQLDateTimeToDateTime(SqlResult);
 
+  DateEnd := Now;
   SqlResult := SQLExecute('select date_tar_end from _user where id = '+ IntToStr(Application.User.id));
   if SqlResult = '' then begin end
   else DateEnd := SQLDateTimeToDateTime(SqlResult);
-
-  SqlResult := SQLExecute('select date_tar_current from _user where id = '+ IntToStr(Application.User.id));
-  if SqlResult = '' then begin end
-  else Tarifikation.DateFilterTarDate.DateTime := SQLDateTimeToDateTime(SqlResult);
 
   Tarifikation.DateTarStart.DateTime := DateStart;
   Tarifikation.DateTarEnd.DateTime := DateEnd;
   Tarifikation.DateFilterTarDate.MinDate := DateStart;
   Tarifikation.DateFilterTarDate.MaxDate := DateEnd;
+  Tarifikation.DateFilterTarDate.Checked := False;
 end;
 
 
@@ -155,33 +153,53 @@ end;
 procedure Tarifikation_DateTarStart_OnChange (Sender: TObject);
 var
   SelectedDate : String;
-  StartDateTime, CurrentDateTime : TDateTime;
+  StartDateTime, EndDateTime, CurrentDateTime : TDateTime;
+  CurrentDateTimeChecked : Boolean;
 begin
   SelectedDate := Tarifikation.DateTarStart.sqlDate;
   SQLExecute('update _user set date_tar_start = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
 
   StartDateTime := Tarifikation.DateTarStart.DateTime;
+  EndDateTime := Tarifikation.DateTarEnd.DateTime;
   CurrentDateTime := Tarifikation.DateFilterTarDate.DateTime;
+  CurrentDateTimeChecked := Tarifikation.DateFilterTarDate.Checked;
+
+  if StartDateTime > EndDateTime then begin
+    Tarifikation.DateTarEnd.DateTime := StartDateTime;
+    Tarifikation_DateTarEnd_OnChange(Sender);
+    Tarifikation.DateFilterTarDate.MaxDate := StartDateTime;
+  end;
   if StartDateTime > CurrentDateTime then begin
     Tarifikation.DateFilterTarDate.DateTime := StartDateTime;
   end;
   Tarifikation.DateFilterTarDate.MinDate := StartDateTime;
+  Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
 end;
 
 procedure Tarifikation_DateTarEnd_OnChange (Sender: TObject);
 var
   SelectedDate : String;
-  EndDateTime, CurrentDateTime : TDateTime;
+  StartDateTime, EndDateTime, CurrentDateTime : TDateTime;
+  CurrentDateTimeChecked : Boolean;
 begin
   SelectedDate := Tarifikation.DateTarEnd.sqlDate;
   SQLExecute('update _user set date_tar_end = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
 
+  StartDateTime := Tarifikation.DateTarStart.DateTime;
   EndDateTime := Tarifikation.DateTarEnd.DateTime;
   CurrentDateTime := Tarifikation.DateFilterTarDate.DateTime;
+  CurrentDateTimeChecked := Tarifikation.DateFilterTarDate.Checked;
+
+  if EndDateTime < StartDateTime then begin
+    Tarifikation.DateTarStart.DateTime := EndDateTime;
+    Tarifikation_DateTarStart_OnChange(Sender);
+    Tarifikation.DateFilterTarDate.MinDate := EndDateTime;
+  end;
   if EndDateTime < CurrentDateTime then begin
     Tarifikation.DateFilterTarDate.DateTime := EndDateTime;
   end;
   Tarifikation.DateFilterTarDate.MaxDate := EndDateTime;
+  Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
 end;
 // Период Тарификации
 

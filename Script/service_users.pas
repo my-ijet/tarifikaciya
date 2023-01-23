@@ -76,7 +76,7 @@ begin
 
   SQLExecute('update _user set last_login = "'+DateTimeToStr(Now)+'" where id = '+IntToStr(Application.User.id));
   UpdateDatabase('_user');
-  FillRequisites; FillTarPeriod; FillCurAppUserSelections;
+  FillCurAppUserSelections; FillTarPeriod; FillRequisites; FillTarOtchetPeriod;
 
   if ShouldSave then SaveCurrentAppUserID;
 end;
@@ -123,6 +123,7 @@ begin
 
   UpdateCurrentAppUser(frmUserLogin.ListUsers.dbItemID,
                        frmUserLogin.ListUsers.Text);
+  Tarifikation_PrepareTarTables;
 end;
 
 procedure frmUserLogin_BtnCancel_OnClick (Sender: TObject; var Cancel: boolean);

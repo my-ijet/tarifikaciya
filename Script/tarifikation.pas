@@ -17,15 +17,6 @@ begin
   Tarifikation.BtnFilterTarifikaciya.Click;
 end;
 
-// Сохранение текущей даты тарификации
-procedure Tarifikation_DateFilterTarDate_OnChange (Sender: TObject);
-var
-  SelectedDate : String;
-begin
-  SelectedDate := Tarifikation.DateFilterTarDate.sqlDate;
-  SQLExecute('update _user set date_tar_current = '+SelectedDate+' where id = '+IntToStr(Application.User.id));
-end;
-
 // Фильтр списка организаций Тарификации
 procedure Tarifikation_ListFilterTarOrganizations_OnChange (Sender: TObject);
 var
@@ -79,11 +70,9 @@ end;
 procedure Tarifikation_CheckShowAllTarifikaions_OnClick (Sender: TObject);
 begin
   if Tarifikation.CheckShowAllTarifikaions.Checked then begin
-    Tarifikation.DateFilterTarDate.Checked := False;
     Tarifikation.DateTarStart.Checked := False;
     Tarifikation.DateTarEnd.Checked := False;
   end else begin
-    Tarifikation.DateFilterTarDate.Checked := True;
     Tarifikation.DateTarStart.Checked := True;
     Tarifikation.DateTarEnd.Checked := True;
   end;
@@ -160,9 +149,12 @@ end;
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
 begin
   frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
-  if Tarifikation.DateFilterTarDate.Checked then
-    frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateFilterTarDate.DateTime
-  else frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateTarStart.DateTime;
+
+  if not frmEditTarifikation.DateTarDate.Checked then
+    frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateFilterTarDate.DateTime;
+
+  frmEditTarifikation.DateTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
+  frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
 end;
 
 // Новая Надбавка тарификации
@@ -342,9 +334,9 @@ end;
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);
 begin
   Tarifikation.MainTabs.ActivePageIndex := 0;
-  Tarifikation_PrepareTarTables;
 
   UserLogin(True);
+  Tarifikation_PrepareTarTables;
 
   Tarifikation.Menu.Items.Remove(Tarifikation.mniAbout);
 end;
