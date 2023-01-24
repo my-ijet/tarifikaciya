@@ -79,7 +79,7 @@ begin
 // Дополнительная настройка БД
   SQLExecute('pragma mmap_size = 268435456;');
   SQLExecute('pragma temp_store = memory;');
-  // SQLExecute('pragma journal_mode = WAL;');
+  SQLExecute('pragma journal_mode = WAL;');
 
 
 // Убираем ошибку вовремя удаления связанной записи
@@ -169,7 +169,7 @@ end;
 
 procedure OptimizeDatabase;
 begin
-  try SQLExecute('VACUUM');
+  try SQLExecute('pragma wal_checkpoint; VACUUM');
   except end;
   SQLExecute('pragma optimize;');
 end;

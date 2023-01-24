@@ -34,6 +34,45 @@ begin
   end;
 end;
 
+// Новый фильтр таблицы Тарификации
+procedure Tarifikation_Btn2FilterTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SqlSelect, SqlFilter : String;
+  SelectedOrganization,
+  OtchetStartDate, OtchetEndDate : String;
+begin
+  SelectedOrganization := Tarifikation.TableTarOrganizations.sqlValue;
+  OtchetStartDate := Tarifikation.DateTarStart.sqlDate;
+  OtchetEndDate := Tarifikation.DateTarEnd.sqlDate;
+
+  if Tarifikation.CheckShowAllTarifikaions.Checked then begin
+    SqlFilter := '(select id from tarifikaciya) '   // Для отображения всех записей
+  end else begin
+    SqlFilter := '(select id, max(date) from tarifikaciya '+
+                 'where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+                 'group by id_person ) ';           // Для отображения самых новых записей по дате
+  end;
+
+  SqlSelect := 'WITH latest_tar as '+SqlFilter+
+           //
+           'SELECT '+
+           'strftime("%d.%m.%Y", date) as formated_date, '+
+           'printf("%s %s %s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
+           'obrazovanie.name as "obrazovanie.name", '+
+           'staj_year, '+
+           'staj_month '+
+           'FROM tarifikaciya, latest_tar '+
+           'JOIN organization ON tarifikaciya.id_organization = organization.id '+
+           'JOIN person ON tarifikaciya.id_person = person.id '+
+           'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
+           'WHERE '+
+           '      organization.id = '+SelectedOrganization+' '+
+           '  and tarifikaciya.id = latest_tar.id '+
+           'ORDER by date desc, "person.FIO" ';
+
+  Tarifikation.Btn2FilterTarifikaciya.dbSQL := SqlSelect;
+end;
+
 // Фильтр таблицы Тарификации
 procedure Tarifikation_DoFilterTableTarifikaciya;
 begin
@@ -69,9 +108,7 @@ end;
 
 procedure Tarifikation_CheckShowAllTarifikaions_OnClick (Sender: TObject);
 begin
-  Tarifikation.DateTarStart.Checked := not Tarifikation.CheckShowAllTarifikaions.Checked;
-  Tarifikation.DateTarEnd.Checked := not Tarifikation.CheckShowAllTarifikaions.Checked;
-  Tarifikation_DoFilterTableTarifikaciya;
+  // Tarifikation_DoFilterTableTarifikaciya;
 end;
 // Фильтр таблицы Тарификации
 

@@ -13,6 +13,8 @@ begin
   Tarifikation.ListFilterOtchetyOrganizations.dbItemId := Tarifikation.ListFilterTarOrganizations.dbItemId;
   Tarifikation.BtnFilterOtchetyOrganizations.Click;
   Tarifikation.TableOtchetyOrganizations.dbItemId := Tarifikation.TableTarOrganizations.dbItemId;
+
+  FillTarOtchetPeriod;
 end;
 
 // Заполнение реквизитов
@@ -31,11 +33,9 @@ end;
 
 procedure PrepareReport;
 var
-  PathToReportFile,
   AppUserID, SelectedOrganization,
   OtchetStartDate, OtchetEndDate : String;
 begin
-  PathToReportFile := ExtractFilePath(Application.ExeName)+'Report\report.fr3';
   AppUserID := IntToStr(Application.User.Id);
   SelectedOrganization := Tarifikation.TableOtchetyOrganizations.sqlValue;
   OtchetStartDate := Tarifikation.DateTarOtchetStart.sqlDate;
@@ -46,8 +46,6 @@ begin
            '(select id, max(date) from tarifikaciya '+
            'where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
            'group by id_person ) '+ // Для отображения самых новых записей по дате
-
-           // '(select id from tarifikaciya)'+ // Для отображения всех записей
 
            'SELECT '+
            'organization.short_name as "organization.short_name",'+
@@ -130,8 +128,6 @@ begin
   ReportDsOrgHead.OpenDataSource := True;
   ReportDsOrgHead.DataSet := DsOrgHead;
 
-  Tarifikation.frxReport.Clear;
-  Tarifikation.frxReport.DataSets.Clear;
   Tarifikation.frxReport.DataSets.Add(ReportDsOtchet);
   Tarifikation.frxReport.DataSets.Add(ReportDsUser);
   Tarifikation.frxReport.DataSets.Add(ReportDsOrgHead);
