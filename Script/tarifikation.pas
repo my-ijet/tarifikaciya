@@ -69,13 +69,8 @@ end;
 
 procedure Tarifikation_CheckShowAllTarifikaions_OnClick (Sender: TObject);
 begin
-  if Tarifikation.CheckShowAllTarifikaions.Checked then begin
-    Tarifikation.DateTarStart.Checked := False;
-    Tarifikation.DateTarEnd.Checked := False;
-  end else begin
-    Tarifikation.DateTarStart.Checked := True;
-    Tarifikation.DateTarEnd.Checked := True;
-  end;
+  Tarifikation.DateTarStart.Checked := not Tarifikation.CheckShowAllTarifikaions.Checked;
+  Tarifikation.DateTarEnd.Checked := not Tarifikation.CheckShowAllTarifikaions.Checked;
   Tarifikation_DoFilterTableTarifikaciya;
 end;
 // Фильтр таблицы Тарификации

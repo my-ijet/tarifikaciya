@@ -4,6 +4,10 @@
   'spravochniky.pas',
   'tarifikation.pas';
 
+var
+  ReportDsOtchet, ReportDsUser, ReportDsOrgHead : TfrxDBDataset;
+  DsOtchet, DsUser, DsOrgHead : TDataSet;
+
 procedure PrepareOtchety;
 begin
   Tarifikation.ListFilterOtchetyOrganizations.dbItemId := Tarifikation.ListFilterTarOrganizations.dbItemId;
@@ -25,10 +29,8 @@ begin
   Tarifikation.DateTarOtchetEnd.DateTime := Tarifikation.DateTarEnd.DateTime;
 end;
 
-procedure ShowOtchet(EditMode : boolean = False);
+procedure PrepareReport;
 var
-  ReportDsOtchet, ReportDsUser, ReportDsOrgHead : TfrxDBDataset;
-  DsOtchet, DsUser, DsOrgHead : TDataSet;
   PathToReportFile,
   AppUserID, SelectedOrganization,
   OtchetStartDate, OtchetEndDate : String;
@@ -41,16 +43,16 @@ begin
 
   // Запрос на получение полей Тарификации в выбранный период
   SQLQuery('SELECT '+
-           // 'organization.short_name as "organization.short_name",'+
-           // 'organization.full_name as "organization.full_name",'+
+           'organization.short_name as "organization.short_name",'+
+           'organization.full_name as "organization.full_name",'+
            'tarifikaciya.id, '+
+           'ROW_NUMBER() OVER(ORDER by person.familyname, person.firstname, person.middlename) as num_of_row, '+
            'date, '+
-           'printf("%s %s'+Chr(10)+'%s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
+           'printf("%s %s" || char(10) || "%s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
            'obrazovanie.name as "obrazovanie.name", '+
            'diplom, '+
            'staj_year, '+
-           'staj_month, '+
-           'ROW_NUMBER() OVER(ORDER by person.familyname, person.firstname, person.middlename) as num_of_row '+
+           'staj_month '+
            'FROM tarifikaciya, '+
            '     (select id, max(date) from tarifikaciya '+
            '      where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
@@ -95,9 +97,7 @@ begin
   // Запрос на получение полей Главы организации в выбранный период
   SQLQuery('SELECT '+
            '(printf("%s %s %s", person.familyname, person.firstname, person.middlename)) as FIO, '+
-           'doljnost.name as doljnost, '+
-           'organization.short_name as organizaciya_short_name, '+
-           'organization.full_name as organizaciya_full_name '+
+           'doljnost.name as doljnost '+
            'from org_head '+
            'join person on org_head.id_person = person.id '+
            'join doljnost on org_head.id_doljnost = doljnost.id '+
@@ -132,19 +132,15 @@ begin
   Tarifikation.frxReport.DataSets.Add(ReportDsUser);
   Tarifikation.frxReport.DataSets.Add(ReportDsOrgHead);
 
-  if EditMode then begin
-  //DESIGN MODE
-    Tarifikation.frxReport.LoadFromFile(PathToReportFile);
-    Tarifikation.frxReport.DesignReport;
-  end else begin
-  //PREVIEW MODE
-    ReportDsOtchet.DataSet.Close;
-    ReportDsUser.DataSet.Close;
-    ReportDsOrgHead.DataSet.Close;
-    Tarifikation.frxReport.LoadFromFile(PathToReportFile);
-    Tarifikation.frxReport.ShowReport;
-  end;
+  ReportDsOtchet.DataSet.Close;
+  ReportDsUser.DataSet.Close;
+  ReportDsOrgHead.DataSet.Close;
 
+  Tarifikation.frxReport.PrepareReport;
+end;
+
+procedure ClearAfterReport;
+begin
   DsOtchet.Free;  ReportDsOtchet.Free;
   DsUser.Free;    ReportDsUser.Free;
   DsOrgHead.Free; ReportDsOrgHead.Free;
@@ -153,16 +149,61 @@ begin
   Tarifikation.frxReport.DataSets.Clear;
 end;
 
-
+// Кнопки отчёта
 procedure Tarifikation_BtnOtchet_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  ShowOtchet;
+  PrepareReport;
+end;
+procedure Tarifikation_BtnOtchet_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  ClearAfterReport;
 end;
 
 procedure Tarifikation_BtnEditOtchet_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  ShowOtchet(True);
+  PrepareReport;
 end;
+procedure Tarifikation_BtnEditOtchet_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  ClearAfterReport;
+end;
+
+procedure Tarifikation_BtnQuickPrintOtchet_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  PrepareReport;
+end;
+procedure Tarifikation_BtnQuickPrintOtchet_OnAfterClick (Sender: TObject);
+begin
+  ClearAfterReport;
+end;
+
+procedure Tarifikation_BtnOtchetToXLS_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  PrepareReport;
+end;
+procedure Tarifikation_BtnOtchetToXLS_OnAfterClick (Sender: TObject);
+begin
+  ClearAfterReport;
+end;
+
+procedure Tarifikation_BtnOtchetToODS_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  PrepareReport;
+end;
+procedure Tarifikation_BtnOtchetToODS_OnAfterClick (Sender: TObject);
+begin
+  ClearAfterReport;
+end;
+
+procedure Tarifikation_BtnOtchetToPDF_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  PrepareReport;
+end;
+procedure Tarifikation_BtnOtchetToPDF_OnAfterClick (Sender: TObject);
+begin
+  ClearAfterReport;
+end;
+// Кнопки отчёта
 
 // Сохранение реквизитов
 procedure Tarifikation_ListRequisitePersons_OnChange (Sender: TObject);
