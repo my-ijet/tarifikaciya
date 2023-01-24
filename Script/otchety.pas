@@ -42,7 +42,14 @@ begin
   OtchetEndDate := Tarifikation.DateTarOtchetEnd.sqlDate;
 
   // Запрос на получение полей Тарификации в выбранный период
-  SQLQuery('SELECT '+
+  SQLQuery('WITH latest_tar as '+
+           '(select id, max(date) from tarifikaciya '+
+           'where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+           'group by id_person ) '+ // Для отображения самых новых записей по дате
+
+           // '(select id from tarifikaciya)'+ // Для отображения всех записей
+
+           'SELECT '+
            'organization.short_name as "organization.short_name",'+
            'organization.full_name as "organization.full_name",'+
            'tarifikaciya.id, '+
@@ -53,10 +60,7 @@ begin
            'diplom, '+
            'staj_year, '+
            'staj_month '+
-           'FROM tarifikaciya, '+
-           '     (select id, max(date) from tarifikaciya '+
-           '      where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
-           '      group by id_person ORDER by date desc) as latest_tar '+         // Для отображения самых новых записей по дате
+           'FROM tarifikaciya, latest_tar '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
