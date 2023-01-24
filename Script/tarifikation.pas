@@ -34,28 +34,46 @@ begin
   end;
 end;
 
-// Новый фильтр таблицы Тарификации
-procedure Tarifikation_Btn2FilterTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
+// Клик на фильтр таблицы Тарификации
+procedure Tarifikation_BtnFilterTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
 var
   SqlSelect, SqlFilter : String;
-  SelectedOrganization,
-  OtchetStartDate, OtchetEndDate : String;
+  SelectedOrganization, SelectedPerson,
+  SelectedObrazovanie, SelectedStajYear,
+  CurrentDate, StartDate, EndDate : String = ' ';
 begin
+  StartDate := Tarifikation.DateTarStart.sqlDate;
+  EndDate := Tarifikation.DateTarEnd.sqlDate;
+
   SelectedOrganization := Tarifikation.TableTarOrganizations.sqlValue;
-  OtchetStartDate := Tarifikation.DateTarStart.sqlDate;
-  OtchetEndDate := Tarifikation.DateTarEnd.sqlDate;
+
+  if Tarifikation.ListFilterTarFIO.dbItemID > 0 then begin
+    SelectedPerson := ' and person.id = '+Tarifikation.ListFilterTarFIO.sqlValue;
+  end;
+
+  if Tarifikation.ListFilterTarObrazovanie.dbItemID > 0 then begin
+    SelectedObrazovanie := ' and obrazovanie.id = '+Tarifikation.ListFilterTarObrazovanie.sqlValue;
+  end;
+
+  if Tarifikation.EditFilterTarStaj.Text <> '' then begin
+    SelectedStajYear := ' and staj_year = '+Tarifikation.EditFilterTarStaj.sqlValue;
+  end;
+
+  if Tarifikation.DateFilterTarDate.Checked then begin
+    CurrentDate := ' and date(date) = date('+Tarifikation.DateFilterTarDate.sqlDate+')';
+  end;
 
   if Tarifikation.CheckShowAllTarifikaions.Checked then begin
     SqlFilter := '(select id from tarifikaciya) '   // Для отображения всех записей
   end else begin
     SqlFilter := '(select id, max(date) from tarifikaciya '+
-                 'where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+                 'where date between '+StartDate+' and '+EndDate+' '+
                  'group by id_person ) ';           // Для отображения самых новых записей по дате
   end;
 
   SqlSelect := 'WITH latest_tar as '+SqlFilter+
-           //
            'SELECT '+
+           'tarifikaciya.id, '+
            'strftime("%d.%m.%Y", date) as formated_date, '+
            'printf("%s %s %s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
            'obrazovanie.name as "obrazovanie.name", '+
@@ -66,19 +84,26 @@ begin
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
            'WHERE '+
-           '      organization.id = '+SelectedOrganization+' '+
+           '      organization.id = ' + SelectedOrganization +
+                  SelectedPerson +
+                  SelectedObrazovanie +
+                  SelectedStajYear +
+                  CurrentDate +
            '  and tarifikaciya.id = latest_tar.id '+
            'ORDER by date desc, "person.FIO" ';
 
-  Tarifikation.Btn2FilterTarifikaciya.dbSQL := SqlSelect;
+  Tarifikation.BtnFilterTarifikaciya.dbSQL := SqlSelect;
+end; // Скрыть колонку ID
+procedure Tarifikation_BtnFilterTarifikaciya_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.TableTarifikaciya.Columns[0].Visible := False;
 end;
 
 // Фильтр таблицы Тарификации
 procedure Tarifikation_DoFilterTableTarifikaciya;
 begin
-  if Tarifikation.TableTarOrganizations.SelectedRow = -1 then Exit;
-
   Tarifikation.BtnFilterTarifikaciya.Click;
+
   if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
     Tarifikation.TableTarNadbavky.ClearRows;
     Tarifikation.TableTarJobs.ClearRows;
@@ -103,14 +128,101 @@ begin
   Tarifikation.ListFilterTarObrazovanie.ItemIndex := 0;
   Tarifikation.EditFilterTarStaj.Clear;
   Tarifikation.DateFilterTarDate.Checked := False;
+
   Tarifikation_DoFilterTableTarifikaciya;
 end;
 
 procedure Tarifikation_CheckShowAllTarifikaions_OnClick (Sender: TObject);
+var
+  CurrentDate, DateStart, DateEnd : TDateTime;
+  CurrentDateTimeChecked : Boolean;
 begin
-  // Tarifikation_DoFilterTableTarifikaciya;
+  DateStart := Tarifikation.DateTarStart.DateTime;
+  DateEnd := Tarifikation.DateTarEnd.DateTime;
+  CurrentDate := Tarifikation.DateFilterTarDate.DateTime;
+  CurrentDateTimeChecked := Tarifikation.DateFilterTarDate.Checked;
+
+  if Tarifikation.CheckShowAllTarifikaions.Checked then begin
+    Tarifikation.DateFilterTarDate.MinDate := 0;
+    Tarifikation.DateFilterTarDate.MaxDate := 9999999;
+  end else begin
+    if CurrentDate < DateStart then
+      Tarifikation.DateFilterTarDate.DateTime := DateStart;
+    if CurrentDate > DateEnd then
+      Tarifikation.DateFilterTarDate.DateTime := DateEnd;
+    Tarifikation.DateFilterTarDate.MinDate := DateStart;
+    Tarifikation.DateFilterTarDate.MaxDate := DateEnd;
+    Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
+  end;
 end;
 // Фильтр таблицы Тарификации
+
+// Клик на фильтр таблицы Должностей
+procedure Tarifikation_BtnFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SqlSelect, SqlFilter : String;
+  SelectedTarifikaciya,
+  SelectedDoljnost, SelectedPredmet : String = ' ';
+begin
+  SelectedTarifikaciya := Tarifikation.TableTarifikaciya.sqlValue;
+
+  if Tarifikation.ListFilterTarJobDoljnosty.dbItemID > 0 then begin
+    SelectedDoljnost := ' and doljnost.id = '+Tarifikation.ListFilterTarJobDoljnosty.sqlValue;
+  end;
+
+  if Tarifikation.ListFilterTarJobPredmety.dbItemID > 0 then begin
+    SelectedPredmet := ' and predmet.id = '+Tarifikation.ListFilterTarJobPredmety.sqlValue;
+  end;
+
+  SqlSelect := ''+
+           'SELECT '+
+           'tar_job.id, '+
+           'doljnost.name, '+
+           'predmet.name, '+
+           'tar_job.clock, '+
+           'kategory.name, '+
+           'stavka.summa '+
+           'FROM tar_job '+
+           'JOIN tarifikaciya ON tar_job.id_tarifikaciya = tarifikaciya.id '+
+           'JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
+           'JOIN predmet ON tar_job.id_predmet = predmet.id '+
+           'JOIN kategory ON tar_job.id_kategory = kategory.id '+
+           'JOIN stavka ON tar_job.id_stavka = stavka.id '+
+           'WHERE '+
+           '      tarifikaciya.id = ' + SelectedTarifikaciya +
+                  SelectedDoljnost +
+                  SelectedPredmet+' ' +
+           'ORDER by doljnost.name ';
+
+  Tarifikation.BtnFilterTarJobs.dbSQL := SqlSelect;
+end;
+procedure Tarifikation_BtnFilterTarJobs_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.TableTarJobs.Columns[0].Visible := False;
+end;
+
+// Фильтр таблицы Должностей
+procedure Tarifikation_DoFilterTableTarJobs;
+begin
+  Tarifikation.BtnFilterTarJobs.Click;
+
+  if Tarifikation.TableTarJobs.SelectedRow = -1 then
+    Tarifikation.TableTarJobDoblaty.ClearRows;
+end;
+
+procedure Tarifikation_TableTarifikaciya_OnCellClick (Sender: TObject; ACol, ARow: Integer);
+begin
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarNadbavky;
+end;
+
+procedure Tarifikation_BtnClearFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.ListFilterTarJobDoljnosty.ItemIndex := 0;
+  Tarifikation.ListFilterTarJobPredmety.ItemIndex := 0;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+// Фильтр таблицы Должностей
 
 // Фильтр таблицы Надбавок тарификации
 procedure Tarifikation_DoFilterTableTarNadbavky;
@@ -126,30 +238,6 @@ begin
   Tarifikation_DoFilterTableTarNadbavky;
 end;
 // Фильтр таблицы Надбавок тарификации
-
-// Фильтр таблицы Должностей
-procedure Tarifikation_DoFilterTableTarJobs;
-begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then Exit;
-
-  Tarifikation.BtnFilterTarJobs.Click;
-  if Tarifikation.TableTarJobs.SelectedRow = -1 then
-    Tarifikation.TableTarJobDoblaty.ClearRows;
-end;
-
-procedure Tarifikation_TableTarifikaciya_OnCellClick (Sender: TObject; ACol, ARow: Integer);
-begin
-  Tarifikation_DoFilterTableTarNadbavky;
-  Tarifikation_DoFilterTableTarJobs;
-end;
-
-procedure Tarifikation_BtnClearFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  Tarifikation.ListFilterTarJobDoljnosty.ItemIndex := 0;
-  Tarifikation.ListFilterTarJobPredmety.ItemIndex := 0;
-  Tarifikation_DoFilterTableTarJobs;
-end;
-// Фильтр таблицы Должностей
 
 // Фильтр таблицы Доплат для Должностей
 procedure Tarifikation_DoFilterTableTarJobDoblaty;
@@ -189,16 +277,6 @@ begin
   frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
 end;
 
-// Новая Надбавка тарификации
-procedure Tarifikation_BtnNewTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
-    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
-    Exit;
-  end;
-  NewRecord(frmEditTarNadbavka,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
-end;
-
 // Новая Должность тарификации
 procedure Tarifikation_BtnNewTarJob_OnClick (Sender: TObject; var Cancel: boolean);
 begin
@@ -207,6 +285,16 @@ begin
     Exit;
   end;
   NewRecord(frmEditTarJob,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
+end;
+
+// Новая Надбавка тарификации
+procedure Tarifikation_BtnNewTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarNadbavka,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
 end;
 
 // Новая Доплата для должности тарификации
@@ -357,6 +445,7 @@ end;
 procedure Tarifikation_PrepareTarTables;
 begin
   Tarifikation.BtnFilterTarOrganizations.Click;
+
   Tarifikation_DoFilterTableTarifikaciya;
   Tarifikation_DoFilterTableTarNadbavky;
   Tarifikation_DoFilterTableTarJobs;
