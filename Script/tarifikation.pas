@@ -78,11 +78,13 @@ begin
            'printf("%s %s %s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
            'obrazovanie.name as "obrazovanie.name", '+
            'staj_year, '+
-           'staj_month '+
+           'staj_month, '+
+           'total_tar_job.total_summa '+
            'FROM tarifikaciya, latest_tar '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
+           'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
            'WHERE '+
            '      organization.id = ' + SelectedOrganization +
                   SelectedPerson +
@@ -181,13 +183,22 @@ begin
            'predmet.name, '+
            'tar_job.clock, '+
            'kategory.name, '+
-           'stavka.summa '+
+           'stavka.summa, '+
+           'tar_job_summa.total_nadbavka_percent, '+
+           'tar_job_summa.total_nadbavka_summa, '+
+           'tar_job_summa.total_doplata_summa, '+
+           'tar_job_summa.total_doplata_persent, '+
+           'tar_job_summa.total_doplata_persent_summa, '+
+           'tar_job_summa.total_percent, '+
+           'tar_job_summa.total_percent_summa, '+
+           'tar_job_summa.total_summa '+
            'FROM tar_job '+
            'JOIN tarifikaciya ON tar_job.id_tarifikaciya = tarifikaciya.id '+
            'JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
            'JOIN predmet ON tar_job.id_predmet = predmet.id '+
            'JOIN kategory ON tar_job.id_kategory = kategory.id '+
            'JOIN stavka ON tar_job.id_stavka = stavka.id '+
+           'LEFT JOIN tar_job_summa ON tar_job.id = tar_job_summa.id '+
            'WHERE '+
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
                   SelectedDoljnost +

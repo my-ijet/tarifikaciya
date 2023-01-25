@@ -84,33 +84,32 @@ begin
 
 // Убираем ошибку вовремя удаления связанной записи
   SQLExecute('PRAGMA foreign_keys=OFF;');
-// новые таблицы
-  SqlCreateTable := 'CREATE TABLE "_user_new" ';
-  SqlCreateTable := SqlCreateTable+'(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, ';
-  SqlCreateTable := SqlCreateTable+'"username" TEXT NOT NULL DEFAULT "empty", ';
-  SqlCreateTable := SqlCreateTable+'"password" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"id__role" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"is_admin" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"is_active" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"email" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"first_name" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"last_name" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"last_login" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"date_joined" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"id_doljnost" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"id_organization" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"id_person" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"date_tar_start" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"date_tar_end" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"date_tar_current" TEXT, ';
-  SqlCreateTable := SqlCreateTable+'"id_org_group" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'"id_organization1" INTEGER, ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id__role) REFERENCES "_role"(id), ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_org_group) REFERENCES "org_group"(id) ON DELETE SET NULL, ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_organization1) REFERENCES "organization"(id) ON DELETE SET NULL, ';
-  SqlCreateTable := SqlCreateTable+'FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)';
+  SqlCreateTable := 'CREATE TABLE "_user_new" '+
+                    '(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, '+
+                    '"username" TEXT NOT NULL DEFAULT "empty", '+
+                    '"password" TEXT, '+
+                    '"id__role" INTEGER, '+
+                    '"is_admin" INTEGER, '+
+                    '"is_active" INTEGER, '+
+                    '"email" TEXT, '+
+                    '"first_name" TEXT, '+
+                    '"last_name" TEXT, '+
+                    '"last_login" TEXT, '+
+                    '"date_joined" TEXT, '+
+                    '"id_doljnost" INTEGER, '+
+                    '"id_organization" INTEGER, '+
+                    '"id_person" INTEGER, '+
+                    '"date_tar_start" TEXT, '+
+                    '"date_tar_end" TEXT, '+
+                    '"date_tar_current" TEXT, '+
+                    '"id_org_group" INTEGER, '+
+                    '"id_organization1" INTEGER, '+
+                    'FOREIGN KEY(id__role) REFERENCES "_role"(id), '+
+                    'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, '+
+                    'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, '+
+                    'FOREIGN KEY(id_org_group) REFERENCES "org_group"(id) ON DELETE SET NULL, '+
+                    'FOREIGN KEY(id_organization1) REFERENCES "organization"(id) ON DELETE SET NULL, '+
+                    'FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)';
   SQLExecute(SqlCreateTable);
 
 // запись значений в новые таблицы
@@ -119,9 +118,92 @@ begin
   SQLExecute('drop table _user;');
 // переименование новых таблиц
   SQLExecute('alter table _user_new rename to _user;');
-
   SQLExecute('PRAGMA foreign_keys=ON;');
 
+// новые таблицы
+  SqlCreateTable :=
+     'CREATE VIEW tar_job_doplata_summa AS '+
+     'WITH total_doplata as '+
+     ' (SELECT doplata.id, '+
+     '		(doplata.percent + tar_job_doplata.dop_percent) as total_percent, '+
+     '		(doplata.summa + tar_job_doplata.dop_summa) as total_summa '+
+     ' FROM tar_job_doplata '+
+     ' JOIN doplata on tar_job_doplata.id_doplata = doplata.id) '+
+     'SELECT tar_job_doplata.id, '+
+     '	   tar_job_doplata.id_tar_job, '+
+     '	   total_summa, '+
+     '	   total_percent, '+
+     '	   (total_percent / 100 * stavka.summa) as total_percent_summa, '+
+     '	   ( total_summa + (total_percent / 100 * stavka.summa)) as total_doplata_summa '+
+     'FROM tar_job_doplata, total_doplata '+
+     'JOIN tar_job on tar_job_doplata.id_tar_job = tar_job.id '+
+     'JOIN stavka on tar_job.id_stavka = stavka.id '+
+     'WHERE tar_job_doplata.id_doplata = total_doplata.id; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW tar_job_summa AS '+
+     'SELECT tar_job.id, '+
+     '	   tar_job.id_tarifikaciya, '+
+     '	   total_tar_job_doplata.total_summa as total_doplata_summa, '+
+     '	   total_tar_job_doplata.total_percent as total_doplata_persent, '+
+     '	   (total_tar_job_doplata.total_percent / 100 * stavka.summa) as total_doplata_persent_summa, '+
+     '	   total_nadbavka.total_percent as total_nadbavka_percent, '+
+     '	   (total_nadbavka.total_percent / 100 * stavka.summa) as total_nadbavka_summa, '+
+     '	   NULLIF((ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)), 0) as total_percent, '+
+     '	   ( NULLIF((ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)), 0) / 100 * stavka.summa ) as total_percent_summa, '+
+     '	   (stavka.summa + ifnull(total_tar_job_doplata.total_summa, 0) + '+
+     '	   ( (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)) / 100 * stavka.summa ) ) as total_summa '+
+     'FROM tar_job '+
+     'JOIN stavka on tar_job.id_stavka = stavka.id '+
+     'LEFT JOIN total_nadbavka on tar_job.id_tarifikaciya = total_nadbavka.id_tarifikaciya '+
+     'LEFT JOIN total_tar_job_doplata on tar_job.id = total_tar_job_doplata.id_tar_job; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW tar_nadbavka_summa AS '+
+     'WITH total_tar_job_stavka as '+
+     '(SELECT tar_job.id_tarifikaciya, '+
+     '		 sum(stavka.summa) as total_summa '+
+     ' FROM tar_job '+
+     ' JOIN stavka on tar_job.id_stavka = stavka.id '+
+     ' GROUP by tar_job.id_tarifikaciya) '+
+     'SELECT tar_nadbavka.id, '+
+     '	    tar_nadbavka.id_tarifikaciya, '+
+     '		nadbavka.percent, '+
+     '	    ( percent / 100 * total_summa ) as total_nadbavka_summa '+
+     'FROM tar_nadbavka, total_tar_job_stavka '+
+     'JOIN tarifikaciya on tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
+     'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
+     'WHERE total_tar_job_stavka.id_tarifikaciya = tar_nadbavka.id_tarifikaciya; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW total_nadbavka AS '+
+     'SELECT tar_nadbavka.id_tarifikaciya, sum(nadbavka.percent) as total_percent '+
+     'FROM tar_nadbavka '+
+     'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
+     'GROUP by tar_nadbavka.id_tarifikaciya; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW total_tar_job AS '+
+     'SELECT tar_job.id_tarifikaciya, '+
+     '	   sum(total_summa) as total_summa '+
+     'from tar_job '+
+     'JOIN tar_job_summa on tar_job.id = tar_job_summa.id '+
+     'GROUP by tar_job.id_tarifikaciya; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW total_tar_job_doplata AS '+
+     'SELECT tar_job_doplata.id_tar_job, '+
+     '       sum(percent + dop_percent) as total_percent, '+
+     '	   sum(summa + dop_summa) as total_summa '+
+     'FROM tar_job_doplata '+
+     'JOIN doplata on tar_job_doplata.id_doplata = doplata.id '+
+     'GROUP by tar_job_doplata.id_tar_job; ';
+  SQLExecute(SqlCreateTable);
 end;
 
 procedure UpdateAllTables;
