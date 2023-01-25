@@ -203,7 +203,7 @@ begin
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
                   SelectedDoljnost +
                   SelectedPredmet+' ' +
-           'ORDER by doljnost.name ';
+           'ORDER by tar_job_summa.total_summa desc, doljnost.name ';
 
   Tarifikation.BtnFilterTarJobs.dbSQL := SqlSelect;
 end;
@@ -274,7 +274,77 @@ begin
     Exit;
   end;
   NewRecord(frmEditTarifikation);
+
+  Tarifikation_DoFilterTableTarifikaciya;
 end;
+
+// Новая Должность тарификации
+procedure Tarifikation_BtnNewTarJob_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarJob,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
+
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+// Новая Надбавка тарификации
+procedure Tarifikation_BtnNewTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarNadbavka,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
+
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarNadbavky;
+end;
+
+// Новая Доплата для должности тарификации
+procedure Tarifikation_BtnNewTarJobDoplata_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  if Tarifikation.TableTarJobs.SelectedRow = -1 then begin
+    MessageDlg('Не выбрана запись должности', mtInformation, mbOK, 0);
+    Exit;
+  end;
+  NewRecord(frmEditTarJobDoplata,'tar_job', Tarifikation.TableTarJobs.dbItemID);
+
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
+
+// Кнопки редактирования на главной
+procedure Tarifikation_BtnEditTarifikaciya_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation_DoFilterTableTarifikaciya;
+end;
+
+procedure Tarifikation_BtnEditTarJob_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+procedure Tarifikation_BtnEditTarNadbavka_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarNadbavky;
+end;
+
+procedure Tarifikation_BtnEditTarJobDoplata_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarJobDoblaty;
+end;
+
 // При открытии формы редактирования тарификации подставляется
 // ранее выбранная организация и текущая дата тарификации
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
@@ -287,37 +357,7 @@ begin
   frmEditTarifikation.DateTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
   frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
 end;
-
-// Новая Должность тарификации
-procedure Tarifikation_BtnNewTarJob_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
-    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
-    Exit;
-  end;
-  NewRecord(frmEditTarJob,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
-end;
-
-// Новая Надбавка тарификации
-procedure Tarifikation_BtnNewTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then begin
-    MessageDlg('Не выбрана запись тарификации', mtInformation, mbOK, 0);
-    Exit;
-  end;
-  NewRecord(frmEditTarNadbavka,'tarifikaciya', Tarifikation.TableTarifikaciya.dbItemID);
-end;
-
-// Новая Доплата для должности тарификации
-procedure Tarifikation_BtnNewTarJobDoplata_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  if Tarifikation.TableTarJobs.SelectedRow = -1 then begin
-    MessageDlg('Не выбрана запись должности', mtInformation, mbOK, 0);
-    Exit;
-  end;
-  NewRecord(frmEditTarJobDoplata,'tar_job', Tarifikation.TableTarJobs.dbItemID);
-end;
-
+// Кнопки редактирования на главной
 
 // Кнопки удаления на главной
 procedure Tarifikation_BtnDeleteTarOrganization_OnClick (Sender: TObject; var Cancel: boolean);
@@ -328,21 +368,30 @@ end;
 procedure Tarifikation_BtnDeleteTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   DeleteRecordFromTable(Tarifikation.TableTarifikaciya);
-end;
-
-procedure Tarifikation_BtnDeleteTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
-begin
-  DeleteRecordFromTable(Tarifikation.TableTarNadbavky);
+  Tarifikation_DoFilterTableTarifikaciya;
 end;
 
 procedure Tarifikation_BtnDeleteTarJob_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   DeleteRecordFromTable(Tarifikation.TableTarJobs);
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+end;
+
+procedure Tarifikation_BtnDeleteTarNadbavka_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  DeleteRecordFromTable(Tarifikation.TableTarNadbavky);
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarNadbavky;
 end;
 
 procedure Tarifikation_BtnDeleteTarJobDoplata_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   DeleteRecordFromTable(Tarifikation.TableTarJobDoblaty);
+  Tarifikation_DoFilterTableTarifikaciya;
+  Tarifikation_DoFilterTableTarJobs;
+  Tarifikation_DoFilterTableTarJobDoblaty;
 end;
 // Кнопки удаления на главной
 
