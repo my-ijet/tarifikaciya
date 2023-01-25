@@ -64,14 +64,17 @@ begin
   end;
 
   if Tarifikation.CheckShowAllTarifikaions.Checked then begin
-    SqlFilter := '(select id from tarifikaciya) '   // Для отображения всех записей
+    SqlFilter := ''   // Для отображения всех записей
   end else begin
-    SqlFilter := '(select id, max(date) from tarifikaciya '+
-                 'where date between '+StartDate+' and '+EndDate+' '+
-                 'group by id_person ) ';           // Для отображения самых новых записей по дате
+    SqlFilter := '  and date between '+StartDate+' and '+EndDate+' ' // Для отображения самых новых записей по дате
   end;
 
-  SqlSelect := 'WITH latest_tar as '+SqlFilter+
+  SqlSelect := 'WITH latest_tar as '+
+               '(SELECT id, '+
+               '      count(id) OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
+               'FROM tarifikaciya '+
+               'where tarifikaciya.id_organization = ' + SelectedOrganization +
+                SqlFilter + ' ) '+
            'SELECT '+
            'tarifikaciya.id, '+
            'strftime("%d.%m.%Y", date) as formated_date, '+
@@ -86,12 +89,12 @@ begin
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
            'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
            'WHERE '+
-           '      organization.id = ' + SelectedOrganization +
+           '      tarifikaciya.id_organization = ' + SelectedOrganization +
                   SelectedPerson +
                   SelectedObrazovanie +
                   SelectedStajYear +
                   CurrentDate +
-           '  and tarifikaciya.id = latest_tar.id '+
+           '  and tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'ORDER by date desc, "person.FIO" ';
 
   Tarifikation.BtnFilterTarifikaciya.dbSQL := SqlSelect;

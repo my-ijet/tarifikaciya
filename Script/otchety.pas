@@ -43,9 +43,12 @@ begin
 
   // Запрос на получение полей Тарификации в выбранный период
   SQLQuery('WITH latest_tar as '+
-           '(select id, max(date) from tarifikaciya '+
-           'where date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
-           'group by id_person ) '+ // Для отображения самых новых записей по дате
+           '(SELECT id, '+
+           '        count(id) OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
+           'FROM tarifikaciya '+
+           'where tarifikaciya.id_organization = ' + SelectedOrganization +
+           '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+           ' ) '+ // Для отображения самых новых записей по дате
 
            'SELECT '+
            'organization.short_name as "organization.short_name",'+
@@ -57,14 +60,16 @@ begin
            'obrazovanie.name as "obrazovanie.name", '+
            'diplom, '+
            'staj_year, '+
-           'staj_month '+
+           'staj_month, '+
+           'total_tar_job.total_summa '+
            'FROM tarifikaciya, latest_tar '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
+           'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
            'WHERE '+
-           '      organization.id = '+SelectedOrganization+' '+
-           '  and tarifikaciya.id = latest_tar.id '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+           '  and tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'ORDER by num_of_row',
            DsOtchet);
 
@@ -136,6 +141,10 @@ begin
   ReportDsUser.DataSet.Close;
   ReportDsOrgHead.DataSet.Close;
 
+  Tarifikation.frxReport.Variables.Clear;
+  // Tarifikation.frxReport.Variables[' ' + 'My Category 1'] := Null;
+  Tarifikation.frxReport.Variables['OtchetEndDate'] := ''''+FormatDateTime('DD.MM.YYYY', Tarifikation.DateTarOtchetEnd.DateTime)+'''';
+
   Tarifikation.frxReport.PrepareReport;
 end;
 
@@ -147,6 +156,7 @@ begin
 
   Tarifikation.frxReport.Clear;
   Tarifikation.frxReport.DataSets.Clear;
+  Tarifikation.frxReport.Variables.Clear;
 end;
 
 // Кнопки отчёта
