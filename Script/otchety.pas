@@ -232,8 +232,8 @@ end;
 
 procedure Tarifikation_TableOtchetyOrganizations_OnMouseEnter (Sender: TObject);
 begin
-  if Tarifikation.TableOtchetyOrganizations.CanFocus then
-    Tarifikation.TableOtchetyOrganizations.SetFocus;
+  // if Tarifikation.TableOtchetyOrganizations.CanFocus then
+  //   Tarifikation.TableOtchetyOrganizations.SetFocus;
 end;
 
 

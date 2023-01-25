@@ -162,7 +162,7 @@ end;
 // Клик на фильтр таблицы Должностей
 procedure Tarifikation_BtnFilterTarJobs_OnClick (Sender: TObject; var Cancel: boolean);
 var
-  SqlSelect, SqlFilter : String;
+  SqlSelect : String;
   SelectedTarifikaciya,
   SelectedDoljnost, SelectedPredmet : String = ' ';
 begin
@@ -235,11 +235,44 @@ begin
 end;
 // Фильтр таблицы Должностей
 
+// Клик на фильтр таблицы Надбавок тарификации
+procedure Tarifikation_BtnFilterTarNadbavky_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SqlSelect : String;
+  SelectedTarifikaciya,
+  SelectedNadbavka : String = ' ';
+begin
+  SelectedTarifikaciya := Tarifikation.TableTarifikaciya.sqlValue;
+
+  if Tarifikation.ListFilterTarNadbavky.dbItemID > 0 then begin
+    SelectedNadbavka := ' and nadbavka.id = '+Tarifikation.ListFilterTarNadbavky.sqlValue;
+  end;
+
+  SqlSelect := ''+
+           'SELECT '+
+           'tar_nadbavka.id, '+
+           'nadbavka.name, '+
+           'nadbavka.percent, '+
+           'tar_nadbavka_summa.total_nadbavka_summa '+
+           'FROM tar_nadbavka '+
+           'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
+           'JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
+           'LEFT JOIN tar_nadbavka_summa ON tar_nadbavka.id = tar_nadbavka_summa.id '+
+           'WHERE '+
+           '      tarifikaciya.id = ' + SelectedTarifikaciya +
+                  SelectedNadbavka +' ' +
+           'ORDER by tar_nadbavka_summa.total_nadbavka_summa desc, nadbavka.name ';
+
+  Tarifikation.BtnFilterTarNadbavky.dbSQL := SqlSelect;
+end;
+procedure Tarifikation_BtnFilterTarNadbavky_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.TableTarNadbavky.Columns[0].Visible := False;
+end;
+
 // Фильтр таблицы Надбавок тарификации
 procedure Tarifikation_DoFilterTableTarNadbavky;
 begin
-  if Tarifikation.TableTarifikaciya.SelectedRow = -1 then Exit;
-
   Tarifikation.BtnFilterTarNadbavky.Click;
 end;
 
@@ -250,11 +283,46 @@ begin
 end;
 // Фильтр таблицы Надбавок тарификации
 
+// Клик на фильтр таблицы Доплат для Должностей
+procedure Tarifikation_BtnFilterTarJobDoplaty_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SqlSelect : String;
+  SelectedTarJob,
+  SelectedDoplata : String = ' ';
+begin
+  SelectedTarJob := Tarifikation.TableTarJobs.sqlValue;
+
+  if Tarifikation.ListFilterTarJobDoplaty.dbItemID > 0 then begin
+    SelectedDoplata := ' and doplata.id = '+Tarifikation.ListFilterTarJobDoplaty.sqlValue;
+  end;
+
+  SqlSelect := ''+
+           'SELECT '+
+           'tar_job_doplata.id, '+
+           'doplata.name, '+
+           'tar_job_doplata_summa.total_summa, '+
+           'tar_job_doplata_summa.total_percent, '+
+           'tar_job_doplata_summa.total_percent_summa, '+
+           'tar_job_doplata_summa.total_doplata_summa '+
+           'FROM tar_job_doplata '+
+           'JOIN tar_job ON tar_job_doplata.id_tar_job = tar_job.id '+
+           'JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
+           'LEFT JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
+           'WHERE '+
+           '      tar_job.id = ' + SelectedTarJob +
+                  SelectedDoplata +' ' +
+           'ORDER by tar_job_doplata_summa.total_doplata_summa desc, doplata.name ';
+
+  Tarifikation.BtnFilterTarJobDoplaty.dbSQL := SqlSelect;
+end;
+procedure Tarifikation_BtnFilterTarJobDoplaty_OnAfterClick (Sender: TObject; var Cancel: boolean);
+begin
+  Tarifikation.TableTarJobDoblaty.Columns[0].Visible := False;
+end;
+
 // Фильтр таблицы Доплат для Должностей
 procedure Tarifikation_DoFilterTableTarJobDoblaty;
 begin
-  if Tarifikation.TableTarJobs.SelectedRow = -1 then Exit;
-
   Tarifikation.BtnFilterTarJobDoplaty.Click;
 end;
 
@@ -393,6 +461,31 @@ begin
   Tarifikation_DoFilterTableTarJobs;
   Tarifikation_DoFilterTableTarJobDoblaty;
 end;
+
+// Обработка нажатия Del
+procedure Tarifikation_TableTarifikaciya_OnKeyDown (Sender: TObject; var Key: Word; Shift, Alt, Ctrl: boolean);
+begin
+  if Key = VK_DELETE then
+    Tarifikation_BtnDeleteTarifikaciya_OnClick(Sender, False);
+end;
+
+procedure Tarifikation_TableTarJobs_OnKeyDown (Sender: TObject; var Key: Word; Shift, Alt, Ctrl: boolean);
+begin
+  if Key = VK_DELETE then
+    Tarifikation_BtnDeleteTarJob_OnClick(Sender, False);
+end;
+
+procedure Tarifikation_TableTarNadbavky_OnKeyDown (Sender: TObject; var Key: Word; Shift, Alt, Ctrl: boolean);
+begin
+  if Key = VK_DELETE then
+    Tarifikation_BtnDeleteTarNadbavka_OnClick(Sender, False);
+end;
+
+procedure Tarifikation_TableTarJobDoblaty_OnKeyDown (Sender: TObject; var Key: Word; Shift, Alt, Ctrl: boolean);
+begin
+  if Key = VK_DELETE then
+    Tarifikation_BtnDeleteTarJobDoplata_OnClick(Sender, False);
+end;
 // Кнопки удаления на главной
 
 
@@ -454,50 +547,50 @@ end;
 procedure Tarifikation_TableTarOrganizations_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableTarOrganizations.CanFocus then
-    Tarifikation.TableTarOrganizations.SetFocus;
+  // if Tarifikation.TableTarOrganizations.CanFocus then
+  //   Tarifikation.TableTarOrganizations.SetFocus;
 end;
 
 procedure Tarifikation_TableTarifikaciya_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableTarifikaciya.CanFocus then
-    Tarifikation.TableTarifikaciya.SetFocus;
+  // if Tarifikation.TableTarifikaciya.CanFocus then
+  //   Tarifikation.TableTarifikaciya.SetFocus;
 end;
 
 procedure Tarifikation_TableTarJobs_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableTarJobs.CanFocus then
-    Tarifikation.TableTarJobs.SetFocus;
+  // if Tarifikation.TableTarJobs.CanFocus then
+  //   Tarifikation.TableTarJobs.SetFocus;
 end;
 
 procedure Tarifikation_TableTarNadbavky_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableTarNadbavky.CanFocus then
-    Tarifikation.TableTarNadbavky.SetFocus;
+  // if Tarifikation.TableTarNadbavky.CanFocus then
+  //   Tarifikation.TableTarNadbavky.SetFocus;
 end;
 
 procedure Tarifikation_TableTarJobDoblaty_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableTarJobDoblaty.CanFocus then
-    Tarifikation.TableTarJobDoblaty.SetFocus;
+  // if Tarifikation.TableTarJobDoblaty.CanFocus then
+  //   Tarifikation.TableTarJobDoblaty.SetFocus;
 end;
 
 procedure Tarifikation_TableUsers_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableUsers.CanFocus then
-    Tarifikation.TableUsers.SetFocus;
+  // if Tarifikation.TableUsers.CanFocus then
+  //   Tarifikation.TableUsers.SetFocus;
 end;
 
 procedure Tarifikation_TableDbBackups_OnMouseEnter (Sender: TObject);
 begin
   Tarifikation_HideGroupsEditButtons;
-  if Tarifikation.TableDbBackups.CanFocus then
-    Tarifikation.TableDbBackups.SetFocus;
+  // if Tarifikation.TableDbBackups.CanFocus then
+  //   Tarifikation.TableDbBackups.SetFocus;
 end;
 // Логика показа кнопок добавления, редактирования и удаления
 

@@ -125,8 +125,8 @@ begin
      'CREATE VIEW tar_job_doplata_summa AS '+
      'WITH total_doplata as '+
      ' (SELECT doplata.id, '+
-     '		(doplata.percent + tar_job_doplata.dop_percent) as total_percent, '+
-     '		(doplata.summa + tar_job_doplata.dop_summa) as total_summa '+
+     '		NULLIF((ifnull(doplata.percent, 0) + ifnull(tar_job_doplata.dop_percent, 0)), 0) as total_percent, '+
+     '		NULLIF((ifnull(doplata.summa, 0) + ifnull(tar_job_doplata.dop_summa, 0)), 0) as total_summa '+
      ' FROM tar_job_doplata '+
      ' JOIN doplata on tar_job_doplata.id_doplata = doplata.id) '+
      'SELECT tar_job_doplata.id, '+
@@ -134,7 +134,7 @@ begin
      '	   total_summa, '+
      '	   total_percent, '+
      '	   (total_percent / 100 * stavka.summa) as total_percent_summa, '+
-     '	   ( total_summa + (total_percent / 100 * stavka.summa)) as total_doplata_summa '+
+     '	   NULLIF(( ifnull(total_summa, 0) + (ifnull(total_percent, 0) / 100 * stavka.summa)), 0) as total_doplata_summa '+
      'FROM tar_job_doplata, total_doplata '+
      'JOIN tar_job on tar_job_doplata.id_tar_job = tar_job.id '+
      'JOIN stavka on tar_job.id_stavka = stavka.id '+
