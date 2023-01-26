@@ -88,7 +88,7 @@ procedure TForm1.Start;
 var
   FoundDbfFiles: TStringList;
   DbfFileName, DbfFilePath: String;
-  numOfFoundedFiles: Integer = 0;
+  numOfFoundedFiles, countFiles: Integer;
 begin
   MainConnection.DatabaseName := PathToDatabase;
   MainConnection.Connected := True;
@@ -106,13 +106,15 @@ begin
 
 // Импорт справочников
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
+    countFiles := numOfFoundedFiles;
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
-      Caption := DbfFileName;
+      Caption := 'Импорт справочников: '+DbfFileName;
+      Status.Caption := 'Осталось: '+IntToStr(countFiles)+'шт.';
 
       ImportSpravochniky(DbfFilePath);
-      Self.Refresh;
+      Self.Refresh; Dec(countFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
 // Импорт справочников
@@ -121,13 +123,15 @@ begin
 
 // Импорт таблиц тарификации
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
+    countFiles := numOfFoundedFiles;
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
-      Caption := DbfFileName;
+      Caption := 'Импорт тар. табл.: '+DbfFileName;
+      Status.Caption := 'Осталось: '+IntToStr(countFiles)+'шт.';
 
       ImportTarifikations(DbfFilePath);
-      Self.Refresh;
+      Self.Refresh; Dec(countFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
 // Импорт таблиц тарификации

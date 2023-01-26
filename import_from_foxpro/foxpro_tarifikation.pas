@@ -687,7 +687,6 @@ var
   FOXPRO_DATA, FOXPRO_DATAZN : TDateTime;
   isMain : Boolean = False;
   founded_id : Integer;
-  founded_num : Integer = 0 ;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into tarifikaciya ';
@@ -707,7 +706,6 @@ begin
       // Проверка по релевантным данным уже содержащимся в таблице тарификации
       founded_id := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
       if founded_id <> 0 then begin
-        Inc(founded_num);
         Form1.FoxProDbf.Next; Continue;
       end;
 
@@ -725,7 +723,6 @@ begin
     end;
   end;
     sql_commands.UpdateTarifikations;
-    //ShowMessage('Найдено дублей: '+IntToStr(founded_num));
 end;
 
 
