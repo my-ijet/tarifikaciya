@@ -30,6 +30,7 @@ procedure ImportNadbavka;
 procedure ImportDoplata;
 
 procedure ImportTarifikaciya;
+procedure ImportTarJob;
 
 implementation
 
@@ -91,7 +92,7 @@ begin
     TarTableType := DbfFileNameDelimited[0];
   case TarTableType of
     'T1': ImportTarifikaciya;
-    'T2': ; // TODOT импорт доп тар таблицы
+    'T2': ImportTarJob;
   end;
 
   Form1.FoxProDbf.Active := False;
@@ -156,7 +157,7 @@ begin
   Form1.QSelect.Open;
   organization_id := Form1.QSelect.FieldByName('id').AsString;
   Form1.QSelect.Close;
-  if organization_id = '' then Exit(0);
+  if organization_id = '' then Exit(-1);
 
   Form1.QSelect.SQL.Text := 'select person.id from person ';
   Form1.QSelect.SQL.Append('left join migration_table on ');
@@ -168,7 +169,7 @@ begin
   Form1.QSelect.Open;
   person_id := Form1.QSelect.FieldByName('id').AsString;
   Form1.QSelect.Close;
-  if person_id = '' then Exit(0);
+  if person_id = '' then Exit(-1);
 
   Form1.QSelect.SQL.Text := 'select tarifikaciya.id from tarifikaciya ';
   Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+organization_id);
@@ -686,7 +687,7 @@ var
   FOXPRO_KU, FOXPRO_TABN, date : String;
   FOXPRO_DATA, FOXPRO_DATAZN : TDateTime;
   isMain : Boolean = False;
-  founded_id : Integer;
+  id_tarifikaciya : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into tarifikaciya ';
@@ -704,8 +705,8 @@ begin
       isMain := FOXPRO_DATA = FOXPRO_DATAZN;
 
       // Проверка по релевантным данным уже содержащимся в таблице тарификации
-      founded_id := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
-      if founded_id <> 0 then begin
+      id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
+      if (id_tarifikaciya = -1) or (id_tarifikaciya > 0) then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
@@ -722,9 +723,69 @@ begin
       Form1.FoxProDbf.Next;
     end;
   end;
-    sql_commands.UpdateTarifikations;
+  sql_commands.UpdateTarifikations;
 end;
 
+procedure ImportTarJob;
+var
+  FOXPRO_KU, FOXPRO_TABN, date : String; FOXPRO_DATA : TDateTime;
+  FOXPRO_DOLJ, FOXPRO_PREDM : String;
+  clock, FOXPRO_SUMCL : Double;
+  FOXPRO_NADB : String;
+  FOXPRO_DOPL : String; FOXPRO_PROC_D, FOXPRO_SUMD : Double;
+  FOXPRO_RAZR : Integer; FOXPRO_KAT : String;
+  stavka_coeff, FOXPRO_STIM : Double;
+
+  id_tarifikaciya : Integer;
+begin
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := 'insert into tar_job ';
+    SQL.Append('(id_tarifikaciya, FOXPRO_KU, FOXPRO_TABN,');
+    SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
+    SQL.Append(' clock, FOXPRO_SUMCL,');
+    SQL.Append(' FOXPRO_NADB,');
+    SQL.Append(' FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
+    SQL.Append(' FOXPRO_KAT,');
+    SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
+    SQL.Append(' FOXPRO_STIM) ');
+    SQL.Append('values (:id_tarifikaciya, :FOXPRO_KU, :FOXPRO_TABN,');
+    SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
+    SQL.Append(' :clock, :FOXPRO_SUMCL,');
+    SQL.Append(' :FOXPRO_NADB,');
+    SQL.Append(' :FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD,');
+    SQL.Append(' :FOXPRO_KAT,');
+    SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
+    SQL.Append(' :FOXPRO_STIM);');
+
+    while not Form1.FoxProDbf.EOF do begin
+      FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
+      FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
+      FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
+
+      clock := Form1.FoxProDbf.FieldByName('CLOCK').AsFloat;
+      stavka_coeff := Form1.FoxProDbf.FieldByName('STAVKA').AsFloat;
+
+      // Находим ID тарификации по релевантным данным
+      id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
+      if id_tarifikaciya < 1 then begin
+        Form1.FoxProDbf.Next; Continue;
+      end;
+
+      //ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;
+      //ParamByName('FOXPRO_TABN').AsString := FOXPRO_TABN;
+      //ParamByName('FOXPRO_OBR').AsString := Form1.FoxProDbf.FieldByName('OBR').AsString;
+      //ParamByName('diplom').AsString := Form1.FoxProDbf.FieldByName('NOMDIP').AsString;
+      //ParamByName('staj_year').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
+      //ParamByName('staj_month').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
+      //ParamByName('date').AsString := date;
+      //ParamByName('main').AsBoolean := isMain;
+      //ExecSQL;
+
+      Form1.FoxProDbf.Next;
+    end;
+  end;
+end;
 
 function TFoxProUtil.DbfTranslate(Dbf: TDbf; Src, Dest: PChar; ToOEM: Boolean): Integer;
 var
