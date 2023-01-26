@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, Dialogs;
 
 procedure PrepareTables;
-procedure UpdateTables;
+procedure UpdateSpravochniky;
+procedure UpdateTarifikations;
 procedure ClearTables;
 procedure OptimizeDatabase;
 
@@ -114,7 +115,7 @@ begin
   Form1.SQL.Execute;
 end;
 
-procedure UpdateTables;
+procedure UpdateSpravochniky;
 begin
   with Form1.SQL.Script do begin
     Clear;
@@ -123,14 +124,20 @@ begin
     AddText('FROM org_group');
     AddText('where organization.pg = org_group.FOXPRO_KOD;');
     SqlApplyMigrationTable('organization', 'id_org_group', 'org_group');
+  end;
+  Form1.SQL.Execute;
+end;
 
+procedure UpdateTarifikations;
+begin
+  with Form1.SQL.Script do begin
+    Clear;
     SqlUpdateTarifikaciya('FOXPRO_KU', 'organization');
     SqlUpdateTarifikaciya('FOXPRO_TABN', 'person');
     SqlUpdateTarifikaciya('FOXPRO_OBR', 'obrazovanie');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_KU', 'organization');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_TABN', 'person');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_OBR', 'obrazovanie');
-
   end;
   Form1.SQL.Execute;
 end;

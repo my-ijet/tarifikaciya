@@ -34,13 +34,12 @@ procedure ImportTarifikaciya;
 implementation
 
 uses
-  main;
+  main, sql_commands;
 
 procedure ImportSpravochniky(DbfFilePath : String);
 var
   i: Integer;
-  DbfFileName, TarTableType: String;
-  DbfFileNameDelimited: TStringArray;
+  DbfFileName: String;
 begin
   DbfFileName := ExtractFileName(DbfFilePath);
   Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
@@ -87,7 +86,7 @@ begin
       TStringField(Form1.FoxProDbf.Fields[i]).Transliterate := true;
   Form1.Refresh;
 
-  DbfFileNameDelimited := SplitString(DbfFileName, '_');
+  DbfFileNameDelimited := SplitString(DbfFileName, '_'); TarTableType := '';
   if Length(DbfFileNameDelimited) > 0 then
     TarTableType := DbfFileNameDelimited[0];
   case TarTableType of
@@ -138,6 +137,46 @@ begin
   Form1.QSelect.SQL.Append('limit 1 ;');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('to_id').AsInteger;
+  Form1.QSelect.Close;
+end;
+
+function FindIdInTarifikaciya (FOXPRO_KU : String;
+                               FOXPRO_TABN : String;
+                               FOXPRO_DATA : String) : Integer;
+var
+  organization_id, person_id : String;
+begin
+  Form1.QSelect.SQL.Text := 'select organization.id from organization ';
+  Form1.QSelect.SQL.Append('left join migration_table on ');
+  Form1.QSelect.SQL.Append('          organization.id = migration_table.to_id ');
+  Form1.QSelect.SQL.Append('      and migration_table.table_name = "organization" ');
+  Form1.QSelect.SQL.Append('where organization.FOXPRO_KOD = "'+FOXPRO_KU+'" ');
+  Form1.QSelect.SQL.Append('   or migration_table.FOXPRO_KOD = "'+FOXPRO_KU+'" ');
+  Form1.QSelect.SQL.Append('limit 1');
+  Form1.QSelect.Open;
+  organization_id := Form1.QSelect.FieldByName('id').AsString;
+  Form1.QSelect.Close;
+  if organization_id = '' then Exit(0);
+
+  Form1.QSelect.SQL.Text := 'select person.id from person ';
+  Form1.QSelect.SQL.Append('left join migration_table on ');
+  Form1.QSelect.SQL.Append('          person.id = migration_table.to_id ');
+  Form1.QSelect.SQL.Append('      and migration_table.table_name = "person" ');
+  Form1.QSelect.SQL.Append('where person.FOXPRO_KOD = "'+FOXPRO_TABN+'" ');
+  Form1.QSelect.SQL.Append('  or migration_table.FOXPRO_KOD = "'+FOXPRO_TABN+'" ');
+  Form1.QSelect.SQL.Append('limit 1');
+  Form1.QSelect.Open;
+  person_id := Form1.QSelect.FieldByName('id').AsString;
+  Form1.QSelect.Close;
+  if person_id = '' then Exit(0);
+
+  Form1.QSelect.SQL.Text := 'select tarifikaciya.id from tarifikaciya ';
+  Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+organization_id);
+  Form1.QSelect.SQL.Append('  and tarifikaciya.id_person = '+person_id);
+  Form1.QSelect.SQL.Append('  and date(tarifikaciya.date) = date("'+FOXPRO_DATA+'") ');
+  Form1.QSelect.SQL.Append('limit 1 ;');
+  Form1.QSelect.Open;
+  Result := Form1.QSelect.FieldByName('id').AsInteger;
   Form1.QSelect.Close;
 end;
 
@@ -645,18 +684,32 @@ end;
 procedure ImportTarifikaciya;
 var
   FOXPRO_KU, FOXPRO_TABN, date : String;
-  founded : Boolean;
+  FOXPRO_DATA, FOXPRO_DATAZN : TDateTime;
+  isMain : Boolean = False;
+  founded_id : Integer;
+  founded_num : Integer = 0 ;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into tarifikaciya ';
-    SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_OBR, diplom, staj_year, staj_month, date)');
-    SQL.Append('values (:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_OBR, :diplom, :staj_year, :staj_month, :date);');
+    SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_OBR, ');
+    SQL.Append(' diplom, staj_year, staj_month, date, main)');
+    SQL.Append('values (:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_OBR, ');
+    SQL.Append(' :diplom, :staj_year, :staj_month, :date, :main);');
 
     while not Form1.FoxProDbf.EOF do begin
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
-      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SSS',
-                             Form1.FoxProDbf.FieldByName('DATA').AsDateTime);
+      FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
+      FOXPRO_DATAZN := Form1.FoxProDbf.FieldByName('DATAZN').AsDateTime;
+      isMain := FOXPRO_DATA = FOXPRO_DATAZN;
+
+      // Проверка по релевантным данным уже содержащимся в таблице тарификации
+      founded_id := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
+      if founded_id <> 0 then begin
+        Inc(founded_num);
+        Form1.FoxProDbf.Next; Continue;
+      end;
 
       ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;
       ParamByName('FOXPRO_TABN').AsString := FOXPRO_TABN;
@@ -665,11 +718,14 @@ begin
       ParamByName('staj_year').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
       ParamByName('staj_month').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
       ParamByName('date').AsString := date;
+      ParamByName('main').AsBoolean := isMain;
       ExecSQL;
 
       Form1.FoxProDbf.Next;
     end;
   end;
+    sql_commands.UpdateTarifikations;
+    //ShowMessage('Найдено дублей: '+IntToStr(founded_num));
 end;
 
 

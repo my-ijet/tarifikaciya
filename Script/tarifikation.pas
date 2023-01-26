@@ -60,21 +60,21 @@ begin
   end;
 
   if Tarifikation.DateFilterTarDate.Checked then begin
-    CurrentDate := ' and date(date) = date('+Tarifikation.DateFilterTarDate.sqlDate+')';
+    CurrentDate := ' and date(date) = date('+Tarifikation.DateFilterTarDate.sqlDate+') ';
   end;
 
   if Tarifikation.CheckShowAllTarifikaions.Checked then begin
     SqlFilter := ''   // Для отображения всех записей
   end else begin
-    SqlFilter := '  and date between '+StartDate+' and '+EndDate+' ' // Для отображения самых новых записей по дате
+    SqlFilter := ' and latest_tar.MaxPersonDate = 1 ' // Для отображения самых новых записей по дате
   end;
 
   SqlSelect := 'WITH latest_tar as '+
                '(SELECT id, '+
-               '      count(id) OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
+               '      row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
                'FROM tarifikaciya '+
                'where tarifikaciya.id_organization = ' + SelectedOrganization +
-                SqlFilter + ' ) '+
+               '  and date between '+StartDate+' and '+EndDate+' ) '+
            'SELECT '+
            'tarifikaciya.id, '+
            'strftime("%d.%m.%Y", date) as formated_date, '+
@@ -83,18 +83,18 @@ begin
            'staj_year, '+
            'staj_month, '+
            'total_tar_job.total_summa '+
-           'FROM tarifikaciya, latest_tar '+
+           'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
            'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id '+SqlFilter+
            'WHERE '+
            '      tarifikaciya.id_organization = ' + SelectedOrganization +
                   SelectedPerson +
                   SelectedObrazovanie +
                   SelectedStajYear +
-                  CurrentDate +
-           '  and tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
+                  CurrentDate +' '+
            'ORDER by date desc, "person.FIO" ';
 
   Tarifikation.BtnFilterTarifikaciya.dbSQL := SqlSelect;

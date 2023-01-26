@@ -44,7 +44,7 @@ begin
   // Запрос на получение полей Тарификации в выбранный период
   SQLQuery('WITH latest_tar as '+
            '(SELECT id, '+
-           '        count(id) OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
+           '        row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
            'FROM tarifikaciya '+
            'where tarifikaciya.id_organization = ' + SelectedOrganization +
            '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
@@ -62,14 +62,14 @@ begin
            'staj_year, '+
            'staj_month, '+
            'total_tar_job.total_summa '+
-           'FROM tarifikaciya, latest_tar '+
+           'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'JOIN person ON tarifikaciya.id_person = person.id '+
            'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
            'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'WHERE '+
            '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
-           '  and tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'ORDER by num_of_row',
            DsOtchet);
 

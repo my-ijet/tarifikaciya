@@ -115,8 +115,9 @@ begin
       Self.Refresh;
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-    MainTransaction.Commit;
 // Импорт справочников
+    sql_commands.UpdateSpravochniky;
+    MainTransaction.Commit;
 
 // Импорт таблиц тарификации
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
@@ -129,13 +130,9 @@ begin
       Self.Refresh;
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-    MainTransaction.Commit;
 // Импорт таблиц тарификации
-
-    Caption := 'Импорт данных FoxPro';
-
-    sql_commands.UpdateTables;
     MainTransaction.Commit;
+    Caption := 'Импорт данных FoxPro';
 
     sql_commands.ClearTables;
     MainTransaction.Commit;
