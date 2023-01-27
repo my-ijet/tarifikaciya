@@ -109,11 +109,9 @@ begin
     ['FOXPRO_KU varchar(5)', 'FOXPRO_TABN varchar(5)', 'FOXPRO_OBR varchar(5)']);
 
   SqlAddColumnsToTable('tar_job',
-    ['FOXPRO_KU varchar(5)', 'FOXPRO_TABN varchar(5)',
-     'FOXPRO_DOLJ varchar(5)', 'FOXPRO_PREDM varchar(5)',
+    ['FOXPRO_DOLJ varchar(5)', 'FOXPRO_PREDM varchar(5)',
      'FOXPRO_SUMCL real',
-     'FOXPRO_NADB varchar(5)',
-     'FOXPRO_DOPL varchar(5)', 'FOXPRO_PROC_D real', 'FOXPRO_SUMD real',
+     'FOXPRO_NADB varchar(5)', 'FOXPRO_DOPL varchar(5)',
      'FOXPRO_RAZR varchar(5)', 'FOXPRO_KAT varchar(5)',
      'FOXPRO_STIM real']);
 
@@ -242,11 +240,9 @@ begin
     ['FOXPRO_KU', 'FOXPRO_TABN', 'FOXPRO_OBR']);
 
   SqlRemoveColumnsFromTable('tar_job',
-    ['FOXPRO_KU', 'FOXPRO_TABN',
-     'FOXPRO_PREDM', 'FOXPRO_DOLJ',
+    ['FOXPRO_PREDM', 'FOXPRO_DOLJ',
      'FOXPRO_SUMCL',
-     'FOXPRO_NADB',
-     'FOXPRO_DOPL', 'FOXPRO_PROC_D', 'FOXPRO_SUMD',
+     'FOXPRO_NADB', 'FOXPRO_DOPL',
      'FOXPRO_RAZR', 'FOXPRO_KAT',
      'FOXPRO_STIM']);
 
