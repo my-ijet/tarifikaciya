@@ -767,25 +767,6 @@ var
   id_tarifikaciya : Integer;
 begin
   while not Form1.FoxProDbf.EOF do begin
-    with Form1.QInsertFromFoxPro do begin
-      SQL.Text := 'insert into tar_job ';
-      SQL.Append('(id_tarifikaciya, FOXPRO_KU, FOXPRO_TABN,');
-      SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
-      SQL.Append(' clock, FOXPRO_SUMCL,');
-      SQL.Append(' FOXPRO_NADB,');
-      SQL.Append(' FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
-      SQL.Append(' FOXPRO_KAT,');
-      SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
-      SQL.Append(' FOXPRO_STIM) ');
-      SQL.Append('values (:id_tarifikaciya, :FOXPRO_KU, :FOXPRO_TABN,');
-      SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
-      SQL.Append(' :clock, :FOXPRO_SUMCL,');
-      SQL.Append(' :FOXPRO_NADB,');
-      SQL.Append(' :FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD,');
-      SQL.Append(' :FOXPRO_KAT,');
-      SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
-      SQL.Append(' :FOXPRO_STIM);');
-
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
       FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
@@ -808,6 +789,25 @@ begin
       if id_tarifikaciya < 1 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
+
+    with Form1.QInsertFromFoxPro do begin
+      SQL.Text := 'insert into tar_job ';
+      SQL.Append('(id_tarifikaciya, FOXPRO_KU, FOXPRO_TABN,');
+      SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
+      SQL.Append(' clock, FOXPRO_SUMCL,');
+      SQL.Append(' FOXPRO_NADB,');
+      SQL.Append(' FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
+      SQL.Append(' FOXPRO_KAT,');
+      SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
+      SQL.Append(' FOXPRO_STIM) ');
+      SQL.Append('values (:id_tarifikaciya, :FOXPRO_KU, :FOXPRO_TABN,');
+      SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
+      SQL.Append(' :clock, :FOXPRO_SUMCL,');
+      SQL.Append(' :FOXPRO_NADB,');
+      SQL.Append(' :FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD,');
+      SQL.Append(' :FOXPRO_KAT,');
+      SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
+      SQL.Append(' :FOXPRO_STIM);');
 
       ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
       ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;

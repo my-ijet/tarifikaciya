@@ -135,10 +135,10 @@ begin
      '	   total_percent, '+
      '	   (total_percent / 100 * stavka.summa) as total_percent_summa, '+
      '	   NULLIF(( ifnull(total_summa, 0) + (ifnull(total_percent, 0) / 100 * stavka.summa)), 0) as total_doplata_summa '+
-     'FROM tar_job_doplata, total_doplata '+
+     'FROM tar_job_doplata '+
      'JOIN tar_job on tar_job_doplata.id_tar_job = tar_job.id '+
      'JOIN stavka on tar_job.id_stavka = stavka.id '+
-     'WHERE tar_job_doplata.id_doplata = total_doplata.id; ';
+     'LEFT JOIN total_doplata on tar_job_doplata.id_doplata = total_doplata.id; ';
   SQLExecute(SqlCreateTable);
 
   SqlCreateTable :=
@@ -172,10 +172,10 @@ begin
      '	    tar_nadbavka.id_tarifikaciya, '+
      '		nadbavka.percent, '+
      '	    ( percent / 100 * total_summa ) as total_nadbavka_summa '+
-     'FROM tar_nadbavka, total_tar_job_stavka '+
+     'FROM tar_nadbavka '+
      'JOIN tarifikaciya on tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
      'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
-     'WHERE total_tar_job_stavka.id_tarifikaciya = tar_nadbavka.id_tarifikaciya; ';
+     'LEFT JOIN total_tar_job_stavka on tar_nadbavka.id_tarifikaciya = total_tar_job_stavka.id_tarifikaciya; ';
   SQLExecute(SqlCreateTable);
 
   SqlCreateTable :=
@@ -239,6 +239,11 @@ begin
   Tarifikation.LabelNumTarifikations.Caption := SQLExecute('select count(*) from tarifikaciya;');
   Tarifikation.LabelNumPersons.Caption := SQLExecute('select count(*) from person;');
   Tarifikation.LabelNumOrganizations.Caption := SQLExecute('select count(*) from organization;');
+
+  // TODO DELETE
+  Tarifikation.LabelNumTarJobs.Caption := SQLExecute('select count(*) from tar_job;');
+  Tarifikation.LabelNumTarNadbavky.Caption := SQLExecute('select count(*) from tar_nadbavka;');
+  Tarifikation.LabelNumTarDoplaty.Caption := SQLExecute('select count(*) from tar_job_doplata;');
 
   filesize := GetFileSize(DbFilePath);
   if filesize < 1000 then DbSize := IntToStr(filesize)+' байт' else
