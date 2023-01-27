@@ -113,7 +113,7 @@ begin
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportSpravochniky(DbfFilePath);
-      Self.Refresh; Dec(numOfFoundedFiles);
+      Application.ProcessMessages; Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     Caption := 'Импорт завершен!';
@@ -138,7 +138,7 @@ begin
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportTarifikations(DbfFilePath);
-      Self.Refresh; Dec(numOfFoundedFiles);
+      Application.ProcessMessages; Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     Caption := 'Импорт завершен!';

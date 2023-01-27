@@ -51,7 +51,6 @@ begin
   for i := 0 to Form1.FoxProDbf.Fields.Count-1 do
     if Form1.FoxProDbf.Fields[i] is TStringField then
       TStringField(Form1.FoxProDbf.Fields[i]).Transliterate := true;
-  Form1.Refresh;
 
   case DbfFileName of
   'SU.DBF': ImportOrganizations;
@@ -86,7 +85,6 @@ begin
   for i := 0 to Form1.FoxProDbf.Fields.Count-1 do
     if Form1.FoxProDbf.Fields[i] is TStringField then
       TStringField(Form1.FoxProDbf.Fields[i]).Transliterate := true;
-  Form1.Refresh;
 
   DbfFileNameDelimited := SplitString(DbfFileName, '_'); TarTableType := '';
   if Length(DbfFileNameDelimited) > 0 then
