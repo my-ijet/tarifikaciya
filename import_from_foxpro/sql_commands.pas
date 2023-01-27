@@ -10,6 +10,8 @@ uses
 procedure PrepareTables;
 procedure UpdateSpravochniky;
 procedure UpdateTarifikations;
+procedure UpdateTarJobs;
+procedure UpdateTarNadbavky;
 procedure ClearTables;
 procedure OptimizeDatabase;
 
@@ -30,14 +32,15 @@ begin
   end;
 end;
 
-procedure SqlUpdateTarifikaciya(FieldName: String;
-                                TableName: String);
+procedure SqlUpdateTarTable(TarTableName: String;
+                            FieldName: String;
+                            TableName: String);
 begin
   with Form1.SQL.Script do begin
-    AddText('UPDATE tarifikaciya');
+    AddText('UPDATE '+TarTableName);
     AddText('SET id_'+TableName+' = '+TableName+'.id');
     AddText('FROM '+TableName);
-    AddText('where tarifikaciya.'+FieldName+' = '+TableName+'.FOXPRO_KOD;');
+    AddText('where '+TarTableName+'.'+FieldName+' = '+TableName+'.FOXPRO_KOD;');
   end;
 end;
 
@@ -96,8 +99,8 @@ begin
   SqlAddColumnsToTable('doplata',
     ['por int', 'pk int', 'pr varchar(5)']);
 
-  SqlAddColumnsToTable('stavka',
-    ['RAZR int']);
+  //SqlAddColumnsToTable('stavka',
+  //  ['RAZR int']);
 
   //SqlAddColumnsToTable('kategory',
   //  ['FOXPRO_KOD varchar(5)']);
@@ -111,8 +114,12 @@ begin
      'FOXPRO_SUMCL real',
      'FOXPRO_NADB varchar(5)',
      'FOXPRO_DOPL varchar(5)', 'FOXPRO_PROC_D real', 'FOXPRO_SUMD real',
-     'FOXPRO_RAZR int', 'FOXPRO_KAT varchar(5)',
+     'FOXPRO_RAZR varchar(5)', 'FOXPRO_KAT varchar(5)',
      'FOXPRO_STIM real']);
+
+  SqlAddColumnsToTable('tar_nadbavka',
+    ['FOXPRO_NADB varchar(5)']);
+
 
   with Form1.SQL.Script do begin
     AddText('create table migration_table (');
@@ -141,12 +148,38 @@ procedure UpdateTarifikations;
 begin
   with Form1.SQL.Script do begin
     Clear;
-    SqlUpdateTarifikaciya('FOXPRO_KU', 'organization');
-    SqlUpdateTarifikaciya('FOXPRO_TABN', 'person');
-    SqlUpdateTarifikaciya('FOXPRO_OBR', 'obrazovanie');
+    SqlUpdateTarTable('tarifikaciya', 'FOXPRO_KU', 'organization');
+    SqlUpdateTarTable('tarifikaciya','FOXPRO_TABN', 'person');
+    SqlUpdateTarTable('tarifikaciya','FOXPRO_OBR', 'obrazovanie');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_KU', 'organization');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_TABN', 'person');
     SqlApplyMigrationTable('tarifikaciya', 'FOXPRO_OBR', 'obrazovanie');
+  end;
+  Form1.SQL.Execute;
+end;
+
+procedure UpdateTarJobs;
+begin
+  with Form1.SQL.Script do begin
+    Clear;
+    SqlUpdateTarTable('tar_job','FOXPRO_DOLJ', 'doljnost');
+    SqlUpdateTarTable('tar_job','FOXPRO_PREDM', 'predmet');
+    SqlUpdateTarTable('tar_job','FOXPRO_RAZR', 'stavka');
+    SqlUpdateTarTable('tar_job','FOXPRO_KAT', 'kategory');
+    SqlApplyMigrationTable('tar_job', 'FOXPRO_DOLJ', 'doljnost');
+    SqlApplyMigrationTable('tar_job', 'FOXPRO_PREDM', 'predmet');
+    SqlApplyMigrationTable('tar_job', 'FOXPRO_RAZR', 'stavka');
+    SqlApplyMigrationTable('tar_job', 'FOXPRO_KAT', 'kategory');
+  end;
+  Form1.SQL.Execute;
+end;
+
+procedure UpdateTarNadbavky;
+begin
+  with Form1.SQL.Script do begin
+    Clear;
+    SqlUpdateTarTable('tar_nadbavka','FOXPRO_NADB', 'nadbavka');
+    SqlApplyMigrationTable('tar_nadbavka', 'FOXPRO_NADB', 'nadbavka');
   end;
   Form1.SQL.Execute;
 end;
@@ -199,8 +232,8 @@ begin
   SqlRemoveColumnsFromTable('doplata',
     ['por', 'pk', 'pr']);
 
-  SqlRemoveColumnsFromTable('stavka',
-    ['RAZR']);
+  //SqlRemoveColumnsFromTable('stavka',
+  //  ['RAZR']);
 
   //SqlRemoveColumnsFromTable('kategory',
   //  ['FOXPRO_KOD']);
@@ -216,6 +249,9 @@ begin
      'FOXPRO_DOPL', 'FOXPRO_PROC_D', 'FOXPRO_SUMD',
      'FOXPRO_RAZR', 'FOXPRO_KAT',
      'FOXPRO_STIM']);
+
+  SqlRemoveColumnsFromTable('tar_nadbavka',
+    ['FOXPRO_NADB']);
 
   with Form1.SQL.Script do begin
     AddText('drop table migration_table;');

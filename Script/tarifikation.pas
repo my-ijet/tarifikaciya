@@ -85,8 +85,8 @@ begin
            'total_tar_job.total_summa '+
            'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
-           'JOIN person ON tarifikaciya.id_person = person.id '+
-           'JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
+           'LEFT JOIN person ON tarifikaciya.id_person = person.id '+
+           'LEFT JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
            'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
            'JOIN latest_tar ON tarifikaciya.id = latest_tar.id '+SqlFilter+
            'WHERE '+
@@ -187,6 +187,7 @@ begin
            'tar_job.clock, '+
            'kategory.name, '+
            'stavka.summa, '+
+           'stavka_coeff, '+
            'tar_job_summa.total_nadbavka_percent, '+
            'tar_job_summa.total_nadbavka_summa, '+
            'tar_job_summa.total_doplata_summa, '+
@@ -197,10 +198,10 @@ begin
            'tar_job_summa.total_summa '+
            'FROM tar_job '+
            'JOIN tarifikaciya ON tar_job.id_tarifikaciya = tarifikaciya.id '+
-           'JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
-           'JOIN predmet ON tar_job.id_predmet = predmet.id '+
-           'JOIN kategory ON tar_job.id_kategory = kategory.id '+
-           'JOIN stavka ON tar_job.id_stavka = stavka.id '+
+           'LEFT JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
+           'LEFT JOIN predmet ON tar_job.id_predmet = predmet.id '+
+           'LEFT JOIN kategory ON tar_job.id_kategory = kategory.id '+
+           'LEFT JOIN stavka ON tar_job.id_stavka = stavka.id '+
            'LEFT JOIN tar_job_summa ON tar_job.id = tar_job_summa.id '+
            'WHERE '+
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
@@ -259,7 +260,7 @@ begin
            'tar_nadbavka_summa.total_nadbavka_summa '+
            'FROM tar_nadbavka '+
            'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
-           'JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
+           'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
            'LEFT JOIN tar_nadbavka_summa ON tar_nadbavka.id = tar_nadbavka_summa.id '+
            'WHERE '+
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
@@ -309,7 +310,7 @@ begin
            'tar_job_doplata_summa.total_doplata_summa '+
            'FROM tar_job_doplata '+
            'JOIN tar_job ON tar_job_doplata.id_tar_job = tar_job.id '+
-           'JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
+           'LEFT JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
            'LEFT JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
            'WHERE '+
            '      tar_job.id = ' + SelectedTarJob +
@@ -470,6 +471,11 @@ procedure Tarifikation_TableTarifikaciya_OnKeyDown (Sender: TObject; var Key: Wo
 begin
   if Key = VK_DELETE then
     Tarifikation_BtnDeleteTarifikaciya_OnClick(Sender, False);
+  // Обработка нажатия стрелочек
+  if (Key = VK_UP) or (Key = VK_DOWN) then begin
+    Tarifikation_DoFilterTableTarJobs;
+    Tarifikation_DoFilterTableTarNadbavky;
+  end;
 end;
 
 procedure Tarifikation_TableTarJobs_OnKeyDown (Sender: TObject; var Key: Word; Shift, Alt, Ctrl: boolean);

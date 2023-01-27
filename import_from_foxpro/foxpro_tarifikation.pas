@@ -31,6 +31,8 @@ procedure ImportDoplata;
 
 procedure ImportTarifikaciya;
 procedure ImportTarJob;
+procedure ImportTarNadbavka(id_tarifikaciya : Integer;
+                            FOXPRO_NADB : String);
 
 implementation
 
@@ -175,6 +177,32 @@ begin
   Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+organization_id);
   Form1.QSelect.SQL.Append('  and tarifikaciya.id_person = '+person_id);
   Form1.QSelect.SQL.Append('  and date(tarifikaciya.date) = date("'+FOXPRO_DATA+'") ');
+  Form1.QSelect.SQL.Append('limit 1 ;');
+  Form1.QSelect.Open;
+  Result := Form1.QSelect.FieldByName('id').AsInteger;
+  Form1.QSelect.Close;
+end;
+
+function FindIdInTarNadbavka(id_tarifikaciya : Integer;
+                             FOXPRO_NADB : String) : Integer;
+var
+  id_nadbavka : String;
+begin
+  Form1.QSelect.SQL.Text := 'select nadbavka.id from nadbavka ';
+  Form1.QSelect.SQL.Append('left join migration_table on ');
+  Form1.QSelect.SQL.Append('          nadbavka.id = migration_table.to_id ');
+  Form1.QSelect.SQL.Append('      and migration_table.table_name = "nadbavka" ');
+  Form1.QSelect.SQL.Append('where nadbavka.FOXPRO_KOD = "'+FOXPRO_NADB+'" ');
+  Form1.QSelect.SQL.Append('  or migration_table.FOXPRO_KOD = "'+FOXPRO_NADB+'" ');
+  Form1.QSelect.SQL.Append('limit 1');
+  Form1.QSelect.Open;
+  id_nadbavka := Form1.QSelect.FieldByName('id').AsString;
+  Form1.QSelect.Close;
+  if id_nadbavka = '' then Exit(-1);
+
+  Form1.QSelect.SQL.Text := 'select id from tar_nadbavka ';
+  Form1.QSelect.SQL.Append('where id_tarifikaciya = '+IntToStr(id_tarifikaciya));
+  Form1.QSelect.SQL.Append('  and id_nadbavka = '+id_nadbavka);
   Form1.QSelect.SQL.Append('limit 1 ;');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('id').AsInteger;
@@ -613,24 +641,24 @@ end;
 
 procedure ImportStavka;
 var
-  FOXPRO_RAZR : Integer;
+  FOXPRO_KOD : String;
   founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into stavka';
-    SQL.Append('(razr, summa)');
-    SQL.Append('values (:razr, :summa)');
+    SQL.Append('(FOXPRO_KOD, summa)');
+    SQL.Append('values (:FOXPRO_KOD, :summa)');
 
     while not Form1.FoxProDbf.EOF do begin
-      FOXPRO_RAZR := Form1.FoxProDbf.FieldByName('RAZR').AsInteger;
+      FOXPRO_KOD := Form1.FoxProDbf.FieldByName('RAZR').AsString;
 
       // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('stavka', 'razr', FOXPRO_RAZR);
+      founded_id := FindIdIfExist('stavka', 'FOXPRO_KOD', FOXPRO_KOD);
       if founded_id <> 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
-      ParamByName('razr').AsInteger := FOXPRO_RAZR;
+      ParamByName('FOXPRO_KOD').AsString := FOXPRO_KOD;
       ParamByName('summa').AsCurrency := Form1.FoxProDbf.FieldByName('SUMST').AsCurrency;
       ExecSQL;
 
@@ -733,38 +761,47 @@ var
   clock, FOXPRO_SUMCL : Double;
   FOXPRO_NADB : String;
   FOXPRO_DOPL : String; FOXPRO_PROC_D, FOXPRO_SUMD : Double;
-  FOXPRO_RAZR : Integer; FOXPRO_KAT : String;
+  FOXPRO_RAZR : String; FOXPRO_KAT : String;
   stavka_coeff, FOXPRO_STIM : Double;
 
   id_tarifikaciya : Integer;
 begin
-  with Form1.QInsertFromFoxPro do begin
-    SQL.Text := 'insert into tar_job ';
-    SQL.Append('(id_tarifikaciya, FOXPRO_KU, FOXPRO_TABN,');
-    SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
-    SQL.Append(' clock, FOXPRO_SUMCL,');
-    SQL.Append(' FOXPRO_NADB,');
-    SQL.Append(' FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
-    SQL.Append(' FOXPRO_KAT,');
-    SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
-    SQL.Append(' FOXPRO_STIM) ');
-    SQL.Append('values (:id_tarifikaciya, :FOXPRO_KU, :FOXPRO_TABN,');
-    SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
-    SQL.Append(' :clock, :FOXPRO_SUMCL,');
-    SQL.Append(' :FOXPRO_NADB,');
-    SQL.Append(' :FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD,');
-    SQL.Append(' :FOXPRO_KAT,');
-    SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
-    SQL.Append(' :FOXPRO_STIM);');
+  while not Form1.FoxProDbf.EOF do begin
+    with Form1.QInsertFromFoxPro do begin
+      SQL.Text := 'insert into tar_job ';
+      SQL.Append('(id_tarifikaciya, FOXPRO_KU, FOXPRO_TABN,');
+      SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
+      SQL.Append(' clock, FOXPRO_SUMCL,');
+      SQL.Append(' FOXPRO_NADB,');
+      SQL.Append(' FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
+      SQL.Append(' FOXPRO_KAT,');
+      SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
+      SQL.Append(' FOXPRO_STIM) ');
+      SQL.Append('values (:id_tarifikaciya, :FOXPRO_KU, :FOXPRO_TABN,');
+      SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
+      SQL.Append(' :clock, :FOXPRO_SUMCL,');
+      SQL.Append(' :FOXPRO_NADB,');
+      SQL.Append(' :FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD,');
+      SQL.Append(' :FOXPRO_KAT,');
+      SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
+      SQL.Append(' :FOXPRO_STIM);');
 
-    while not Form1.FoxProDbf.EOF do begin
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
       FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      FOXPRO_DOLJ := Form1.FoxProDbf.FieldByName('DOLJ').AsString;
+      FOXPRO_PREDM := Form1.FoxProDbf.FieldByName('PREDM').AsString;
       date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
-
       clock := Form1.FoxProDbf.FieldByName('CLOCK').AsFloat;
+      FOXPRO_SUMCL := Form1.FoxProDbf.FieldByName('SUMCL').AsFloat;
+      FOXPRO_NADB := Form1.FoxProDbf.FieldByName('NADB').AsString;
+      FOXPRO_DOPL := Form1.FoxProDbf.FieldByName('DOPL').AsString;
+      FOXPRO_PROC_D := Form1.FoxProDbf.FieldByName('PROC_D').AsFloat;
+      FOXPRO_SUMD := Form1.FoxProDbf.FieldByName('SUMD').AsFloat;
+      FOXPRO_RAZR := Form1.FoxProDbf.FieldByName('RAZR').AsString;
+      FOXPRO_KAT := Form1.FoxProDbf.FieldByName('KAT').AsString;
       stavka_coeff := Form1.FoxProDbf.FieldByName('STAVKA').AsFloat;
+      FOXPRO_STIM := Form1.FoxProDbf.FieldByName('STIM').AsFloat;
 
       // Находим ID тарификации по релевантным данным
       id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
@@ -772,19 +809,50 @@ begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
-      //ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;
-      //ParamByName('FOXPRO_TABN').AsString := FOXPRO_TABN;
-      //ParamByName('FOXPRO_OBR').AsString := Form1.FoxProDbf.FieldByName('OBR').AsString;
-      //ParamByName('diplom').AsString := Form1.FoxProDbf.FieldByName('NOMDIP').AsString;
-      //ParamByName('staj_year').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
-      //ParamByName('staj_month').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
-      //ParamByName('date').AsString := date;
-      //ParamByName('main').AsBoolean := isMain;
-      //ExecSQL;
+      ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
+      ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;
+      ParamByName('FOXPRO_TABN').AsString := FOXPRO_TABN;
+      ParamByName('FOXPRO_DOLJ').AsString := FOXPRO_DOLJ;
+      ParamByName('FOXPRO_PREDM').AsString := FOXPRO_PREDM;
+      ParamByName('clock').AsFloat := clock;
+      ParamByName('FOXPRO_SUMCL').AsFloat := FOXPRO_SUMCL;
+      ParamByName('FOXPRO_NADB').AsString := FOXPRO_NADB;
+      ParamByName('FOXPRO_DOPL').AsString := FOXPRO_DOPL;
+      ParamByName('FOXPRO_PROC_D').AsFloat := FOXPRO_PROC_D;
+      ParamByName('FOXPRO_SUMD').AsFloat := FOXPRO_SUMD;
+      ParamByName('FOXPRO_RAZR').AsString := FOXPRO_RAZR;
+      ParamByName('FOXPRO_KAT').AsString := FOXPRO_KAT;
+      ParamByName('stavka_coeff').AsFloat := stavka_coeff;
+      ParamByName('FOXPRO_STIM').AsFloat := FOXPRO_STIM;
+      ExecSQL;
+
+      ImportTarNadbavka(id_tarifikaciya, FOXPRO_NADB);
 
       Form1.FoxProDbf.Next;
     end;
   end;
+  sql_commands.UpdateTarJobs;
+end;
+
+procedure ImportTarNadbavka(id_tarifikaciya : Integer;
+                            FOXPRO_NADB : String);
+var
+  founded_id : Integer;
+begin
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := 'insert into tar_nadbavka ';
+    SQL.Append('(id_tarifikaciya, FOXPRO_NADB)');
+    SQL.Append('values (:id_tarifikaciya, :FOXPRO_NADB);');
+
+    // Находим ID по релевантным данным в таблице тарификационных надбавок
+    founded_id := FindIdInTarNadbavka(id_tarifikaciya, FOXPRO_NADB);
+    if (founded_id = -1) or (founded_id > 0) then Exit;
+
+    ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
+    ParamByName('FOXPRO_NADB').AsString := FOXPRO_NADB;
+    ExecSQL;
+  end;
+  sql_commands.UpdateTarNadbavky;
 end;
 
 function TFoxProUtil.DbfTranslate(Dbf: TDbf; Src, Dest: PChar; ToOEM: Boolean): Integer;

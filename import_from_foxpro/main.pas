@@ -88,7 +88,7 @@ procedure TForm1.Start;
 var
   FoundDbfFiles: TStringList;
   DbfFileName, DbfFilePath: String;
-  numOfFoundedFiles, countFiles: Integer;
+  numOfFoundedFiles: Integer;
 begin
   MainConnection.DatabaseName := PathToDatabase;
   MainConnection.Connected := True;
@@ -98,55 +98,60 @@ begin
     Exit;
   end;
 
+  // Импорт справочников
   FoundDbfFiles := FindAllFiles(PathToFoxProDir, '*.DBF', True);
-  numOfFoundedFiles := FoundDbfFiles.Capacity;
+  numOfFoundedFiles := FoundDbfFiles.Count;
 
   if numOfFoundedFiles > 0 then begin
     sql_commands.PrepareTables;
 
-// Импорт справочников
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
-    countFiles := numOfFoundedFiles;
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
       Caption := 'Импорт справочников: '+DbfFileName;
-      Status.Caption := 'Осталось: '+IntToStr(countFiles)+'шт.';
+      Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportSpravochniky(DbfFilePath);
-      Self.Refresh; Dec(countFiles);
+      Self.Refresh; Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-// Импорт справочников
+    Caption := 'Импорт завершен!';
+    Status.Caption := 'Импорт завершен!';
     sql_commands.UpdateSpravochniky;
     MainTransaction.Commit;
+  // Импорт справочников
+  end else Status.Caption := 'Файлы не найдены!';
 
-// Импорт таблиц тарификации
+  // Импорт таблиц тарификации
+  FoundDbfFiles := FindAllFiles(PathToFoxProDir, 'T?_*.DBF', True);
+  numOfFoundedFiles := FoundDbfFiles.Count;
+
+  if numOfFoundedFiles > 0 then begin
+    sql_commands.PrepareTables;
+
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
-    countFiles := numOfFoundedFiles;
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
       Caption := 'Импорт тар. табл.: '+DbfFileName;
-      Status.Caption := 'Осталось: '+IntToStr(countFiles)+'шт.';
+      Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportTarifikations(DbfFilePath);
-      Self.Refresh; Dec(countFiles);
+      Self.Refresh; Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-// Импорт таблиц тарификации
+    Caption := 'Импорт завершен!';
+    Status.Caption := 'Импорт завершен!';
     MainTransaction.Commit;
-    Caption := 'Импорт данных FoxPro';
+  // Импорт таблиц тарификации
+  end else Status.Caption := 'Файлы не найдены!';
 
     sql_commands.ClearTables;
     MainTransaction.Commit;
 
     sql_commands.OptimizeDatabase;
     MainTransaction.Commit;
-
-    Caption := 'Импорт завершен!';
-    Status.Caption := 'Импорт завершен!';
-  end else Status.Caption := 'Файлы не найдены!';
 
   FreeAndNil(FoundDbfFiles);
 
