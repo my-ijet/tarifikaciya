@@ -16,6 +16,7 @@ type
   TForm1 = class(TForm)
     DataSource1: TDataSource;
     FoxProDbf: TDbf;
+    ProgressBar: TProgressBar;
     QSelect: TSQLQuery;
     Status: TLabel;
     MainConnection: TSQLite3Connection;
@@ -113,7 +114,8 @@ begin
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportSpravochniky(DbfFilePath);
-      Application.ProcessMessages; Dec(numOfFoundedFiles);
+      Application.ProcessMessages;
+      Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     Caption := 'Импорт завершен!';
@@ -138,7 +140,8 @@ begin
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportTarifikations(DbfFilePath);
-      Application.ProcessMessages; Dec(numOfFoundedFiles);
+      Application.ProcessMessages;
+      Dec(numOfFoundedFiles);
     end;
     //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
     Caption := 'Импорт завершен!';
@@ -147,11 +150,14 @@ begin
   // Импорт таблиц тарификации
   end else Status.Caption := 'Файлы не найдены!';
 
-    sql_commands.ClearTables;
-    MainTransaction.Commit;
+  ProgressBar.Position := ProgressBar.Max;
+  Application.ProcessMessages;
 
-    sql_commands.OptimizeDatabase;
-    MainTransaction.Commit;
+  sql_commands.ClearTables;
+  MainTransaction.Commit;
+
+  sql_commands.OptimizeDatabase;
+  MainTransaction.Commit;
 
   FreeAndNil(FoundDbfFiles);
 

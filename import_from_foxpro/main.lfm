@@ -12,27 +12,42 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '2.3.0.0'
   Visible = True
   object Status: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
     AnchorSideTop.Control = Owner
-    AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrCenter
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrCenter
-    Left = 90
+    Left = 88
     Height = 45
-    Top = 18
+    Top = 12
     Width = 139
     Align = alCustom
     Alignment = taCenter
-    Anchors = [akTop, akRight]
+    Anchors = [akTop]
+    BorderSpacing.Top = 12
     Caption = 'Импорт..'
     Font.Height = -32
     ParentFont = False
+  end
+  object ProgressBar: TProgressBar
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 16
+    Top = 64
+    Width = 320
+    Anchors = [akLeft, akRight, akBottom]
+    Font.Height = -32
+    ParentFont = False
+    ParentShowHint = False
+    TabOrder = 0
   end
   object MainConnection: TSQLite3Connection
     Connected = False

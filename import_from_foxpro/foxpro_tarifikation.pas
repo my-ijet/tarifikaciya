@@ -5,7 +5,8 @@ unit foxpro_tarifikation;
 interface
 
 uses
-  Classes, SysUtils, Dialogs, DB, Dbf, LConvEncoding, FileUtil, StrUtils, Variants;
+  Classes, SysUtils, Dialogs, DB, Dbf, Forms,
+  LConvEncoding, FileUtil, StrUtils, Variants;
 
 type
   TFoxProUtil = class
@@ -46,6 +47,9 @@ begin
   Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
   Form1.FoxProDbf.TableName := DbfFileName;
   Form1.FoxProDbf.Active := True;
+  Form1.ProgressBar.Position := 0;
+  Form1.ProgressBar.Max := Form1.FoxProDbf.PhysicalRecordCount;
+  Form1.ProgressBar.Step := Round(Form1.ProgressBar.Max * 0.1)+1;
 
   // Преобразуем строки в UTF8
   for i := 0 to Form1.FoxProDbf.Fields.Count-1 do
@@ -80,6 +84,9 @@ begin
   Form1.FoxProDbf.FilePath := ExtractFileDir(DbfFilePath);
   Form1.FoxProDbf.TableName := DbfFileName;
   Form1.FoxProDbf.Active := True;
+  Form1.ProgressBar.Position := 0;
+  Form1.ProgressBar.Max := Form1.FoxProDbf.PhysicalRecordCount;
+  Form1.ProgressBar.Step := Round(Form1.ProgressBar.Max * 0.1)+1;
 
   // Преобразуем строки в UTF8
   for i := 0 to Form1.FoxProDbf.Fields.Count-1 do
@@ -228,6 +235,10 @@ begin
     SQL.Append('values (:short_name, :foxpro_kod, :pg, :gr)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -266,6 +277,10 @@ begin
     SQL.Append('values (:name, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -305,6 +320,10 @@ begin
     SQL.Append('values (:familyname, :firstname, :middlename, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       tmpstr := Trim(Form1.FoxProDbf.FieldByName('NAIM').AsString);
       while tmpstr.Contains('  ') do
         tmpstr := tmpstr.Replace('  ', ' ', [rfReplaceAll]);
@@ -367,6 +386,10 @@ begin
     SQL.Append('values (:name, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -403,6 +426,10 @@ begin
     SQL.Append('values (:name, :kolvo, :foxpro_kod, :por, :pk, :gopl)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -443,6 +470,10 @@ begin
     SQL.Append('values (:name, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -479,6 +510,10 @@ begin
     SQL.Append('values (:name, :clock, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -516,6 +551,10 @@ begin
     SQL.Append('values (:name, :percent, :foxpro_kod, :por, :pr)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -555,6 +594,10 @@ begin
     SQL.Append('values (:name, :foxpro_kod, :por, :pk, :pr)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -594,6 +637,10 @@ begin
     SQL.Append('values (:FOXPRO_KOD, :summa)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('RAZR').AsString;
 
       // Проверка на код уже содержащийся в справочнике
@@ -622,6 +669,10 @@ begin
     SQL.Append('values (:name, :foxpro_kod)');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
@@ -663,6 +714,10 @@ begin
     SQL.Append(' :diplom, :staj_year, :staj_month, :date, :main);');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
       FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
@@ -706,6 +761,8 @@ var
   id_tar_nadbavka,
   id_tar_job, id_tar_job_doplata : Integer;
 begin
+  Form1.ProgressBar.Max := Form1.FoxProDbf.PhysicalRecordCount * 2;
+  Form1.ProgressBar.Step := Round(Form1.ProgressBar.Max * 0.05)+1;
   //Импорт Надбавок
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into tar_nadbavka ';
@@ -713,6 +770,10 @@ begin
     SQL.Append('values (:id_tarifikaciya, :FOXPRO_NADB);');
 
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
       FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
@@ -760,6 +821,10 @@ begin
 
     Form1.FoxProDbf.First;
     while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
       FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
       FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
       FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
