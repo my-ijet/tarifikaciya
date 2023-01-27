@@ -68,6 +68,7 @@ begin
   end;
 
   Form1.FoxProDbf.Active := False;
+  Form1.FoxProDbf.Close;
 end;
 
 procedure ImportTarifikations(DbfFilePath : String);
@@ -96,20 +97,17 @@ begin
   end;
 
   Form1.FoxProDbf.Active := False;
+  Form1.FoxProDbf.Close;
 end;
 
 
 // Находит ID по указанному полю если данные уже содержатся в справочнике
 function FindIdIfExist(tablename : String;
                        FieldName : String;
-                       FieldValue : Variant) : Integer;
+                       FieldValue : String) : Integer;
 begin
   Form1.QSelect.SQL.Text := 'select id from '+tablename;
-  Form1.QSelect.SQL.Append(' where "'+FieldName+'" = ');
-  case varType(FieldValue) of
-    varString: Form1.QSelect.SQL.Append('"'+FieldValue+'" ;');
-    varInteger: Form1.QSelect.SQL.Append(IntToStr(FieldValue)+' ;');
-  end;
+  Form1.QSelect.SQL.Append(' where "'+FieldName+'" = "'+FieldValue+'";');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('id').AsInteger;
   Form1.QSelect.Close;
@@ -129,15 +127,18 @@ begin
   Form1.QSelect.Close;
 end;
 
-function FindIdInMigrationTable(tablename : String;
-                                FOXPRO_KOD : String) : Integer;
+function FindIdWithMigrationTable(tablename : String;
+                                FOXPRO_KOD : String) : Integer; Inline;
 begin
-  Form1.QSelect.SQL.Text := 'select to_id from migration_table ';
-  Form1.QSelect.SQL.Append('where table_name = "'+tablename+'"');
-  Form1.QSelect.SQL.Append('  and FOXPRO_KOD = "'+FOXPRO_KOD+'" ');
-  Form1.QSelect.SQL.Append('limit 1 ;');
+  Form1.QSelect.SQL.Text := 'select '+tablename+'.id from '+tablename+' ';
+  Form1.QSelect.SQL.Append('left join migration_table on ');
+  Form1.QSelect.SQL.Append('          '+tablename+'.id = migration_table.to_id ');
+  Form1.QSelect.SQL.Append('      and migration_table.table_name = "'+tablename+'" ');
+  Form1.QSelect.SQL.Append('where '+tablename+'.FOXPRO_KOD = "'+FOXPRO_KOD+'"');
+  Form1.QSelect.SQL.Append('   or migration_table.FOXPRO_KOD = "'+FOXPRO_KOD+'" ');
+  Form1.QSelect.SQL.Append('limit 1');
   Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('to_id').AsInteger;
+  Result := Form1.QSelect.FieldByName('id').AsInteger;
   Form1.QSelect.Close;
 end;
 
@@ -145,36 +146,46 @@ function FindIdInTarifikaciya (FOXPRO_KU : String;
                                FOXPRO_TABN : String;
                                FOXPRO_DATA : String) : Integer;
 var
-  organization_id, person_id : String;
+  id_organization, id_person : Integer;
 begin
-  Form1.QSelect.SQL.Text := 'select organization.id from organization ';
-  Form1.QSelect.SQL.Append('left join migration_table on ');
-  Form1.QSelect.SQL.Append('          organization.id = migration_table.to_id ');
-  Form1.QSelect.SQL.Append('      and migration_table.table_name = "organization" ');
-  Form1.QSelect.SQL.Append('where organization.FOXPRO_KOD = "'+FOXPRO_KU+'" ');
-  Form1.QSelect.SQL.Append('   or migration_table.FOXPRO_KOD = "'+FOXPRO_KU+'" ');
-  Form1.QSelect.SQL.Append('limit 1');
-  Form1.QSelect.Open;
-  organization_id := Form1.QSelect.FieldByName('id').AsString;
-  Form1.QSelect.Close;
-  if organization_id = '' then Exit(-1);
-
-  Form1.QSelect.SQL.Text := 'select person.id from person ';
-  Form1.QSelect.SQL.Append('left join migration_table on ');
-  Form1.QSelect.SQL.Append('          person.id = migration_table.to_id ');
-  Form1.QSelect.SQL.Append('      and migration_table.table_name = "person" ');
-  Form1.QSelect.SQL.Append('where person.FOXPRO_KOD = "'+FOXPRO_TABN+'" ');
-  Form1.QSelect.SQL.Append('  or migration_table.FOXPRO_KOD = "'+FOXPRO_TABN+'" ');
-  Form1.QSelect.SQL.Append('limit 1');
-  Form1.QSelect.Open;
-  person_id := Form1.QSelect.FieldByName('id').AsString;
-  Form1.QSelect.Close;
-  if person_id = '' then Exit(-1);
+  id_organization := FindIdWithMigrationTable('organization', FOXPRO_KU);
+  if id_organization = 0 then Exit(-1);
+  id_person := FindIdWithMigrationTable('person', FOXPRO_TABN);
+  if id_person = 0 then Exit(-1);
 
   Form1.QSelect.SQL.Text := 'select tarifikaciya.id from tarifikaciya ';
-  Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+organization_id);
-  Form1.QSelect.SQL.Append('  and tarifikaciya.id_person = '+person_id);
+  Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+IntToStr(id_organization));
+  Form1.QSelect.SQL.Append('  and tarifikaciya.id_person = '+IntToStr(id_person));
   Form1.QSelect.SQL.Append('  and date(tarifikaciya.date) = date("'+FOXPRO_DATA+'") ');
+  Form1.QSelect.SQL.Append('limit 1 ;');
+  Form1.QSelect.Open;
+  Result := Form1.QSelect.FieldByName('id').AsInteger;
+  Form1.QSelect.Close;
+end;
+
+function FindIdInTarJob(id_tarifikaciya : Integer;
+                        FOXPRO_DOLJ : String;
+                        FOXPRO_PREDM : String;
+                        FOXPRO_RAZR : String;
+                        FOXPRO_KAT : String                         ) : Integer;
+var
+  id_doljnost, id_predmet, id_kategory, id_stavka : Integer;
+begin
+  id_doljnost := FindIdWithMigrationTable('doljnost', FOXPRO_DOLJ);
+  if id_doljnost = 0 then Exit(-1);
+  id_predmet := FindIdWithMigrationTable('predmet', FOXPRO_PREDM);
+  if id_predmet = 0 then Exit(-1);
+  id_kategory := FindIdWithMigrationTable('kategory', FOXPRO_KAT);
+  if id_kategory = 0 then Exit(-1);
+  id_stavka := FindIdWithMigrationTable('stavka', FOXPRO_RAZR);
+  if id_stavka = 0 then Exit(-1);
+
+  Form1.QSelect.SQL.Text := 'select id from tar_job ';
+  Form1.QSelect.SQL.Append('where id_tarifikaciya = '+IntToStr(id_tarifikaciya));
+  Form1.QSelect.SQL.Append('  and id_doljnost = '+IntToStr(id_doljnost));
+  Form1.QSelect.SQL.Append('  and id_predmet = '+IntToStr(id_predmet));
+  Form1.QSelect.SQL.Append('  and id_kategory = '+IntToStr(id_kategory));
+  Form1.QSelect.SQL.Append('  and id_stavka = '+IntToStr(id_stavka));
   Form1.QSelect.SQL.Append('limit 1 ;');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('id').AsInteger;
@@ -184,23 +195,14 @@ end;
 function FindIdInTarNadbavka(id_tarifikaciya : Integer;
                              FOXPRO_NADB : String) : Integer;
 var
-  id_nadbavka : String;
+  id_nadbavka : Integer;
 begin
-  Form1.QSelect.SQL.Text := 'select nadbavka.id from nadbavka ';
-  Form1.QSelect.SQL.Append('left join migration_table on ');
-  Form1.QSelect.SQL.Append('          nadbavka.id = migration_table.to_id ');
-  Form1.QSelect.SQL.Append('      and migration_table.table_name = "nadbavka" ');
-  Form1.QSelect.SQL.Append('where nadbavka.FOXPRO_KOD = "'+FOXPRO_NADB+'" ');
-  Form1.QSelect.SQL.Append('  or migration_table.FOXPRO_KOD = "'+FOXPRO_NADB+'" ');
-  Form1.QSelect.SQL.Append('limit 1');
-  Form1.QSelect.Open;
-  id_nadbavka := Form1.QSelect.FieldByName('id').AsString;
-  Form1.QSelect.Close;
-  if id_nadbavka = '' then Exit(-1);
+  id_nadbavka := FindIdWithMigrationTable('nadbavka', FOXPRO_NADB);
+  if id_nadbavka = 0 then Exit(-1);
 
   Form1.QSelect.SQL.Text := 'select id from tar_nadbavka ';
   Form1.QSelect.SQL.Append('where id_tarifikaciya = '+IntToStr(id_tarifikaciya));
-  Form1.QSelect.SQL.Append('  and id_nadbavka = '+id_nadbavka);
+  Form1.QSelect.SQL.Append('  and id_nadbavka = '+IntToStr(id_nadbavka));
   Form1.QSelect.SQL.Append('limit 1 ;');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('id').AsInteger;
@@ -231,21 +233,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('organization', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('organization', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('organization', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('organization', 'short_name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('organization', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -275,21 +271,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('org_group', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('org_group', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('org_group', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('org_group', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('org_group', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -344,21 +334,15 @@ begin
       end;
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('person', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('person', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('person', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на ФИО уже содержащиеся в справочнике
       founded_id := FindIdByFIO(familyname, firstname, middlename);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('person', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -388,21 +372,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('personal_group', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('personal_group', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('personal_group', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('personal_group', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('personal_group', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -430,21 +408,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('doljnost', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('doljnost', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('doljnost', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('doljnost', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('doljnost', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -476,21 +448,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('obrazovanie', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('obrazovanie', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('obrazovanie', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('obrazovanie', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('obrazovanie', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -518,21 +484,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('predmet', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('predmet', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('predmet', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('predmet', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('predmet', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -561,21 +521,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('nadbavka', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('nadbavka', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('nadbavka', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('nadbavka', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('nadbavka', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -606,21 +560,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('doplata', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('doplata', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('doplata', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('doplata', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('doplata', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -652,7 +600,7 @@ begin
 
       // Проверка на код уже содержащийся в справочнике
       founded_id := FindIdIfExist('stavka', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
@@ -679,21 +627,15 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('kategory', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id <> 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на код уже содержащийся в таблице миграции
-      founded_id := FindIdInMigrationTable('kategory', FOXPRO_KOD);
-      if founded_id <> 0 then begin
+      // Проверка на код уже содержащийся в справочнике и в таблице миграции
+      founded_id := FindIdWithMigrationTable('kategory', FOXPRO_KOD);
+      if founded_id > 0 then begin
         Form1.FoxProDbf.Next; Continue;
       end;
 
       // Проверка на наименования уже содержащиеся в справочнике
       founded_id := FindIdIfExist('kategory', 'name', FOXPRO_NAIM);
-      if founded_id <> 0 then begin
+      if founded_id > 0 then begin
         AddToMigrationTable('kategory', FOXPRO_KOD, founded_id);
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -794,8 +736,10 @@ begin
       ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
       ParamByName('FOXPRO_NADB').AsString := FOXPRO_NADB;
       ExecSQL;
+      sql_commands.UpdateTarNadbavky;
+      Form1.FoxProDbf.Next;
     end;
-  end; sql_commands.UpdateTarNadbavky;
+  end;
   //Импорт Надбавок
 
   //Импорт Должностей тарификации
@@ -842,6 +786,12 @@ begin
       end;
 
       // Находим ID Должности тарификации по релевантным данным
+      id_tar_job := FindIdInTarJob(id_tarifikaciya,
+                            FOXPRO_DOLJ, FOXPRO_PREDM,
+                            FOXPRO_RAZR, FOXPRO_KAT);
+      if (id_tar_job = -1) or (id_tar_job > 0) then begin
+        Form1.FoxProDbf.Next; Continue;
+      end;
 
       ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
       ParamByName('FOXPRO_DOLJ').AsString := FOXPRO_DOLJ;
