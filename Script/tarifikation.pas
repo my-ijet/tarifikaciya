@@ -301,18 +301,20 @@ begin
            'SELECT '+
            'tar_job_doplata.id, '+
            'doplata.name, '+
-           'tar_job_doplata_summa.total_summa, '+
-           'tar_job_doplata_summa.total_percent, '+
-           'tar_job_doplata_summa.total_percent_summa, '+
-           'tar_job_doplata_summa.total_doplata_summa '+
+           'tar_job_doplata.dop_summa, '+
+           'tar_job_doplata.dop_percent '+
+           // 'tar_job_doplata_summa.total_summa, '+
+           // 'tar_job_doplata_summa.total_percent, '+
+           // 'tar_job_doplata_summa.total_percent_summa, '+
+           // 'tar_job_doplata_summa.total_doplata_summa '+
            'FROM tar_job_doplata '+
            'JOIN tar_job ON tar_job_doplata.id_tar_job = tar_job.id '+
            'LEFT JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
-           'LEFT JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
+           // 'LEFT JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
            'WHERE '+
            '      tar_job.id = ' + SelectedTarJob +
-                  SelectedDoplata +' ' +
-           'ORDER by tar_job_doplata_summa.total_doplata_summa desc, doplata.name ';
+                  SelectedDoplata +' ';
+           // 'ORDER by tar_job_doplata_summa.total_doplata_summa desc, doplata.name ';
 
   Tarifikation.BtnFilterTarJobDoplaty.dbSQL := SqlSelect;
 end;

@@ -31,6 +31,7 @@ object Form1: TForm1
     BorderSpacing.Top = 12
     Caption = 'Импорт..'
     Font.Height = -32
+    ParentColor = False
     ParentFont = False
   end
   object ProgressBar: TProgressBar
@@ -64,6 +65,8 @@ object Form1: TForm1
     Database = MainConnection
     Transaction = MainTransaction
     Options = [sqoAutoApplyUpdates]
+    Params = <>
+    Macros = <>
     Left = 39
     Top = 10
   end
@@ -102,6 +105,8 @@ object Form1: TForm1
   object SQL: TSQLScript
     DataBase = MainConnection
     Transaction = MainTransaction
+    AutoCommit = False
+    UseDollarString = False
     Directives.Strings = (
       'SET TERM'
       'COMMIT WORK'
@@ -116,6 +121,10 @@ object Form1: TForm1
       '#UNDEFINE'
     )
     Terminator = ';'
+    CommentsinSQL = True
+    UseSetTerm = True
+    UseCommit = True
+    UseDefines = True
     OnException = SQLException
     Left = 213
     Top = 10
@@ -125,6 +134,8 @@ object Form1: TForm1
     FieldDefs = <>
     Database = MainConnection
     Transaction = MainTransaction
+    Params = <>
+    Macros = <>
     Left = 39
     Top = 10
   end

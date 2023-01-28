@@ -98,28 +98,24 @@ begin
     TimerQuit.Enabled := True;
     Exit;
   end;
+  sql_commands.PrepareTables;
 
   // Импорт справочников
   FoundDbfFiles := FindAllFiles(PathToFoxProDir, '*.DBF', True);
   numOfFoundedFiles := FoundDbfFiles.Count;
 
   if numOfFoundedFiles > 0 then begin
-    sql_commands.PrepareTables;
-
-    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
-      Caption := 'Импорт справочников: '+DbfFileName;
+      Caption := 'Справочники: '+DbfFileName;
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportSpravochniky(DbfFilePath);
       Application.ProcessMessages;
       Dec(numOfFoundedFiles);
     end;
-    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-    Caption := 'Импорт завершен!';
-    Status.Caption := 'Импорт завершен!';
+    sql_commands.RemoveDuplicatesFromSpravochnikyAfterImport;
     sql_commands.UpdateSpravochniky;
     MainTransaction.Commit;
   // Импорт справочников
@@ -130,26 +126,32 @@ begin
   numOfFoundedFiles := FoundDbfFiles.Count;
 
   if numOfFoundedFiles > 0 then begin
-    sql_commands.PrepareTables;
-
-    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
     for DbfFilePath in FoundDbfFiles do
     begin
       DbfFileName := ExtractFileName(DbfFilePath);
-      Caption := 'Импорт тар. табл.: '+DbfFileName;
+      Caption := 'Тарификации: '+DbfFileName;
       Status.Caption := 'Осталось: '+IntToStr(numOfFoundedFiles)+'шт.';
 
       ImportTarifikations(DbfFilePath);
       Application.ProcessMessages;
       Dec(numOfFoundedFiles);
     end;
-    //MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
-    Caption := 'Импорт завершен!';
-    Status.Caption := 'Импорт завершен!';
-    MainTransaction.Commit;
+  sql_commands.RemoveDuplicatesFromT1;
+  sql_commands.RemoveDuplicatesFromT2;
+  MainTransaction.Commit;
   // Импорт таблиц тарификации
   end else Status.Caption := 'Файлы не найдены!';
+  Caption := 'Импорт данных FoxPro'; Status.Caption := 'Обработка..';
 
+  sql_commands.ImportTarifikaciyaFromT1;
+  sql_commands.ImportTarNadbavkaFromT2;
+  sql_commands.ImportTarJobFromT2;
+  sql_commands.ImportTarJobDoplataFromT2;
+
+  sql_commands.FindAndRemoveDuplicatesInData;
+  MainTransaction.Commit;
+
+  Caption := 'Импорт завершен!'; Status.Caption := 'Импорт завершен!';
   ProgressBar.Position := ProgressBar.Max;
   Application.ProcessMessages;
 
@@ -179,7 +181,7 @@ end;
 procedure TForm1.SQLException(Sender: TObject; Statement: TStrings;
   TheException: Exception; var Continue: boolean);
 begin
-  Continue := True;
+  //Continue := True;
 end;
 
 end.

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, DB, Dbf, Forms,
-  LConvEncoding, FileUtil, StrUtils, Variants;
+  Math, LConvEncoding, FileUtil, StrUtils, Variants;
 
 type
   TFoxProUtil = class
@@ -30,8 +30,8 @@ procedure ImportStavka;
 procedure ImportNadbavka;
 procedure ImportDoplata;
 
-procedure ImportTarifikaciya;
-procedure ImportTarJob;
+procedure ImportFoxProT1;
+procedure ImportFoxProT2;
 
 implementation
 
@@ -97,8 +97,8 @@ begin
   if Length(DbfFileNameDelimited) > 0 then
     TarTableType := DbfFileNameDelimited[0];
   case TarTableType of
-    'T1': ImportTarifikaciya;
-    'T2': ImportTarJob;
+    'T1': ImportFoxProT1;
+    'T2': ImportFoxProT2;
   end;
 
   Form1.FoxProDbf.Active := False;
@@ -172,7 +172,8 @@ function FindIdInTarJob(id_tarifikaciya : Integer;
                         FOXPRO_DOLJ : String;
                         FOXPRO_PREDM : String;
                         FOXPRO_RAZR : String;
-                        FOXPRO_KAT : String                         ) : Integer;
+                        FOXPRO_KAT : String;
+                        stavka_coeff : Double) : Integer;
 var
   id_doljnost, id_predmet, id_kategory, id_stavka : Integer;
 begin
@@ -191,6 +192,8 @@ begin
   Form1.QSelect.SQL.Append('  and id_predmet = '+IntToStr(id_predmet));
   Form1.QSelect.SQL.Append('  and id_kategory = '+IntToStr(id_kategory));
   Form1.QSelect.SQL.Append('  and id_stavka = '+IntToStr(id_stavka));
+  Form1.QSelect.SQL.Append('  and printf("%.2f", stavka_coeff) = ');
+  Form1.QSelect.SQL.Append('  printf("%.2f", cast("'+FormatFloat('0.00', stavka_coeff)+'" as real))');
   Form1.QSelect.SQL.Append('limit 1 ;');
   Form1.QSelect.Open;
   Result := Form1.QSelect.FieldByName('id').AsInteger;
@@ -214,6 +217,23 @@ begin
   Form1.QSelect.Close;
 end;
 
+function FindIdInTarJobDoplata(id_tar_job : Integer;
+                               FOXPRO_DOPL : String) : Integer;
+var
+  id_doplata : Integer;
+begin
+  id_doplata := FindIdWithMigrationTable('doplata', FOXPRO_DOPL);
+  if id_doplata = 0 then Exit(-1);
+
+  Form1.QSelect.SQL.Text := 'select id from tar_job_doplata ';
+  Form1.QSelect.SQL.Append('where id_tar_job = '+IntToStr(id_tar_job));
+  Form1.QSelect.SQL.Append('  and id_doplata = '+IntToStr(id_doplata));
+  Form1.QSelect.SQL.Append('limit 1 ;');
+  Form1.QSelect.Open;
+  Result := Form1.QSelect.FieldByName('id').AsInteger;
+  Form1.QSelect.Close;
+end;
+
 procedure AddToMigrationTable(tablename : String;
                              FOXPRO_KOD : String;
                              ToId : Integer);
@@ -227,7 +247,6 @@ end;
 procedure ImportOrganizations;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into organization';
@@ -241,19 +260,6 @@ begin
 
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
-
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('organization', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('organization', 'short_name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('organization', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('short_name').AsString := FOXPRO_NAIM;
@@ -269,7 +275,6 @@ end;
 procedure ImportOrgGroups;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into org_group';
@@ -284,19 +289,6 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('org_group', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('org_group', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('org_group', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ExecSQL;
@@ -309,7 +301,6 @@ end;
 procedure ImportPersons;
 var
   FOXPRO_KOD : String;
-  founded_id : Integer;
   tmpstr, familyname, firstname, middlename: String;
   splittedstr: array of String;
   i: Integer;
@@ -351,19 +342,6 @@ begin
       end;
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('person', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на ФИО уже содержащиеся в справочнике
-      founded_id := FindIdByFIO(familyname, firstname, middlename);
-      if founded_id > 0 then begin
-        AddToMigrationTable('person', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('familyname').AsString := familyname;
       ParamByName('firstname').AsString := firstname;
@@ -378,7 +356,6 @@ end;
 procedure ImportPersonalGroups;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into personal_group';
@@ -393,19 +370,6 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('personal_group', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('personal_group', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('personal_group', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ExecSQL;
@@ -418,7 +382,6 @@ end;
 procedure ImportDoljnost;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into doljnost';
@@ -432,19 +395,6 @@ begin
 
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
-
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('doljnost', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('doljnost', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('doljnost', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
@@ -462,7 +412,6 @@ end;
 procedure ImportObrazovanie;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into obrazovanie';
@@ -477,19 +426,6 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('obrazovanie', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('obrazovanie', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('obrazovanie', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ExecSQL;
@@ -502,7 +438,6 @@ end;
 procedure ImportPredmet;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into predmet';
@@ -517,19 +452,6 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('predmet', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('predmet', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('predmet', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ParamByName('clock').AsInteger := Form1.FoxProDbf.FieldByName('CLOCK').AsInteger;
@@ -543,7 +465,6 @@ end;
 procedure ImportNadbavka;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into nadbavka';
@@ -557,19 +478,6 @@ begin
 
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
-
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('nadbavka', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('nadbavka', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('nadbavka', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
@@ -586,7 +494,6 @@ end;
 procedure ImportDoplata;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into doplata';
@@ -600,19 +507,6 @@ begin
 
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
-
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('doplata', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('doplata', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('doplata', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
@@ -629,7 +523,6 @@ end;
 procedure ImportStavka;
 var
   FOXPRO_KOD : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into stavka';
@@ -643,12 +536,6 @@ begin
 
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('RAZR').AsString;
 
-      // Проверка на код уже содержащийся в справочнике
-      founded_id := FindIdIfExist('stavka', 'FOXPRO_KOD', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('FOXPRO_KOD').AsString := FOXPRO_KOD;
       ParamByName('summa').AsCurrency := Form1.FoxProDbf.FieldByName('SUMST').AsCurrency;
       ExecSQL;
@@ -661,7 +548,6 @@ end;
 procedure ImportKategories;
 var
   FOXPRO_KOD, FOXPRO_NAIM : String;
-  founded_id : Integer;
 begin
   with Form1.QInsertFromFoxPro do  begin
     SQL.Text := 'insert into kategory';
@@ -676,19 +562,6 @@ begin
       FOXPRO_KOD := Form1.FoxProDbf.FieldByName('KOD').AsString;
       FOXPRO_NAIM := Form1.FoxProDbf.FieldByName('NAIM').AsString;
 
-      // Проверка на код уже содержащийся в справочнике и в таблице миграции
-      founded_id := FindIdWithMigrationTable('kategory', FOXPRO_KOD);
-      if founded_id > 0 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Проверка на наименования уже содержащиеся в справочнике
-      founded_id := FindIdIfExist('kategory', 'name', FOXPRO_NAIM);
-      if founded_id > 0 then begin
-        AddToMigrationTable('kategory', FOXPRO_KOD, founded_id);
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ExecSQL;
@@ -699,55 +572,84 @@ begin
 end;
 
 
-procedure ImportTarifikaciya;
-var
-  FOXPRO_KU, FOXPRO_TABN, date : String;
-  FOXPRO_DATA, FOXPRO_DATAZN : TDateTime;
-  isMain : Boolean = False;
-  id_tarifikaciya : Integer;
+procedure ImportFoxProT1;
 begin
   with Form1.QInsertFromFoxPro do begin
-    SQL.Text := 'insert into tarifikaciya ';
+    SQL.Text := 'insert into T1 ';
     SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_OBR, ');
-    SQL.Append(' diplom, staj_year, staj_month, date, main)');
+    SQL.Append(' FOXPRO_NOMDIP, FOXPRO_STAGY, FOXPRO_STAGM, ');
+    SQL.Append(' FOXPRO_DATA, FOXPRO_DATAZN )');
     SQL.Append('values (:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_OBR, ');
-    SQL.Append(' :diplom, :staj_year, :staj_month, :date, :main);');
+    SQL.Append(' :FOXPRO_NOMDIP, :FOXPRO_STAGY, :FOXPRO_STAGM, ');
+    SQL.Append(' :FOXPRO_DATA, :FOXPRO_DATAZN );');
 
     while not Form1.FoxProDbf.EOF do begin
       if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
           Form1.ProgressBar.StepIt; Application.ProcessMessages;
       end;
-
-      FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
-      FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
-      FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
-      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
-      FOXPRO_DATAZN := Form1.FoxProDbf.FieldByName('DATAZN').AsDateTime;
-      isMain := FOXPRO_DATA = FOXPRO_DATAZN;
-
-      // Проверка по релевантным данным уже содержащимся в таблице тарификации
-      id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
-      if (id_tarifikaciya = -1) or (id_tarifikaciya > 0) then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      ParamByName('FOXPRO_KU').AsString := FOXPRO_KU;
-      ParamByName('FOXPRO_TABN').AsString := FOXPRO_TABN;
+      ParamByName('FOXPRO_KU').AsString := Form1.FoxProDbf.FieldByName('KU').AsString;
+      ParamByName('FOXPRO_TABN').AsString := Form1.FoxProDbf.FieldByName('TABN').AsString;
       ParamByName('FOXPRO_OBR').AsString := Form1.FoxProDbf.FieldByName('OBR').AsString;
-      ParamByName('diplom').AsString := Form1.FoxProDbf.FieldByName('NOMDIP').AsString;
-      ParamByName('staj_year').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
-      ParamByName('staj_month').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
-      ParamByName('date').AsString := date;
-      ParamByName('main').AsBoolean := isMain;
+      ParamByName('FOXPRO_NOMDIP').AsString := Form1.FoxProDbf.FieldByName('NOMDIP').AsString;
+      ParamByName('FOXPRO_STAGY').AsInteger := Form1.FoxProDbf.FieldByName('STAGY').AsInteger;
+      ParamByName('FOXPRO_STAGM').AsInteger := Form1.FoxProDbf.FieldByName('STAGM').AsInteger;
+      ParamByName('FOXPRO_DATA').AsDateTime := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      ParamByName('FOXPRO_DATAZN').AsDateTime := Form1.FoxProDbf.FieldByName('DATAZN').AsDateTime;
       ExecSQL;
 
       Form1.FoxProDbf.Next;
     end;
   end;
-  sql_commands.UpdateTarifikations;
 end;
 
-procedure ImportTarJob;
+procedure ImportFoxProT2;
+begin
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := 'insert into T2 ';
+    SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_DOLJ, ');
+    SQL.Append('FOXPRO_PREDM, FOXPRO_CLOCK, FOXPRO_SUMCL, ');
+    SQL.Append('FOXPRO_NADB, FOXPRO_DOPL, ');
+    SQL.Append('FOXPRO_PROC_D, FOXPRO_SUMD, ');
+    SQL.Append('FOXPRO_RAZR, FOXPRO_KAT, ');
+    SQL.Append('FOXPRO_STAVKA, FOXPRO_STIM, ');
+    SQL.Append('FOXPRO_DATA )');
+    SQL.Append('values');
+    SQL.Append('(:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_DOLJ, ');
+    SQL.Append(':FOXPRO_PREDM, :FOXPRO_CLOCK, :FOXPRO_SUMCL, ');
+    SQL.Append(':FOXPRO_NADB, :FOXPRO_DOPL, ');
+    SQL.Append(':FOXPRO_PROC_D, :FOXPRO_SUMD, ');
+    SQL.Append(':FOXPRO_RAZR, :FOXPRO_KAT, ');
+    SQL.Append(':FOXPRO_STAVKA, :FOXPRO_STIM, ');
+    SQL.Append(':FOXPRO_DATA );');
+
+    while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+      ParamByName('FOXPRO_KU').AsString := Form1.FoxProDbf.FieldByName('KU').AsString;
+      ParamByName('FOXPRO_TABN').AsString := Form1.FoxProDbf.FieldByName('TABN').AsString;
+      ParamByName('FOXPRO_DOLJ').AsString := Form1.FoxProDbf.FieldByName('DOLJ').AsString;
+      ParamByName('FOXPRO_PREDM').AsString := Form1.FoxProDbf.FieldByName('PREDM').AsString;
+      ParamByName('FOXPRO_CLOCK').AsFloat := Form1.FoxProDbf.FieldByName('CLOCK').AsFloat;
+      ParamByName('FOXPRO_SUMCL').AsFloat := Form1.FoxProDbf.FieldByName('SUMCL').AsFloat;
+      ParamByName('FOXPRO_NADB').AsString := Form1.FoxProDbf.FieldByName('NADB').AsString;
+      ParamByName('FOXPRO_DOPL').AsString := Form1.FoxProDbf.FieldByName('DOPL').AsString;
+      ParamByName('FOXPRO_PROC_D').AsFloat := Form1.FoxProDbf.FieldByName('PROC_D').AsFloat;
+      ParamByName('FOXPRO_SUMD').AsFloat := Form1.FoxProDbf.FieldByName('SUMD').AsFloat;
+      ParamByName('FOXPRO_RAZR').AsString := Form1.FoxProDbf.FieldByName('RAZR').AsString;
+      ParamByName('FOXPRO_KAT').AsString := Form1.FoxProDbf.FieldByName('KAT').AsString;
+      ParamByName('FOXPRO_STAVKA').AsFloat := Form1.FoxProDbf.FieldByName('STAVKA').AsFloat;
+      ParamByName('FOXPRO_STIM').AsFloat := Form1.FoxProDbf.FieldByName('STIM').AsFloat;
+      ParamByName('FOXPRO_DATA').AsDateTime := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      ExecSQL;
+
+      Form1.FoxProDbf.Next;
+    end;
+  end;
+end;
+
+
+procedure OldImport;
 var
   FOXPRO_KU, FOXPRO_TABN, date : String; FOXPRO_DATA : TDateTime;
   FOXPRO_DOLJ, FOXPRO_PREDM : String;
@@ -758,48 +660,10 @@ var
   stavka_coeff, FOXPRO_STIM : Double;
 
   id_tarifikaciya,
-  id_tar_nadbavka,
   id_tar_job, id_tar_job_doplata : Integer;
 begin
-  Form1.ProgressBar.Max := Form1.FoxProDbf.PhysicalRecordCount * 2;
-  Form1.ProgressBar.Step := Round(Form1.ProgressBar.Max * 0.05)+1;
-  //Импорт Надбавок
-  with Form1.QInsertFromFoxPro do begin
-    SQL.Text := 'insert into tar_nadbavka ';
-    SQL.Append('(id_tarifikaciya, FOXPRO_NADB)');
-    SQL.Append('values (:id_tarifikaciya, :FOXPRO_NADB);');
-
-    while not Form1.FoxProDbf.EOF do begin
-      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
-          Form1.ProgressBar.StepIt; Application.ProcessMessages;
-      end;
-
-      FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
-      FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
-      FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
-      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
-      FOXPRO_NADB := Form1.FoxProDbf.FieldByName('NADB').AsString;
-
-      // Находим ID тарификации по релевантным данным
-      id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
-      if id_tarifikaciya < 1 then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      // Находим ID по релевантным данным в таблице тарификационных надбавок
-      id_tar_nadbavka := FindIdInTarNadbavka(id_tarifikaciya, FOXPRO_NADB);
-      if (id_tar_nadbavka = -1) or (id_tar_nadbavka > 0) then begin
-        Form1.FoxProDbf.Next; Continue;
-      end;
-
-      ParamByName('id_tarifikaciya').AsInteger := id_tarifikaciya;
-      ParamByName('FOXPRO_NADB').AsString := FOXPRO_NADB;
-      ExecSQL;
-      sql_commands.UpdateTarNadbavky;
-      Form1.FoxProDbf.Next;
-    end;
-  end;
-  //Импорт Надбавок
+  Form1.ProgressBar.Max := Form1.FoxProDbf.PhysicalRecordCount * 3;
+  Form1.ProgressBar.Step := Round(Form1.ProgressBar.Max * 0.025)+1;
 
   //Импорт Должностей тарификации
   with Form1.QInsertFromFoxPro do begin
@@ -807,14 +671,12 @@ begin
     SQL.Append('(id_tarifikaciya,');
     SQL.Append(' FOXPRO_DOLJ, FOXPRO_PREDM, ');
     SQL.Append(' clock, FOXPRO_SUMCL,');
-    SQL.Append(' FOXPRO_NADB,  FOXPRO_DOPL,');
     SQL.Append(' FOXPRO_KAT,');
     SQL.Append(' FOXPRO_RAZR, stavka_coeff,');
     SQL.Append(' FOXPRO_STIM) ');
     SQL.Append('values (:id_tarifikaciya, ');
     SQL.Append(' :FOXPRO_DOLJ, :FOXPRO_PREDM, ');
     SQL.Append(' :clock, :FOXPRO_SUMCL,');
-    SQL.Append(' :FOXPRO_NADB, :FOXPRO_DOPL,');
     SQL.Append(' :FOXPRO_KAT,');
     SQL.Append(' :FOXPRO_RAZR, :stavka_coeff,');
     SQL.Append(' :FOXPRO_STIM);');
@@ -833,10 +695,6 @@ begin
       date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
       clock := Form1.FoxProDbf.FieldByName('CLOCK').AsFloat;
       FOXPRO_SUMCL := Form1.FoxProDbf.FieldByName('SUMCL').AsFloat;
-      FOXPRO_NADB := Form1.FoxProDbf.FieldByName('NADB').AsString;
-      FOXPRO_DOPL := Form1.FoxProDbf.FieldByName('DOPL').AsString;
-      FOXPRO_PROC_D := Form1.FoxProDbf.FieldByName('PROC_D').AsFloat;
-      FOXPRO_SUMD := Form1.FoxProDbf.FieldByName('SUMD').AsFloat;
       FOXPRO_RAZR := Form1.FoxProDbf.FieldByName('RAZR').AsString;
       FOXPRO_KAT := Form1.FoxProDbf.FieldByName('KAT').AsString;
       stavka_coeff := Form1.FoxProDbf.FieldByName('STAVKA').AsFloat;
@@ -851,7 +709,7 @@ begin
       // Находим ID Должности тарификации по релевантным данным
       id_tar_job := FindIdInTarJob(id_tarifikaciya,
                             FOXPRO_DOLJ, FOXPRO_PREDM,
-                            FOXPRO_RAZR, FOXPRO_KAT);
+                            FOXPRO_RAZR, FOXPRO_KAT, stavka_coeff);
       if (id_tar_job = -1) or (id_tar_job > 0) then begin
         Form1.FoxProDbf.Next; Continue;
       end;
@@ -861,8 +719,6 @@ begin
       ParamByName('FOXPRO_PREDM').AsString := FOXPRO_PREDM;
       ParamByName('clock').AsFloat := clock;
       ParamByName('FOXPRO_SUMCL').AsFloat := FOXPRO_SUMCL;
-      ParamByName('FOXPRO_NADB').AsString := FOXPRO_NADB;
-      ParamByName('FOXPRO_DOPL').AsString := FOXPRO_DOPL;
       ParamByName('FOXPRO_RAZR').AsString := FOXPRO_RAZR;
       ParamByName('FOXPRO_KAT').AsString := FOXPRO_KAT;
       ParamByName('stavka_coeff').AsFloat := stavka_coeff;
@@ -870,15 +726,81 @@ begin
       ExecSQL;
 
       Form1.FoxProDbf.Next;
+      sql_commands.UpdateTarJobs;
     end;
-  end; sql_commands.UpdateTarJobs;
+  end;
   //Импорт Должностей тарификации
 
   //Импорт Доплат должностей тарификации
-  //Импорт Доплат должностей тарификации
+  with Form1.QInsertFromFoxPro do begin
+    SQL.Text := 'insert into tar_job_doplata ';
+    SQL.Append('(id_tar_job,');
+    SQL.Append(' FOXPRO_DOPL, ');
+    SQL.Append(' dop_percent, dop_summa) ');
+    SQL.Append('values (:id_tar_job, ');
+    SQL.Append(' :FOXPRO_DOPL, ');
+    SQL.Append(' :dop_percent, :dop_summa);');
 
-  //Импорт Стимулирующих доплат
-  //Импорт Стимулирующих доплат
+    Form1.FoxProDbf.First;
+    while not Form1.FoxProDbf.EOF do begin
+      if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
+          Form1.ProgressBar.StepIt; Application.ProcessMessages;
+      end;
+
+      FOXPRO_KU := Form1.FoxProDbf.FieldByName('KU').AsString;
+      FOXPRO_TABN := Form1.FoxProDbf.FieldByName('TABN').AsString;
+      FOXPRO_DATA := Form1.FoxProDbf.FieldByName('DATA').AsDateTime;
+      date := FormatDateTime('YYYY-MM-DD HH:MM:SS.SS', FOXPRO_DATA);
+      FOXPRO_DOLJ := Form1.FoxProDbf.FieldByName('DOLJ').AsString;
+      FOXPRO_PREDM := Form1.FoxProDbf.FieldByName('PREDM').AsString;
+      FOXPRO_RAZR := Form1.FoxProDbf.FieldByName('RAZR').AsString;
+      FOXPRO_KAT := Form1.FoxProDbf.FieldByName('KAT').AsString;
+      stavka_coeff := Form1.FoxProDbf.FieldByName('STAVKA').AsFloat;
+
+      FOXPRO_DOPL := Form1.FoxProDbf.FieldByName('DOPL').AsString;
+      FOXPRO_PROC_D := Form1.FoxProDbf.FieldByName('PROC_D').AsFloat;
+      FOXPRO_SUMD := Form1.FoxProDbf.FieldByName('SUMD').AsFloat;
+      FOXPRO_STIM := Form1.FoxProDbf.FieldByName('STIM').AsFloat;
+
+      // Находим ID тарификации по релевантным данным
+      id_tarifikaciya := FindIdInTarifikaciya(FOXPRO_KU, FOXPRO_TABN, date);
+      if id_tarifikaciya < 1 then begin
+        Form1.FoxProDbf.Next; Continue;
+      end;
+
+      // Находим ID Должности тарификации по релевантным данным
+      id_tar_job := FindIdInTarJob(id_tarifikaciya,
+                            FOXPRO_DOLJ, FOXPRO_PREDM,
+                            FOXPRO_RAZR, FOXPRO_KAT, stavka_coeff);
+      if id_tar_job < 1 then begin
+        Form1.FoxProDbf.Next; Continue;
+      end;
+
+      // Находим ID Доплаты для должности тарификации по релевантным данным
+      id_tar_job_doplata := FindIdInTarJobDoplata(id_tar_job, FOXPRO_DOPL);
+      if (id_tar_job_doplata = -1) or (id_tar_job_doplata > 0) then begin
+        Form1.FoxProDbf.Next; Continue;
+      end;
+
+      if (CompareValue(FOXPRO_PROC_D, 0) = 1) then
+        FOXPRO_SUMD := 0;
+      if (CompareValue(FOXPRO_STIM, 0) = 1) then
+        FOXPRO_SUMD := FOXPRO_SUMD + FOXPRO_STIM;
+      if (CompareValue(FOXPRO_PROC_D, 0) = 1) or (CompareValue(FOXPRO_SUMD, 0) = 1)
+      then begin
+
+        ParamByName('id_tar_job').AsInteger := id_tar_job;
+        ParamByName('FOXPRO_DOPL').AsString := FOXPRO_DOPL;
+        ParamByName('dop_percent').AsFloat := FOXPRO_PROC_D;
+        ParamByName('dop_summa').AsFloat := FOXPRO_SUMD;
+        ExecSQL;
+      end;
+
+      Form1.FoxProDbf.Next;
+    end;
+      sql_commands.UpdateTarJobDoplaty;
+  end;
+  //Импорт Доплат должностей тарификации
 end;
 
 function TFoxProUtil.DbfTranslate(Dbf: TDbf; Src, Dest: PChar; ToOEM: Boolean): Integer;
