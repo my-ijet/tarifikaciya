@@ -219,6 +219,41 @@ end;
 
 procedure ImportTarJobFromT2;
 begin
+  with Form1.SQL.Script do begin
+    Clear;
+    AddText('INSERT INTO tar_job');
+    AddText('(id_tarifikaciya, id_doljnost, id_predmet, clock, id_kategory, id_stavka, stavka_coeff)');
+    AddText('WITH tar as (SELECT');
+    AddText('       organization.id as id_organization,');
+    AddText('       person.id as id_person,');
+    AddText('       date(T1.FOXPRO_DATA) as date,');
+    AddText('       FOXPRO_KU, FOXPRO_TABN, FOXPRO_DATA');
+    AddText('FROM T1');
+    AddText('JOIN organization on T1.FOXPRO_KU = organization.FOXPRO_KOD');
+    AddText('LEFT JOIN person on T1.FOXPRO_TABN = person.FOXPRO_KOD)');
+    AddText('SELECT tarifikaciya.id,');
+    AddText('       ifnull(doljnost.id, 0) as id_doljnost,');
+    AddText('       ifnull(predmet.id, 0) as id_predmet,');
+    AddText('       FOXPRO_CLOCK as clock,');
+    AddText('       ifnull(kategory.id, 0) as id_kategory,');
+    AddText('       ifnull(stavka.id, 0) as id_stavka,');
+    AddText('       FOXPRO_STAVKA as stavka_coeff');
+    AddText('FROM T2');
+    AddText('JOIN tar on T2.FOXPRO_KU = tar.FOXPRO_KU');
+    AddText('        and T2.FOXPRO_TABN = tar.FOXPRO_TABN');
+    AddText('        and T2.FOXPRO_DATA = tar.FOXPRO_DATA');
+    AddText('JOIN tarifikaciya on tar.id_organization = tarifikaciya.id_organization');
+    AddText('                 and tar.id_person = tarifikaciya.id_person');
+    AddText('                 and tar.date = tarifikaciya.date');
+    AddText('LEFT JOIN doljnost on T2.FOXPRO_DOLJ = doljnost.FOXPRO_KOD');
+    AddText('LEFT JOIN predmet on T2.FOXPRO_PREDM = predmet.FOXPRO_KOD');
+    AddText('LEFT JOIN kategory on T2.FOXPRO_KAT = kategory.FOXPRO_KOD');
+    AddText('LEFT JOIN stavka on T2.FOXPRO_RAZR = stavka.FOXPRO_KOD');
+  end;
+  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
+  Form1.SQL.Execute;
+  Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=ON;');
+
   RemoveDuplicatesFromTarJobAfterImport;
 end;
 
