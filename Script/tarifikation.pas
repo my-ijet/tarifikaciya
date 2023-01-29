@@ -102,6 +102,15 @@ end; // Скрыть колонку ID
 procedure Tarifikation_BtnFilterTarifikaciya_OnAfterClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.TableTarifikaciya.Columns[0].Visible := False;
+
+  // Выделяем первую запись
+  if (Tarifikation.TableTarifikaciya.RowCount > 0)
+  and (Tarifikation.TableTarifikaciya.SelectedRow = -1)
+  then begin
+    // ShowMessage('Больше одного!');
+    Tarifikation.TableTarifikaciya.SelectedRow := 0;
+    Tarifikation_DoFilterTableTarJobs;
+  end;
 end;
 
 // Фильтр таблицы Тарификации
@@ -209,7 +218,7 @@ begin
            'ORDER by tar_job_summa.total_summa desc, doljnost.name ';
 
   Tarifikation.BtnFilterTarJobs.dbSQL := SqlSelect;
-end;
+end; // Скрыть первую колонку
 procedure Tarifikation_BtnFilterTarJobs_OnAfterClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.TableTarJobs.Columns[0].Visible := False;
@@ -312,8 +321,6 @@ begin
            'SELECT '+
            'tar_job_doplata.id, '+
            'doplata.name, '+
-           // 'tar_job_doplata.dop_summa, '+
-           // 'tar_job_doplata.dop_percent, '+
            'tar_job_doplata_summa.total_summa, '+
            'tar_job_doplata_summa.total_percent, '+
            'ROUND(tar_job_doplata_summa.total_percent_summa, 2), '+
