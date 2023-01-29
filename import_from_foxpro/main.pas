@@ -142,6 +142,7 @@ begin
   // Импорт таблиц тарификации
   end else Status.Caption := 'Файлы не найдены!';
   Caption := 'Импорт данных FoxPro'; Status.Caption := 'Обработка..';
+  Application.ProcessMessages;
 
   sql_commands.ImportTarifikaciyaFromT1;
   sql_commands.ImportTarNadbavkaFromT2;
@@ -151,7 +152,7 @@ begin
   sql_commands.FindAndRemoveDuplicatesInData;
   MainTransaction.Commit;
 
-  Caption := 'Импорт завершен!'; Status.Caption := 'Импорт завершен!';
+  Caption := 'Импорт завершён!'; Status.Caption := 'Импорт завершён!';
   ProgressBar.Position := ProgressBar.Max;
   Application.ProcessMessages;
 
