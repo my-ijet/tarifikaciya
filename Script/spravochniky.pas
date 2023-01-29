@@ -151,7 +151,6 @@ end;
 
 procedure Tarifikation_BtnClearFilterStavky_OnClick (Sender: TObject; var Cancel: boolean);
 begin
-  Tarifikation.EditFilterStavkyRazr.Clear;
   Tarifikation.EditFilterStavkySymma.Clear;
   Tarifikation.CheckFilterStavkaArchived.State := 0;
 

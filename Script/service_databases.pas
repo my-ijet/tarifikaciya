@@ -122,49 +122,80 @@ begin
 
 // новые таблицы
   SqlCreateTable :=
-     'CREATE VIEW tar_job_doplata_summa AS '+
-     'WITH total_doplata as '+
-     ' (SELECT doplata.id, '+
-     '		NULLIF((ifnull(doplata.percent, 0) + ifnull(tar_job_doplata.dop_percent, 0)), 0) as total_percent, '+
-     '		NULLIF((ifnull(doplata.summa, 0) + ifnull(tar_job_doplata.dop_summa, 0)), 0) as total_summa '+
-     ' FROM tar_job_doplata '+
-     ' JOIN doplata on tar_job_doplata.id_doplata = doplata.id) '+
-     'SELECT tar_job_doplata.id, '+
-     '	   tar_job_doplata.id_tar_job, '+
-     '	   total_summa, '+
-     '	   total_percent, '+
-     '	   (total_percent / 100 * stavka.summa) as total_percent_summa, '+
-     '	   NULLIF(( ifnull(total_summa, 0) + (ifnull(total_percent, 0) / 100 * stavka.summa)), 0) as total_doplata_summa '+
+     'CREATE VIEW total_nadbavka AS '+
+     'SELECT tar_nadbavka.id_tarifikaciya, total(nadbavka.percent) as total_percent '+
+     'FROM tar_nadbavka '+
+     'LEFT JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
+     'GROUP by tar_nadbavka.id_tarifikaciya; ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW total_tar_job_doplata AS '+
+     'SELECT tar_job_doplata.id_tar_job, '+
+     '       total(ifnull(percent, 0) + ifnull(dop_percent, 0)) as total_percent, '+
+     '	     total(ifnull(summa, 0) + ifnull(dop_summa, 0)) as total_summa '+
      'FROM tar_job_doplata '+
-     'JOIN tar_job on tar_job_doplata.id_tar_job = tar_job.id '+
-     'JOIN stavka on tar_job.id_stavka = stavka.id '+
-     'LEFT JOIN total_doplata on tar_job_doplata.id_doplata = total_doplata.id; ';
+     'LEFT JOIN doplata on tar_job_doplata.id_doplata = doplata.id '+
+     'GROUP by tar_job_doplata.id_tar_job; ';
   SQLExecute(SqlCreateTable);
 
   SqlCreateTable :=
      'CREATE VIEW tar_job_summa AS '+
+     'WITH job_itog as ( '+
      'SELECT tar_job.id, '+
-     '	   tar_job.id_tarifikaciya, '+
-     '	   total_tar_job_doplata.total_summa as total_doplata_summa, '+
-     '	   total_tar_job_doplata.total_percent as total_doplata_persent, '+
-     '	   (total_tar_job_doplata.total_percent / 100 * stavka.summa) as total_doplata_persent_summa, '+
-     '	   total_nadbavka.total_percent as total_nadbavka_percent, '+
-     '	   (total_nadbavka.total_percent / 100 * stavka.summa) as total_nadbavka_summa, '+
-     '	   NULLIF((ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)), 0) as total_percent, '+
-     '	   ( NULLIF((ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)), 0) / 100 * stavka.summa ) as total_percent_summa, '+
-     '	   (stavka.summa + ifnull(total_tar_job_doplata.total_summa, 0) + '+
-     '	   ( (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_tar_job_doplata.total_percent, 0)) / 100 * stavka.summa ) ) as total_summa '+
+     '	   ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)) * ifnull(clock_coeff, 0))  as nagruzka, '+
+     '	   (ifnull(stavka_coeff, 0)+ifnull(kategory_coeff, 0)) * ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * clock_coeff) as zarplata '+
+
      'FROM tar_job '+
-     'JOIN stavka on tar_job.id_stavka = stavka.id '+
+     'LEFT JOIN stavka on tar_job.id_stavka = stavka.id '+
      'LEFT JOIN total_nadbavka on tar_job.id_tarifikaciya = total_nadbavka.id_tarifikaciya '+
-     'LEFT JOIN total_tar_job_doplata on tar_job.id = total_tar_job_doplata.id_tar_job; ';
+     'LEFT JOIN total_tar_job_doplata on tar_job.id = total_tar_job_doplata.id_tar_job '+
+     ') '+
+     'SELECT tar_job.id, '+
+     '       (job_itog.zarplata / 100 * total_nadbavka.total_percent) as nadbavka_summa, '+
+
+     '       total_tar_job_doplata.total_summa as doplata_summa, '+
+     '       (job_itog.zarplata / 100 * total_tar_job_doplata.total_percent ) as doplata_persent_summa, '+
+
+     '       job_itog.nagruzka, job_itog.zarplata, '+
+
+     '       ( job_itog.zarplata / 100 * (total_nadbavka.total_percent + total_tar_job_doplata.total_percent)) as total_percent_summa, '+
+
+     '       (job_itog.zarplata + total_tar_job_doplata.total_summa + '+
+     '       ( job_itog.zarplata / 100 * (total_nadbavka.total_percent + total_tar_job_doplata.total_percent)) ) as total_summa '+
+
+     'FROM job_itog '+
+     'JOIN tar_job on tar_job.id = job_itog.id '+
+     'LEFT JOIN total_nadbavka on tar_job.id_tarifikaciya = total_nadbavka.id_tarifikaciya '+
+     'LEFT JOIN total_tar_job_doplata on tar_job.id = total_tar_job_doplata.id_tar_job ';
+  SQLExecute(SqlCreateTable);
+
+  SqlCreateTable :=
+     'CREATE VIEW tar_job_doplata_summa AS '+
+     'WITH total_doplata as '+
+     ' (SELECT doplata.id, '+
+     '         tar_job_doplata.id_tar_job, '+
+     '		(ifnull(doplata.percent, 0) + ifnull(tar_job_doplata.dop_percent, 0)) as total_percent, '+
+     '		(ifnull(doplata.summa, 0) + ifnull(tar_job_doplata.dop_summa, 0)) as total_summa '+
+     ' FROM tar_job_doplata '+
+     ' JOIN doplata on tar_job_doplata.id_doplata = doplata.id) '+
+     'SELECT tar_job_doplata.id, '+
+     '	   tar_job_doplata.id_tar_job, '+
+     '	   total_doplata.total_summa, '+
+     '	   total_doplata.total_percent, '+
+     '	   (tar_job_summa.zarplata / 100 * total_doplata.total_percent) as total_percent_summa, '+
+     '	   (total_doplata.total_summa + (tar_job_summa.zarplata / 100 * total_doplata.total_percent)) as total_doplata_summa '+
+     'FROM tar_job_doplata '+
+     'JOIN tar_job_summa on tar_job_doplata.id_tar_job = tar_job_summa.id '+
+     'JOIN total_doplata on tar_job_doplata.id_doplata = total_doplata.id '+
+     '                   and tar_job_doplata.id_tar_job = total_doplata.id_tar_job ; ';
   SQLExecute(SqlCreateTable);
 
   SqlCreateTable :=
      'CREATE VIEW tar_nadbavka_summa AS '+
      'WITH total_tar_job_stavka as '+
      '(SELECT tar_job.id_tarifikaciya, '+
-     '		 sum(stavka.summa) as total_summa '+
+     '		 total(stavka.summa) as total_summa '+
      ' FROM tar_job '+
      ' JOIN stavka on tar_job.id_stavka = stavka.id '+
      ' GROUP by tar_job.id_tarifikaciya) '+
@@ -174,36 +205,19 @@ begin
      '	    ( percent / 100 * total_summa ) as total_nadbavka_summa '+
      'FROM tar_nadbavka '+
      'JOIN tarifikaciya on tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
-     'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
+     'LEFT JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
      'LEFT JOIN total_tar_job_stavka on tar_nadbavka.id_tarifikaciya = total_tar_job_stavka.id_tarifikaciya; ';
-  SQLExecute(SqlCreateTable);
-
-  SqlCreateTable :=
-     'CREATE VIEW total_nadbavka AS '+
-     'SELECT tar_nadbavka.id_tarifikaciya, sum(nadbavka.percent) as total_percent '+
-     'FROM tar_nadbavka '+
-     'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
-     'GROUP by tar_nadbavka.id_tarifikaciya; ';
   SQLExecute(SqlCreateTable);
 
   SqlCreateTable :=
      'CREATE VIEW total_tar_job AS '+
      'SELECT tar_job.id_tarifikaciya, '+
-     '	   sum(total_summa) as total_summa '+
+     '	   total(total_summa) as total_summa '+
      'from tar_job '+
      'JOIN tar_job_summa on tar_job.id = tar_job_summa.id '+
      'GROUP by tar_job.id_tarifikaciya; ';
   SQLExecute(SqlCreateTable);
 
-  SqlCreateTable :=
-     'CREATE VIEW total_tar_job_doplata AS '+
-     'SELECT tar_job_doplata.id_tar_job, '+
-     '       sum(percent + dop_percent) as total_percent, '+
-     '	   sum(summa + dop_summa) as total_summa '+
-     'FROM tar_job_doplata '+
-     'JOIN doplata on tar_job_doplata.id_doplata = doplata.id '+
-     'GROUP by tar_job_doplata.id_tar_job; ';
-  SQLExecute(SqlCreateTable);
 end;
 
 procedure UpdateAllTables;

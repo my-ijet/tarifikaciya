@@ -222,7 +222,8 @@ begin
   with Form1.SQL.Script do begin
     Clear;
     AddText('INSERT INTO tar_job');
-    AddText('(id_tarifikaciya, id_doljnost, id_predmet, clock, id_kategory, id_stavka, stavka_coeff)');
+    AddText('(id_tarifikaciya, id_doljnost, id_predmet, clock, clock_coeff,');
+    AddText(' id_kategory, id_stavka, stavka_coeff)');
     AddText('WITH tar as (SELECT');
     AddText('       organization.id as id_organization,');
     AddText('       person.id as id_person,');
@@ -235,6 +236,7 @@ begin
     AddText('       ifnull(doljnost.id, 0) as id_doljnost,');
     AddText('       ifnull(predmet.id, 0) as id_predmet,');
     AddText('       FOXPRO_CLOCK as clock,');
+    AddText('       round((FOXPRO_SUMCL / stavka.summa), 2) as clock_coeff,');
     AddText('       ifnull(kategory.id, 0) as id_kategory,');
     AddText('       ifnull(stavka.id, 0) as id_stavka,');
     AddText('       FOXPRO_STAVKA as stavka_coeff');
@@ -275,7 +277,7 @@ begin
     AddText('                 and person.id = tarifikaciya.id_person');
     AddText('                 and date(T1.FOXPRO_DATA) = tarifikaciya.date');
     AddText('LEFT JOIN person on T1.FOXPRO_TABN = person.FOXPRO_KOD),');
-    AddText('   job as (SELECT');
+    AddText('job as (SELECT');
     AddText('       doljnost.id as id_doljnost,');
     AddText('       predmet.id as id_predmet,');
     AddText('       FOXPRO_CLOCK as clock,');
@@ -417,7 +419,7 @@ procedure RemoveDuplicatesFromTarJobAfterImport;
 var
   columns: String;
 begin
-  columns := 'id_tarifikaciya, id_doljnost, id_predmet, clock, '+
+  columns := 'id_tarifikaciya, id_doljnost, id_predmet, clock, clock_coeff, '+
              'id_kategory, id_stavka, stavka_coeff ';
   RemoveDuplicatesFromTable('tar_job', columns);
 end;

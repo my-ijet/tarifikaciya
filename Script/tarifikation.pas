@@ -82,7 +82,7 @@ begin
            'obrazovanie.name as "obrazovanie.name", '+
            'staj_year, '+
            'staj_month, '+
-           'total_tar_job.total_summa '+
+           'ROUND(total_tar_job.total_summa, 2) '+
            'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'LEFT JOIN person ON tarifikaciya.id_person = person.id '+
@@ -186,13 +186,15 @@ begin
            'predmet.name, '+
            'tar_job.clock, '+
            'kategory.name, '+
-           'stavka.summa, '+
+           'ROUND(stavka.summa, 2), '+
+           'ROUND(tar_job_summa.nadbavka_summa, 2), '+
+           'ROUND(tar_job_summa.doplata_summa, 2), '+
+           'ROUND(tar_job_summa.doplata_persent_summa, 2), '+
            'stavka_coeff, '+
-           'tar_job_summa.total_nadbavka_summa, '+
-           'tar_job_summa.total_doplata_summa, '+
-           'tar_job_summa.total_doplata_persent_summa, '+
-           'tar_job_summa.total_percent_summa, '+
-           'tar_job_summa.total_summa '+
+           'ROUND(tar_job_summa.nagruzka, 2), '+
+           'ROUND(tar_job_summa.zarplata, 2), '+
+           'ROUND(tar_job_summa.total_percent_summa, 2), '+
+           'ROUND(tar_job_summa.total_summa, 2) '+
            'FROM tar_job '+
            'JOIN tarifikaciya ON tar_job.id_tarifikaciya = tarifikaciya.id '+
            'LEFT JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
@@ -211,6 +213,15 @@ end;
 procedure Tarifikation_BtnFilterTarJobs_OnAfterClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.TableTarJobs.Columns[0].Visible := False;
+
+  // Выделяем первую запись
+  if (Tarifikation.TableTarJobs.RowCount > 0)
+  and (Tarifikation.TableTarJobs.SelectedRow = -1)
+  then begin
+    // ShowMessage('Больше одного!');
+    Tarifikation.TableTarJobs.SelectedRow := 0;
+    Tarifikation_DoFilterTableTarJobDoblaty;
+  end;
 end;
 
 // Фильтр таблицы Должностей
@@ -254,11 +265,11 @@ begin
            'tar_nadbavka.id, '+
            'nadbavka.name, '+
            'nadbavka.percent, '+
-           'tar_nadbavka_summa.total_nadbavka_summa '+
+           'ROUND(tar_nadbavka_summa.total_nadbavka_summa, 2) '+
            'FROM tar_nadbavka '+
            'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
            'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
-           'LEFT JOIN tar_nadbavka_summa ON tar_nadbavka.id = tar_nadbavka_summa.id '+
+           'JOIN tar_nadbavka_summa ON tar_nadbavka.id = tar_nadbavka_summa.id '+
            'WHERE '+
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
                   SelectedNadbavka +' ' +
@@ -301,20 +312,20 @@ begin
            'SELECT '+
            'tar_job_doplata.id, '+
            'doplata.name, '+
-           'tar_job_doplata.dop_summa, '+
-           'tar_job_doplata.dop_percent '+
-           // 'tar_job_doplata_summa.total_summa, '+
-           // 'tar_job_doplata_summa.total_percent, '+
-           // 'tar_job_doplata_summa.total_percent_summa, '+
-           // 'tar_job_doplata_summa.total_doplata_summa '+
+           // 'tar_job_doplata.dop_summa, '+
+           // 'tar_job_doplata.dop_percent, '+
+           'tar_job_doplata_summa.total_summa, '+
+           'tar_job_doplata_summa.total_percent, '+
+           'ROUND(tar_job_doplata_summa.total_percent_summa, 2), '+
+           'ROUND(tar_job_doplata_summa.total_doplata_summa, 2) '+
            'FROM tar_job_doplata '+
            'JOIN tar_job ON tar_job_doplata.id_tar_job = tar_job.id '+
            'LEFT JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
-           // 'LEFT JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
+           'JOIN tar_job_doplata_summa ON tar_job_doplata.id = tar_job_doplata_summa.id '+
            'WHERE '+
            '      tar_job.id = ' + SelectedTarJob +
-                  SelectedDoplata +' ';
-           // 'ORDER by tar_job_doplata_summa.total_doplata_summa desc, doplata.name ';
+                  SelectedDoplata +' '+
+           'ORDER by tar_job_doplata_summa.total_doplata_summa desc, doplata.name ';
 
   Tarifikation.BtnFilterTarJobDoplaty.dbSQL := SqlSelect;
 end;
@@ -433,19 +444,19 @@ end;
 // организация, сотрудник и дата тарификации
 procedure frmEditTarJob_OnShow (Sender: TObject; Action: string);
 var
-  TarID : Integer;
+  TarID,
   TarOrganization, TarPerson, TarDate : String;
 begin
-  TarID := Tarifikation.TableTarifikaciya.dbItemID;
+  TarID := IntToStr(Tarifikation.TableTarifikaciya.dbItemID);
   TarOrganization := SQLExecute('select short_name from tarifikaciya '+
                                 'join organization on tarifikaciya.id_organization = organization.id '+
-                                'where tarifikaciya.id = '+IntToStr(TarID));
+                                'where tarifikaciya.id = '+TarID);
   TarPerson := SQLExecute('select printf("%i - %s %s %s", person.id, person.familyname, person.firstname, person.middlename) '+
                           'from tarifikaciya '+
                           'join person on tarifikaciya.id_person = person.id '+
-                          'where tarifikaciya.id = '+IntToStr(TarID));
+                          'where tarifikaciya.id = '+TarID);
   TarDate := SQLExecute('select date from tarifikaciya '+
-                        'where tarifikaciya.id = '+IntToStr(TarID));
+                        'where tarifikaciya.id = '+TarID);
 
   frmEditTarJob.TarOrganization.Text := TarOrganization;
   frmEditTarJob.TarPerson.Text := TarPerson;
