@@ -1,20 +1,23 @@
 ﻿
 
-// Форма тарификации, подставляется
-// ранее выбранная организация и текущая дата тарификации
+// Форма тарификации
+// подставляетсяранее выбранная организация и текущая дата тарификации
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
 begin
-  frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
+  if frmEditTarifikation.dbAction = 'NewRecord' then begin
+    frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
 
-  if not frmEditTarifikation.DateTarDate.Checked then
-    frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateFilterTarDate.DateTime;
-
-  frmEditTarifikation.DateTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
-  frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
+    frmEditTarifikation.DateTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
+    frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
+    frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateTarStart.DateTime;
+  end else begin
+    frmEditTarifikation.DateTarDate.MinDate := 0;
+    frmEditTarifikation.DateTarDate.MaxDate := Now;
+  end;
 end;
 
-// Форма должности тарификации, подставляются
-// организация, сотрудник и дата тарификации
+// Форма должности тарификации
+// подставляются организация, сотрудник и дата тарификации
 procedure frmEditTarJob_OnShow (Sender: TObject; Action: string);
 var
   TarID,
