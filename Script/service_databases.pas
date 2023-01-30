@@ -273,7 +273,7 @@ end;
 
 procedure DeleteSpravochniky;
 begin
-  if MessageDlg('ВСЕ справочники будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
+  if MessageDlg('ВСЕ справочники и связанные тарификационные списки будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
   then Exit;
 
   SQLExecute('delete from org_head;');

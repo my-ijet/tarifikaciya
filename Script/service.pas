@@ -143,9 +143,6 @@ begin
 
   Tarifikation.DateTarStart.DateTime := DateStart;
   Tarifikation.DateTarEnd.DateTime := DateEnd;
-  Tarifikation.DateFilterTarDate.MinDate := DateStart;
-  Tarifikation.DateFilterTarDate.MaxDate := DateEnd;
-  Tarifikation.DateFilterTarDate.Checked := False;
 end;
 
 
@@ -167,12 +164,10 @@ begin
   if StartDateTime > EndDateTime then begin
     Tarifikation.DateTarEnd.DateTime := StartDateTime;
     Tarifikation_DateTarEnd_OnChange(Sender);
-    Tarifikation.DateFilterTarDate.MaxDate := StartDateTime;
   end;
   if StartDateTime > CurrentDateTime then begin
     Tarifikation.DateFilterTarDate.DateTime := StartDateTime;
   end;
-  Tarifikation.DateFilterTarDate.MinDate := StartDateTime;
   Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
 end;
 
@@ -193,12 +188,10 @@ begin
   if EndDateTime < StartDateTime then begin
     Tarifikation.DateTarStart.DateTime := EndDateTime;
     Tarifikation_DateTarStart_OnChange(Sender);
-    Tarifikation.DateFilterTarDate.MinDate := EndDateTime;
   end;
   if EndDateTime < CurrentDateTime then begin
     Tarifikation.DateFilterTarDate.DateTime := EndDateTime;
   end;
-  Tarifikation.DateFilterTarDate.MaxDate := EndDateTime;
   Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
 end;
 // Период Тарификации

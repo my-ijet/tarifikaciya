@@ -154,19 +154,16 @@ var
 begin
   DateStart := Tarifikation.DateTarStart.DateTime;
   DateEnd := Tarifikation.DateTarEnd.DateTime;
+
   CurrentDate := Tarifikation.DateFilterTarDate.DateTime;
   CurrentDateTimeChecked := Tarifikation.DateFilterTarDate.Checked;
 
   if Tarifikation.CheckShowAllTarifikaions.Checked then begin
-    Tarifikation.DateFilterTarDate.MinDate := 0;
-    Tarifikation.DateFilterTarDate.MaxDate := 9999999;
   end else begin
     if CurrentDate < DateStart then
       Tarifikation.DateFilterTarDate.DateTime := DateStart;
     if CurrentDate > DateEnd then
       Tarifikation.DateFilterTarDate.DateTime := DateEnd;
-    Tarifikation.DateFilterTarDate.MinDate := DateStart;
-    Tarifikation.DateFilterTarDate.MaxDate := DateEnd;
     Tarifikation.DateFilterTarDate.Checked := CurrentDateTimeChecked;
   end;
 end;

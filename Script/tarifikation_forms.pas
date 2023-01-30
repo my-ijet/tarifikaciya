@@ -6,13 +6,7 @@ procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
 begin
   if frmEditTarifikation.dbAction = 'NewRecord' then begin
     frmEditTarifikation.ListOrganizations.dbItemID := Tarifikation.TableTarOrganizations.dbItemID;
-
-    frmEditTarifikation.DateTarDate.MinDate := Tarifikation.DateTarStart.DateTime;
-    frmEditTarifikation.DateTarDate.MaxDate := Tarifikation.DateTarEnd.DateTime;
     frmEditTarifikation.DateTarDate.DateTime := Tarifikation.DateTarStart.DateTime;
-  end else begin
-    frmEditTarifikation.DateTarDate.MinDate := 0;
-    frmEditTarifikation.DateTarDate.MaxDate := Now;
   end;
 end;
 
