@@ -144,7 +144,7 @@ begin
      'WITH job_itog as ( '+
      'SELECT tar_job.id, '+
      '	   ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)) * ifnull(clock_coeff, 0))  as nagruzka, '+
-     '	   (ifnull(stavka_coeff, 0)+ifnull(kategory_coeff, 0)) * ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * clock_coeff) as zarplata '+
+     '	   (ifnull(stavka_coeff, 0)+ifnull(kategory_coeff, 0)) * ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * ifnull(clock_coeff, 0)) as zarplata '+
 
      'FROM tar_job '+
      'LEFT JOIN stavka on tar_job.id_stavka = stavka.id '+

@@ -182,7 +182,7 @@ end;
 procedure TForm1.SQLException(Sender: TObject; Statement: TStrings;
   TheException: Exception; var Continue: boolean);
 begin
-  //Continue := True;
+  Continue := True;
 end;
 
 end.
