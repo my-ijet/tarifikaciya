@@ -70,6 +70,106 @@ begin
   frmEditTarJob.TarDate.DateTime := SQLDateTimeToDateTime(TarDate);
 end;
 
+procedure frmEditTarJob_CalculateAllFields;
+var
+  OkladId, OkladSumma : String;
+  Oklad, OkladPlusPercent, TotalOklad,
+  ClockCoeff,
+  Nagruzka,
+  KategoryCoeff, AllCoeff,
+  Stavka : Double = 0;
+begin
+  OkladId := IntToStr(frmEditTarJob.ListOklady.dbItemID);
+  OkladSumma := SQLExecute('select summa from stavka '+
+                           'where id = '+OkladId);
+  if OkladSumma <> '' then
+    Oklad := StrToFloat(OkladSumma);
+  if frmEditTarJob.EditOkladPlusPercent.Text <> '' then
+    OkladPlusPercent := StrToFloat(frmEditTarJob.EditOkladPlusPercent.Text);
+  TotalOklad := Oklad + (Oklad / 100 * OkladPlusPercent);
+
+  if frmEditTarJob.EditClockCoeff.Text <> '' then
+    ClockCoeff := StrToFloat(frmEditTarJob.EditClockCoeff.Text);
+  Nagruzka := TotalOklad * ClockCoeff;
+
+  if frmEditTarJob.EditKategoryCoeff.Text <> '' then
+    KategoryCoeff := StrToFloat(frmEditTarJob.EditKategoryCoeff.Text);
+  if frmEditTarJob.EditAllCoeff.Text <> '' then
+    AllCoeff := StrToFloat(frmEditTarJob.EditAllCoeff.Text);
+  Stavka := Nagruzka * (KategoryCoeff+AllCoeff);
+
+  frmEditTarJob.TotalOklad.Text := FormatFloat('0.##', TotalOklad);
+  frmEditTarJob.Nagruzka.Text := FormatFloat('0.##', Nagruzka);
+  frmEditTarJob.Stavka.Text := FormatFloat('0.##', Stavka);
+end;
+
+procedure frmEditTarJob_CalculateClockCoeff;
+var
+  DoljnostId, DoljnostClock : String;
+  Clock, ClockCoeff : Double = 0;
+begin
+  DoljnostId := IntToStr(frmEditTarJob.ListDoljnosty.dbItemID);
+  DoljnostClock := SQLExecute('select clock from doljnost '+
+                              'where id = '+DoljnostId);
+  if frmEditTarJob.EditClock.Text <> '' then
+    Clock := StrToFloat(frmEditTarJob.EditClock.Text);
+  if DoljnostClock <> '' then
+    ClockCoeff := Clock / StrToFloat(DoljnostClock);
+
+  frmEditTarJob.EditClockCoeff.Text := FormatFloat('0.##', ClockCoeff);
+
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_ListOklady_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_EditOkladPlusPercent_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_EditClock_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateClockCoeff;
+end;
+
+procedure frmEditTarJob_EditClockCoeff_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_ListPredmety_OnChange (Sender: TObject);
+begin end;
+
+procedure frmEditTarJob_ListDoljnosty_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateClockCoeff;
+end;
+
+procedure frmEditTarJob_ListKategory_OnChange (Sender: TObject);
+var
+  KategoryID, KategoryCoeff : String;
+begin
+  KategoryID := IntToStr(frmEditTarJob.ListKategory.dbItemID);
+  KategoryCoeff := SQLExecute('select coeff from kategory '+
+                          'where id = '+KategoryID);
+  frmEditTarJob.EditKategoryCoeff.Text := KategoryCoeff;
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_EditKategoryCoeff_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_EditAllCoeff_OnChange (Sender: TObject);
+begin
+  frmEditTarJob_CalculateAllFields;
+end;
+
 procedure frmEditTarJob_BtnSaveTarJob_OnAfterClick (Sender: TObject; var Cancel: boolean);
 begin
   if frmEditTarJob.dbAction = 'NewRecord' then begin

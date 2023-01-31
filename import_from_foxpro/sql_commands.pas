@@ -240,7 +240,7 @@ begin
     AddText('       ifnull(doljnost.id, 0) as id_doljnost,');
     AddText('       ifnull(predmet.id, 0) as id_predmet,');
     AddText('       FOXPRO_CLOCK as clock,');
-    AddText('       round((FOXPRO_SUMCL / stavka.summa), 2) as clock_coeff,');
+    AddText('       FOXPRO_STAVKA as clock_coeff,');
     AddText('       ifnull(kategory.id, 0) as id_kategory,');
     AddText('       ifnull(stavka.id, 0) as id_stavka,');
     AddText('       FOXPRO_STAVKA as stavka_coeff');
