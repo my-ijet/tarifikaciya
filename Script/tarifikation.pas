@@ -141,10 +141,6 @@ begin
 end;
 
 // Фильтр таблицы Тарификации
-procedure Tarifikation_DoFilterTableTarifikaciya;
-begin
-end;
-
 procedure Tarifikation_BtnClearFilterTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarFIO.ItemIndex := 0;
@@ -246,10 +242,6 @@ begin
 end;
 
 // Фильтр таблицы Должностей
-procedure Tarifikation_DoFilterTableTarJobs;
-begin
-end;
-
 procedure Tarifikation_TableTarifikaciya_OnCellClick (Sender: TObject; ACol, ARow: Integer);
 begin
   Tarifikation.BtnFilterTarJobs.Click;
@@ -308,10 +300,6 @@ begin
 end;
 
 // Фильтр таблицы Надбавок тарификации
-procedure Tarifikation_DoFilterTableTarNadbavky;
-begin
-end;
-
 procedure Tarifikation_BtnClearFilterTarNadbavky_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   Tarifikation.ListFilterTarNadbavky.ItemIndex := 0;
@@ -365,10 +353,6 @@ begin
 end;
 
 // Фильтр таблицы Доплат для Должностей
-procedure Tarifikation_DoFilterTableTarJobDoblaty;
-begin
-end;
-
 procedure Tarifikation_TableTarJobs_OnCellClick (Sender: TObject; ACol, ARow: Integer);
 begin
   Tarifikation.BtnFilterTarJobDoplaty.Click;
