@@ -381,6 +381,71 @@ begin
 end;
 // Фильтр таблицы Доплат для Должностей
 
+// Формат таблиц и футера
+procedure Tarifikation_TableTarifikaciya_OnChange (Sender: TObject);
+var
+  Column : Integer;
+begin
+  for Column:=6 to 6 do begin
+    if Tarifikation.TableTarifikaciya.Columns[Column] is TNxNumberColumn then begin
+      TNxNumberColumn(Tarifikation.TableTarifikaciya.Columns[Column]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+      Tarifikation.TableTarifikaciya.Columns[Column].Footer.FormatMaskKind := mkFloat;
+      Tarifikation.TableTarifikaciya.Columns[Column].Footer.FormulaKind := fkSum;
+      Tarifikation.TableTarifikaciya.Columns[Column].Footer.TextBefore := ' ';
+      Tarifikation.TableTarifikaciya.Columns[Column].Footer.FormatMask := '#,###,##0.00';
+    end;
+  end;
+  Tarifikation.TableTarifikaciya.CalculateFooter;
+end;
+
+procedure Tarifikation_TableTarJobs_OnChange (Sender: TObject);
+var
+  Column : Integer;
+begin
+  for Column:=1 to 12 do begin
+    if Tarifikation.TableTarJobs.Columns[Column] is TNxNumberColumn then begin
+      TNxNumberColumn(Tarifikation.TableTarJobs.Columns[Column]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+      Tarifikation.TableTarJobs.Columns[Column].Footer.FormatMaskKind := mkFloat;
+      Tarifikation.TableTarJobs.Columns[Column].Footer.FormulaKind := fkSum;
+      Tarifikation.TableTarJobs.Columns[Column].Footer.TextBefore := ' ';
+      Tarifikation.TableTarJobs.Columns[Column].Footer.FormatMask := '#,###,##0.00';
+    end;
+  end;
+  Tarifikation.TableTarJobs.CalculateFooter;
+end;
+
+procedure Tarifikation_TableTarNadbavky_OnChange (Sender: TObject);
+var
+  Column : Integer;
+begin
+  for Column:=1 to 3 do begin
+    if Tarifikation.TableTarNadbavky.Columns[Column] is TNxNumberColumn then begin
+      TNxNumberColumn(Tarifikation.TableTarNadbavky.Columns[Column]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+      Tarifikation.TableTarNadbavky.Columns[Column].Footer.FormatMaskKind := mkFloat;
+      Tarifikation.TableTarNadbavky.Columns[Column].Footer.FormulaKind := fkSum;
+      Tarifikation.TableTarNadbavky.Columns[Column].Footer.TextBefore := ' ';
+      Tarifikation.TableTarNadbavky.Columns[Column].Footer.FormatMask := '#,###,##0.00';
+    end;
+  end;
+  Tarifikation.TableTarNadbavky.CalculateFooter;
+end;
+
+procedure Tarifikation_TableTarJobDoblaty_OnChange (Sender: TObject);
+var
+  Column : Integer;
+begin
+  for Column:=1 to 5 do begin
+    if Tarifikation.TableTarJobDoblaty.Columns[Column] is TNxNumberColumn then begin
+      TNxNumberColumn(Tarifikation.TableTarJobDoblaty.Columns[Column]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+      Tarifikation.TableTarJobDoblaty.Columns[Column].Footer.FormatMaskKind := mkFloat;
+      Tarifikation.TableTarJobDoblaty.Columns[Column].Footer.FormulaKind := fkSum;
+      Tarifikation.TableTarJobDoblaty.Columns[Column].Footer.TextBefore := ' ';
+      Tarifikation.TableTarJobDoblaty.Columns[Column].Footer.FormatMask := '#,###,##0.00';
+    end;
+  end;
+  Tarifikation.TableTarJobDoblaty.CalculateFooter;
+end;
+// Формат таблиц и футера
 
 // Новая Тарификация
 procedure Tarifikation_BtnNewTarifikaciya_OnClick (Sender: TObject; var Cancel: boolean);
@@ -627,11 +692,6 @@ begin
   Tarifikation.BtnFilterTarNadbavky.Click;
   Tarifikation.BtnFilterTarJobs.Click;
   Tarifikation.BtnFilterTarJobDoplaty.Click;
-
-  // Tarifikation_DoFilterTableTarifikaciya;
-  // Tarifikation_DoFilterTableTarNadbavky;
-  // Tarifikation_DoFilterTableTarJobs;
-  // Tarifikation_DoFilterTableTarJobDoblaty;
 end;
 
 procedure Tarifikation_OnShow (Sender: TObject; Action: string);

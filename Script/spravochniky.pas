@@ -129,6 +129,16 @@ end;
 // Надбавки
 
 // Доплаты
+procedure Tarifikation_TableDoplaty_OnChange (Sender: TObject);
+var
+  ColumnSumma : Integer;
+begin
+  ColumnSumma := 3;
+  if Tarifikation.TableDoplaty.Columns[ColumnSumma] is TNxNumberColumn then begin
+    TNxNumberColumn(Tarifikation.TableDoplaty.Columns[ColumnSumma]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+   end;
+end;
+
 procedure Tarifikation_CheckFilterDoplataArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterDoplaty.Click;
@@ -144,6 +154,16 @@ end;
 // Доплаты
 
 // Ставки
+procedure Tarifikation_TableStavky_OnChange (Sender: TObject);
+var
+  ColumnSumma : Integer;
+begin
+  ColumnSumma := 1;
+  if Tarifikation.TableStavky.Columns[ColumnSumma] is TNxNumberColumn then begin
+    TNxNumberColumn(Tarifikation.TableStavky.Columns[ColumnSumma]).FormatMask := '#,###,##0.00'; // Маска для колонки с деньгами
+   end;
+end;
+
 procedure Tarifikation_CheckFilterStavkaArchived_OnClick (Sender: TObject);
 begin
   Tarifikation.BtnFilterStavky.Click;
@@ -282,7 +302,7 @@ begin
 end;
 // Кнопки отправки в архив
 
-
+// Статистика использования ФИО сотрудника в тарификации
 procedure Tarifikation_TablePersons_OnCellClick (Sender: TObject; ACol, ARow: Integer);
 var
   PersonId, NumOfTarifikations : String;

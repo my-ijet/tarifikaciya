@@ -97,10 +97,10 @@ begin
   KategorySumma := Nagruzka * KategoryCoeff;
   Stavka := Nagruzka + KategorySumma;
 
-  frmEditTarJob.TotalOklad.Text := FormatFloat('0.##', TotalOklad);
-  frmEditTarJob.Nagruzka.Text := FormatFloat('0.##', Nagruzka);
-  frmEditTarJob.KategorySumma.Text := FormatFloat('0.##', KategorySumma);
-  frmEditTarJob.Stavka.Text := FormatFloat('0.##', Stavka);
+  frmEditTarJob.TotalOklad.Text := FormatFloat('#,###,##0.##', TotalOklad);
+  frmEditTarJob.Nagruzka.Text := FormatFloat('#,###,##0.##', Nagruzka);
+  frmEditTarJob.KategorySumma.Text := FormatFloat('#,###,##0.##', KategorySumma);
+  frmEditTarJob.Stavka.Text := FormatFloat('#,###,##0.##', Stavka);
 end;
 
 procedure frmEditTarJob_CalculateClockCoeff;
