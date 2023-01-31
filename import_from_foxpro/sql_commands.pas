@@ -211,8 +211,8 @@ begin
     AddText('JOIN tarifikaciya on tar.id_organization = tarifikaciya.id_organization');
     AddText('                 and tar.id_person = tarifikaciya.id_person');
     AddText('                 and tar.date = tarifikaciya.date');
-    AddText('JOIN nadbavka on T2.FOXPRO_NADB = nadbavka.FOXPRO_KOD;');
-      AddText('WHERE T2.FOXPRO_PROC_N > 0');
+    AddText('JOIN nadbavka on T2.FOXPRO_NADB = nadbavka.FOXPRO_KOD');
+    AddText('WHERE T2.FOXPRO_PROC_N > 0');
   end;
   Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
   Form1.SQL.Execute;
@@ -227,7 +227,7 @@ begin
     Clear;
     AddText('INSERT INTO tar_job');
     AddText('(id_tarifikaciya, id_doljnost, id_predmet, clock, clock_coeff,');
-    AddText(' id_kategory, id_stavka, stavka_coeff)');
+    AddText(' id_kategory, id_stavka)');
     AddText('WITH tar as (SELECT');
     AddText('       organization.id as id_organization,');
     AddText('       person.id as id_person,');
@@ -242,8 +242,7 @@ begin
     AddText('       FOXPRO_CLOCK as clock,');
     AddText('       FOXPRO_STAVKA as clock_coeff,');
     AddText('       ifnull(kategory.id, 0) as id_kategory,');
-    AddText('       ifnull(stavka.id, 0) as id_stavka,');
-    AddText('       FOXPRO_STAVKA as stavka_coeff');
+    AddText('       ifnull(stavka.id, 0) as id_stavka');
     AddText('FROM T2');
     AddText('JOIN tar on T2.FOXPRO_KU = tar.FOXPRO_KU');
     AddText('        and T2.FOXPRO_TABN = tar.FOXPRO_TABN');
@@ -287,7 +286,7 @@ begin
       AddText('       FOXPRO_CLOCK as clock,');
       AddText('       kategory.id as id_kategory,');
       AddText('       stavka.id as id_stavka,');
-      AddText('       FOXPRO_STAVKA as stavka_coeff,');
+      AddText('       FOXPRO_STAVKA,');
       AddText('       FOXPRO_KU, FOXPRO_TABN, FOXPRO_DOLJ, FOXPRO_PREDM,');
       AddText('       FOXPRO_NADB, FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD,');
       AddText('       FOXPRO_KAT, FOXPRO_RAZR, FOXPRO_STIM, FOXPRO_SUMCL,');
@@ -321,7 +320,7 @@ begin
       AddText('        and T2.FOXPRO_SUMD = job.FOXPRO_SUMD');
       AddText('        and T2.FOXPRO_KAT = job.FOXPRO_KAT');
       AddText('        and T2.FOXPRO_RAZR = job.FOXPRO_RAZR');
-      AddText('        and T2.FOXPRO_STAVKA = job.stavka_coeff');
+      AddText('        and T2.FOXPRO_STAVKA = job.FOXPRO_STAVKA');
       AddText('        and T2.FOXPRO_STIM = job.FOXPRO_STIM');
       AddText('        and T2.FOXPRO_SUMCL = job.FOXPRO_SUMCL');
       AddText('JOIN tar_job on tar_job.id_tarifikaciya = tar.id');
@@ -330,7 +329,6 @@ begin
       AddText('            and tar_job.clock = job.clock');
       AddText('            and tar_job.id_kategory = job.id_kategory');
       AddText('            and tar_job.id_stavka = job.id_stavka');
-      AddText('            and tar_job.stavka_coeff = job.stavka_coeff');
       AddText('JOIN doplata on T2.FOXPRO_DOPL = doplata.FOXPRO_KOD');
       AddText('WHERE T2.FOXPRO_SUMD > 0');
 
@@ -427,7 +425,7 @@ var
   columns: String;
 begin
   columns := 'id_tarifikaciya, id_doljnost, id_predmet, clock, clock_coeff, '+
-             'id_kategory, id_stavka, stavka_coeff ';
+             'id_kategory, id_stavka ';
   RemoveDuplicatesFromTable('tar_job', columns);
 end;
 

@@ -199,15 +199,14 @@ begin
            'tar_job.id, '+
            'doljnost.name, '+
            'predmet.name, '+
-           'tar_job.clock, '+
-           'kategory.name, '+
            'ROUND((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)), 2), '+
+           'tar_job.clock, '+
+           'ROUND(tar_job_summa.nagruzka, 2), '+
+           'kategory.name, '+
+           'ROUND(tar_job_summa.kategory_summa, 2), '+
            'ROUND(tar_job_summa.nadbavka_summa, 2), '+
            'ROUND(tar_job_summa.doplata_summa, 2), '+
            'ROUND(tar_job_summa.doplata_persent_summa, 2), '+
-           '(ifnull(stavka_coeff, 0)+ifnull(kategory_coeff, 0)), '+
-           'ROUND(tar_job_summa.nagruzka, 2), '+
-           'ROUND(tar_job_summa.zarplata, 2), '+
            'ROUND(tar_job_summa.total_percent_summa, 2), '+
            'ROUND(tar_job_summa.total_summa, 2) '+
            'FROM tar_job '+

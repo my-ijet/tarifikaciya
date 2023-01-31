@@ -215,6 +215,11 @@ begin
 end;
 // Кнопки отчёта
 
+procedure Tarifikation_TableOtchetyOrganizations_OnCellDoubleClick (Sender: TObject; ACol, ARow: Integer);
+begin
+  Tarifikation.BtnOtchet.Click;
+end;
+
 // Сохранение реквизитов
 procedure Tarifikation_ListRequisitePersons_OnChange (Sender: TObject);
 var

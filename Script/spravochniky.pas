@@ -282,6 +282,20 @@ begin
 end;
 // Кнопки отправки в архив
 
+
+procedure Tarifikation_TablePersons_OnCellClick (Sender: TObject; ACol, ARow: Integer);
+var
+  PersonId, NumOfTarifikations : String;
+begin
+  PersonId := IntToStr(Tarifikation.TablePersons.dbItemID);
+
+  NumOfTarifikations := SQLExecute('select count(id) from tarifikaciya '+
+                                   'where id_person = '+PersonId);
+
+  Tarifikation.LabelSprNumTarForPeople.Caption := NumOfTarifikations;
+end;
+
+
 begin
   // MessageDlg('Справочники загружены!', mtInformation, mbOK, 0);
 end.

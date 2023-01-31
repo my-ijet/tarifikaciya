@@ -76,7 +76,7 @@ var
   Oklad, OkladPlusPercent, TotalOklad,
   ClockCoeff,
   Nagruzka,
-  KategorySumma, KategoryCoeff, AllCoeff,
+  KategorySumma, KategoryCoeff,
   Stavka : Double = 0;
 begin
   OkladId := IntToStr(frmEditTarJob.ListOklady.dbItemID);
@@ -95,9 +95,7 @@ begin
   if frmEditTarJob.EditKategoryCoeff.Text <> '' then
     KategoryCoeff := StrToFloat(frmEditTarJob.EditKategoryCoeff.Text);
   KategorySumma := Nagruzka * KategoryCoeff;
-  if frmEditTarJob.EditAllCoeff.Text <> '' then
-    AllCoeff := StrToFloat(frmEditTarJob.EditAllCoeff.Text);
-  Stavka := Nagruzka * (KategoryCoeff+AllCoeff);
+  Stavka := Nagruzka + KategorySumma;
 
   frmEditTarJob.TotalOklad.Text := FormatFloat('0.##', TotalOklad);
   frmEditTarJob.Nagruzka.Text := FormatFloat('0.##', Nagruzka);
@@ -163,11 +161,6 @@ begin
 end;
 
 procedure frmEditTarJob_EditKategoryCoeff_OnChange (Sender: TObject);
-begin
-  frmEditTarJob_CalculateAllFields;
-end;
-
-procedure frmEditTarJob_EditAllCoeff_OnChange (Sender: TObject);
 begin
   frmEditTarJob_CalculateAllFields;
 end;
