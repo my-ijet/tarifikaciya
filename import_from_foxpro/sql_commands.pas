@@ -101,7 +101,7 @@ begin
   //  ['FOXPRO_KOD varchar(5)']);
 
   SqlAddColumnsToTable('doljnost',
-    ['kolvo int', 'por int', 'pk int', 'gopl int']);
+    ['pk int', 'gopl int']);
 
   //SqlAddColumnsToTable('obrazovanie',
   //  ['FOXPRO_KOD varchar(5)']);
@@ -140,6 +140,7 @@ begin
     AddText('FOXPRO_CLOCK double,');
     AddText('FOXPRO_SUMCL double,');
     AddText('FOXPRO_NADB varchar(5),');
+    AddText('FOXPRO_PROC_N double, ');
     AddText('FOXPRO_DOPL varchar(5),');
     AddText('FOXPRO_PROC_D double, ');
     AddText('FOXPRO_SUMD double, ');
@@ -191,7 +192,7 @@ begin
   with Form1.SQL.Script do begin
     Clear;
     AddText('INSERT INTO tar_nadbavka');
-    AddText('(id_tarifikaciya, id_nadbavka)');
+    AddText('(id_tarifikaciya, id_nadbavka, nad_percent)');
     AddText('WITH tar as (SELECT');
     AddText('organization.id as id_organization,');
     AddText('person.id as id_person,');
@@ -200,7 +201,9 @@ begin
     AddText('FROM T1');
     AddText('JOIN organization on T1.FOXPRO_KU = organization.FOXPRO_KOD');
     AddText('LEFT JOIN person on T1.FOXPRO_TABN = person.FOXPRO_KOD)');
-    AddText('SELECT tarifikaciya.id , ifnull(nadbavka.id, 0) as id_nadbavka');
+    AddText('SELECT tarifikaciya.id, ');
+    AddText('       ifnull(nadbavka.id, 0) as id_nadbavka,');
+    AddText('       T2.FOXPRO_PROC_N as nad_percent');
     AddText('FROM T2');
     AddText('JOIN tar on T2.FOXPRO_KU = tar.FOXPRO_KU');
     AddText('        and T2.FOXPRO_TABN = tar.FOXPRO_TABN');
@@ -208,7 +211,8 @@ begin
     AddText('JOIN tarifikaciya on tar.id_organization = tarifikaciya.id_organization');
     AddText('                 and tar.id_person = tarifikaciya.id_person');
     AddText('                 and tar.date = tarifikaciya.date');
-    AddText('LEFT JOIN nadbavka on T2.FOXPRO_NADB = nadbavka.FOXPRO_KOD;');
+    AddText('JOIN nadbavka on T2.FOXPRO_NADB = nadbavka.FOXPRO_KOD;');
+      AddText('WHERE T2.FOXPRO_PROC_N > 0');
   end;
   Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
   Form1.SQL.Execute;
@@ -327,7 +331,7 @@ begin
       AddText('            and tar_job.id_kategory = job.id_kategory');
       AddText('            and tar_job.id_stavka = job.id_stavka');
       AddText('            and tar_job.stavka_coeff = job.stavka_coeff');
-      AddText('LEFT JOIN doplata on T2.FOXPRO_DOPL = doplata.FOXPRO_KOD');
+      AddText('JOIN doplata on T2.FOXPRO_DOPL = doplata.FOXPRO_KOD');
       AddText('WHERE T2.FOXPRO_SUMD > 0');
 
       Form1.MainConnection.ExecuteDirect('PRAGMA foreign_keys=OFF;');
@@ -523,7 +527,7 @@ begin
   //  ['FOXPRO_KOD']);
 
   SqlRemoveColumnsFromTable('doljnost',
-    ['kolvo', 'por', 'pk', 'gopl']);
+    ['pk', 'gopl']);
 
   //SqlRemoveColumnsFromTable('obrazovanie',
   //  ['FOXPRO_KOD']);

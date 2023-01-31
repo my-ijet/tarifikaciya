@@ -385,8 +385,8 @@ var
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into doljnost';
-    SQL.Append('(name, kolvo, foxpro_kod, por, pk, gopl)');
-    SQL.Append('values (:name, :kolvo, :foxpro_kod, :por, :pk, :gopl)');
+    SQL.Append('(name, clock, por, foxpro_kod, pk, gopl)');
+    SQL.Append('values (:name, :clock, :por, :foxpro_kod, :pk, :gopl)');
 
     while not Form1.FoxProDbf.EOF do begin
       if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
@@ -398,7 +398,7 @@ begin
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
-      ParamByName('kolvo').AsInteger := Form1.FoxProDbf.FieldByName('KOLVO').AsInteger;
+      ParamByName('clock').AsInteger := Form1.FoxProDbf.FieldByName('KOLVO').AsInteger;
       ParamByName('por').AsInteger := Form1.FoxProDbf.FieldByName('POR').AsInteger;
       ParamByName('pk').AsInteger := Form1.FoxProDbf.FieldByName('PK').AsInteger;
       ParamByName('gopl').AsInteger := Form1.FoxProDbf.FieldByName('GOPL').AsInteger;
@@ -608,16 +608,16 @@ begin
     SQL.Text := 'insert into T2 ';
     SQL.Append('(FOXPRO_KU, FOXPRO_TABN, FOXPRO_DOLJ, ');
     SQL.Append('FOXPRO_PREDM, FOXPRO_CLOCK, FOXPRO_SUMCL, ');
-    SQL.Append('FOXPRO_NADB, FOXPRO_DOPL, ');
-    SQL.Append('FOXPRO_PROC_D, FOXPRO_SUMD, ');
+    SQL.Append('FOXPRO_NADB, FOXPRO_PROC_N, ');
+    SQL.Append('FOXPRO_DOPL, FOXPRO_PROC_D, FOXPRO_SUMD, ');
     SQL.Append('FOXPRO_RAZR, FOXPRO_KAT, ');
     SQL.Append('FOXPRO_STAVKA, FOXPRO_STIM, ');
     SQL.Append('FOXPRO_DATA )');
     SQL.Append('values');
     SQL.Append('(:FOXPRO_KU, :FOXPRO_TABN, :FOXPRO_DOLJ, ');
     SQL.Append(':FOXPRO_PREDM, :FOXPRO_CLOCK, :FOXPRO_SUMCL, ');
-    SQL.Append(':FOXPRO_NADB, :FOXPRO_DOPL, ');
-    SQL.Append(':FOXPRO_PROC_D, :FOXPRO_SUMD, ');
+    SQL.Append(':FOXPRO_NADB, :FOXPRO_PROC_N, ');
+    SQL.Append(':FOXPRO_DOPL, :FOXPRO_PROC_D, :FOXPRO_SUMD, ');
     SQL.Append(':FOXPRO_RAZR, :FOXPRO_KAT, ');
     SQL.Append(':FOXPRO_STAVKA, :FOXPRO_STIM, ');
     SQL.Append(':FOXPRO_DATA );');
@@ -633,6 +633,7 @@ begin
       ParamByName('FOXPRO_CLOCK').AsFloat := Form1.FoxProDbf.FieldByName('CLOCK').AsFloat;
       ParamByName('FOXPRO_SUMCL').AsFloat := Form1.FoxProDbf.FieldByName('SUMCL').AsFloat;
       ParamByName('FOXPRO_NADB').AsString := Form1.FoxProDbf.FieldByName('NADB').AsString;
+      ParamByName('FOXPRO_PROC_N').AsFloat := Form1.FoxProDbf.FieldByName('PROC_N').AsFloat;
       ParamByName('FOXPRO_DOPL').AsString := Form1.FoxProDbf.FieldByName('DOPL').AsString;
       ParamByName('FOXPRO_PROC_D').AsFloat := Form1.FoxProDbf.FieldByName('PROC_D').AsFloat;
       ParamByName('FOXPRO_SUMD').AsFloat := Form1.FoxProDbf.FieldByName('SUMD').AsFloat;
