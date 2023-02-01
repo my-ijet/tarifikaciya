@@ -216,7 +216,7 @@ begin
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
                   SelectedDoljnost +
                   SelectedPredmet+' ' +
-           'ORDER by doljnost.por, doljnost.name ';
+           'ORDER by tar_job_summa.total_summa desc, doljnost.por, doljnost.name ';
 
   Tarifikation.BtnFilterTarJobs.dbSQL := SqlSelect;
 end;

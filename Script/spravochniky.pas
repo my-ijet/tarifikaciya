@@ -315,7 +315,6 @@ begin
   Tarifikation.LabelSprNumTarForPeople.Caption := NumOfTarifikations;
 end;
 
-
 begin
   // MessageDlg('Справочники загружены!', mtInformation, mbOK, 0);
 end.

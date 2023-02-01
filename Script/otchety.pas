@@ -146,7 +146,7 @@ begin
            'WHERE '+
            '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
                   MainTarFilter+' '+
-           'ORDER by doljnost.por, doljnost.name ',
+           'ORDER by tar_job_summa.total_summa desc, doljnost.por, doljnost.name ',
            DsOtchetTarJobs);
 
   // Запрос на получение полей Доплат для должностей тарификации в выбранный период
