@@ -95,8 +95,8 @@ begin
            '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
            ' ) '+ // Для отображения самых новых записей по дате
 
-           'SELECT tar_nadbavka.id_tarifikaciya, '+
-           'tar_nadbavka.id, '+
+           'SELECT tar_nadbavka.id, '+
+           'tar_nadbavka.id_tarifikaciya, '+
            'nadbavka.name, '+
            'tar_nadbavka.nad_percent, '+
            'ROUND(tar_nadbavka_summa.total_nadbavka_summa, 2) as total_nadbavka_summa '+
