@@ -216,7 +216,7 @@ begin
            '      tarifikaciya.id = ' + SelectedTarifikaciya +
                   SelectedDoljnost +
                   SelectedPredmet+' ' +
-           'ORDER by tar_job_summa.total_summa desc, doljnost.name ';
+           'ORDER by doljnost.por, doljnost.name ';
 
   Tarifikation.BtnFilterTarJobs.dbSQL := SqlSelect;
 end;
@@ -274,7 +274,7 @@ begin
            'tar_nadbavka.id, '+
            'nadbavka.name, '+
            'tar_nadbavka.nad_percent, '+
-           'ROUND(tar_nadbavka_summa.total_nadbavka_summa, 2) '+
+           'ROUND(tar_nadbavka_summa.total_nadbavka_summa, 2) as total_nadbavka_summa '+
            'FROM tar_nadbavka '+
            'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
            'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+

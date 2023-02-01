@@ -225,6 +225,50 @@ begin
 end;
 // Утилиты
 
+// Форма перетарификации
+procedure frmPeretarifikation_OnShow (Sender: TObject; Action: string);
+begin
+  frmPeretarifikation.TarDate.DateTime := Tarifikation.DateTarEnd.DateTime + 1;
+end;
+
+procedure frmPeretarifikation_BtnGo_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SelectedDate : String;
+begin
+  if frmPeretarifikation.TarDate.Checked then begin
+    SelectedDate := frmPeretarifikation.TarDate.sqlDate;
+    Peretarifikaciya(SelectedDate);
+    Tarifikation.DateTarStart.DateTime := Tarifikation.DateTarEnd.DateTime + 1;
+    Tarifikation.DateTarEnd.DateTime := Tarifikation.DateTarEnd.DateTime + 365;
+    Tarifikation_DateTarStart_OnChange(Sender); Tarifikation_DateTarEnd_OnChange(Sender);
+  end else begin
+    Cancel := True;
+    MessageDlg('Не выбрана дата тарификации', mtInformation, mbOK, 0);
+  end;
+end;
+// Форма перетарификации
+
+// Форма удаления записей тарификации
+procedure frmDeleteTarBeforDate_OnShow (Sender: TObject; Action: string);
+begin
+  frmDeleteTarBeforDate.TarDate.DateTime := Tarifikation.DateTarStart.DateTime;
+  frmDeleteTarBeforDate.TarDate.Checked := False;
+end;
+
+procedure frmDeleteTarBeforDate_BtnDelete_OnClick (Sender: TObject; var Cancel: boolean);
+var
+  SelectedDate : String;
+begin
+  if frmDeleteTarBeforDate.TarDate.Checked then begin
+    SelectedDate := frmDeleteTarBeforDate.TarDate.sqlDate;
+    DeleteTarifikationsBeforSelectedDate(SelectedDate);
+  end else begin
+    Cancel := True;
+    MessageDlg('Не выбрана дата тарификации', mtInformation, mbOK, 0);
+  end;
+end;
+// Форма удаления записей тарификации
+
 // Пользователи
 procedure Tarifikation_BtnDeleteUser_OnClick (Sender: TObject; var Cancel: boolean);
 var

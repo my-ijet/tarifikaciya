@@ -5,7 +5,7 @@
   'spravochniky.pas',
   'otchety.pas',
   'tarifikation.pas';
-        
+
 procedure Tarifikation_MainTabs_OnChange (Sender: TObject);
 begin
 

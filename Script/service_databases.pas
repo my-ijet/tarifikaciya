@@ -291,6 +291,16 @@ begin
   UpdateAllTables;
 end;
 
+procedure DeleteTarifikationsBeforSelectedDate(SelectedDate: String);
+begin
+  SQLExecute('delete from tarifikaciya '+
+             'where date(date) < date('+SelectedDate+')');
+
+  OptimizeDatabase;
+
+  UpdateAllTables;
+end;
+
 procedure DeleteTarifikations;
 begin
   if MessageDlg('ВСЕ тарификации будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
@@ -300,6 +310,16 @@ begin
   SQLExecute('delete from tar_nadbavka;');
   SQLExecute('delete from tar_job;');
   SQLExecute('delete from tar_job_doplata;');
+
+  OptimizeDatabase;
+
+  UpdateAllTables;
+end;
+
+procedure Peretarifikaciya(SelectedDate: String);
+begin
+  // SQLExecute('delete from tarifikaciya '+
+             // 'where date(date) < date('+SelectedDate+')');
 
   OptimizeDatabase;
 
