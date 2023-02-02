@@ -149,7 +149,6 @@ begin
   sql_commands.ImportTarJobFromT2;
   sql_commands.ImportTarJobDoplataFromT2;
 
-  sql_commands.FindAndRemoveDuplicatesInData;
   MainTransaction.Commit;
 
   Caption := 'Импорт завершён!'; Status.Caption := 'Импорт завершён!';

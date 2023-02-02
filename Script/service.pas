@@ -212,6 +212,11 @@ begin
   DeleteTarifikations;
 end;
 
+procedure Tarifikation_BtnFindAndDeleteDublicates_OnClick (Sender: TObject; var Cancel: boolean);
+begin
+  FindAndDeleteDublicates;
+end;
+
 procedure Tarifikation_BtnOptimizeDatabase_OnClick (Sender: TObject; var Cancel: boolean);
 begin
   OptimizeDatabase;

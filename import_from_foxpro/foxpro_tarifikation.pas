@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Dialogs, DB, Dbf, Forms,
-  Math, LConvEncoding, FileUtil, StrUtils, Variants;
+  LConvEncoding, FileUtil, StrUtils, Variants;
 
 type
   TFoxProUtil = class
@@ -36,7 +36,7 @@ procedure ImportFoxProT2;
 implementation
 
 uses
-  main, sql_commands;
+  main;
 
 procedure ImportSpravochniky(DbfFilePath : String);
 var
@@ -105,144 +105,6 @@ begin
   Form1.FoxProDbf.Close;
 end;
 
-
-// Находит ID по указанному полю если данные уже содержатся в справочнике
-function FindIdIfExist(tablename : String;
-                       FieldName : String;
-                       FieldValue : String) : Integer;
-begin
-  Form1.QSelect.SQL.Text := 'select id from '+tablename;
-  Form1.QSelect.SQL.Append(' where "'+FieldName+'" = "'+FieldValue+'";');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdByFIO(familyname: String;
-                     firstname: String;
-                     middlename: String) : Integer;
-begin
-  Form1.QSelect.SQL.Text := 'select id from person ';
-  Form1.QSelect.SQL.Append('where familyname like "'+familyname+'"');
-  Form1.QSelect.SQL.Append('  and firstname like "'+firstname+'"');
-  Form1.QSelect.SQL.Append('  and middlename like "'+middlename+'"');
-  Form1.QSelect.SQL.Append('limit 1 ;');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdWithMigrationTable(tablename : String;
-                                FOXPRO_KOD : String) : Integer; Inline;
-begin
-  Form1.QSelect.SQL.Text := 'select '+tablename+'.id from '+tablename+' ';
-  Form1.QSelect.SQL.Append('left join migration_table on ');
-  Form1.QSelect.SQL.Append('          '+tablename+'.id = migration_table.to_id ');
-  Form1.QSelect.SQL.Append('      and migration_table.table_name = "'+tablename+'" ');
-  Form1.QSelect.SQL.Append('where '+tablename+'.FOXPRO_KOD = "'+FOXPRO_KOD+'"');
-  Form1.QSelect.SQL.Append('   or migration_table.FOXPRO_KOD = "'+FOXPRO_KOD+'" ');
-  Form1.QSelect.SQL.Append('limit 1');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdInTarifikaciya (FOXPRO_KU : String;
-                               FOXPRO_TABN : String;
-                               FOXPRO_DATA : String) : Integer;
-var
-  id_organization, id_person : Integer;
-begin
-  id_organization := FindIdWithMigrationTable('organization', FOXPRO_KU);
-  if id_organization = 0 then Exit(-1);
-  id_person := FindIdWithMigrationTable('person', FOXPRO_TABN);
-  if id_person = 0 then Exit(-1);
-
-  Form1.QSelect.SQL.Text := 'select tarifikaciya.id from tarifikaciya ';
-  Form1.QSelect.SQL.Append('where tarifikaciya.id_organization = '+IntToStr(id_organization));
-  Form1.QSelect.SQL.Append('  and tarifikaciya.id_person = '+IntToStr(id_person));
-  Form1.QSelect.SQL.Append('  and date(tarifikaciya.date) = date("'+FOXPRO_DATA+'") ');
-  Form1.QSelect.SQL.Append('limit 1 ;');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdInTarJob(id_tarifikaciya : Integer;
-                        FOXPRO_DOLJ : String;
-                        FOXPRO_PREDM : String;
-                        FOXPRO_RAZR : String;
-                        FOXPRO_KAT : String;
-                        stavka_coeff : Double) : Integer;
-var
-  id_doljnost, id_predmet, id_kategory, id_stavka : Integer;
-begin
-  id_doljnost := FindIdWithMigrationTable('doljnost', FOXPRO_DOLJ);
-  if id_doljnost = 0 then Exit(-1);
-  id_predmet := FindIdWithMigrationTable('predmet', FOXPRO_PREDM);
-  if id_predmet = 0 then Exit(-1);
-  id_kategory := FindIdWithMigrationTable('kategory', FOXPRO_KAT);
-  if id_kategory = 0 then Exit(-1);
-  id_stavka := FindIdWithMigrationTable('stavka', FOXPRO_RAZR);
-  if id_stavka = 0 then Exit(-1);
-
-  Form1.QSelect.SQL.Text := 'select id from tar_job ';
-  Form1.QSelect.SQL.Append('where id_tarifikaciya = '+IntToStr(id_tarifikaciya));
-  Form1.QSelect.SQL.Append('  and id_doljnost = '+IntToStr(id_doljnost));
-  Form1.QSelect.SQL.Append('  and id_predmet = '+IntToStr(id_predmet));
-  Form1.QSelect.SQL.Append('  and id_kategory = '+IntToStr(id_kategory));
-  Form1.QSelect.SQL.Append('  and id_stavka = '+IntToStr(id_stavka));
-  Form1.QSelect.SQL.Append('  and printf("%.2f", stavka_coeff) = ');
-  Form1.QSelect.SQL.Append('  printf("%.2f", cast("'+FormatFloat('0.00', stavka_coeff)+'" as real))');
-  Form1.QSelect.SQL.Append('limit 1 ;');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdInTarNadbavka(id_tarifikaciya : Integer;
-                             FOXPRO_NADB : String) : Integer;
-var
-  id_nadbavka : Integer;
-begin
-  id_nadbavka := FindIdWithMigrationTable('nadbavka', FOXPRO_NADB);
-  if id_nadbavka = 0 then Exit(-1);
-
-  Form1.QSelect.SQL.Text := 'select id from tar_nadbavka ';
-  Form1.QSelect.SQL.Append('where id_tarifikaciya = '+IntToStr(id_tarifikaciya));
-  Form1.QSelect.SQL.Append('  and id_nadbavka = '+IntToStr(id_nadbavka));
-  Form1.QSelect.SQL.Append('limit 1 ;');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-function FindIdInTarJobDoplata(id_tar_job : Integer;
-                               FOXPRO_DOPL : String) : Integer;
-var
-  id_doplata : Integer;
-begin
-  id_doplata := FindIdWithMigrationTable('doplata', FOXPRO_DOPL);
-  if id_doplata = 0 then Exit(-1);
-
-  Form1.QSelect.SQL.Text := 'select id from tar_job_doplata ';
-  Form1.QSelect.SQL.Append('where id_tar_job = '+IntToStr(id_tar_job));
-  Form1.QSelect.SQL.Append('  and id_doplata = '+IntToStr(id_doplata));
-  Form1.QSelect.SQL.Append('limit 1 ;');
-  Form1.QSelect.Open;
-  Result := Form1.QSelect.FieldByName('id').AsInteger;
-  Form1.QSelect.Close;
-end;
-
-procedure AddToMigrationTable(tablename : String;
-                             FOXPRO_KOD : String;
-                             ToId : Integer);
-begin
-  Form1.QSelect.SQL.Text := 'insert into migration_table ';
-  Form1.QSelect.SQL.Append('(table_name, FOXPRO_KOD, to_id)');
-  Form1.QSelect.SQL.Append('values ("'+tablename+'", "'+FOXPRO_KOD+'", '+IntToStr(ToId)+' );');
-  Form1.QSelect.ExecSQL;
-end;
 
 procedure ImportOrganizations;
 var

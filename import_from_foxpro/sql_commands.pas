@@ -15,9 +15,6 @@ procedure ImportTarJobFromT2;
 procedure ImportTarJobDoplataFromT2;
 
 procedure UpdateSpravochniky;
-procedure UpdateTarJobs;
-procedure UpdateTarNadbavky;
-procedure UpdateTarJobDoplaty;
 
 procedure RemoveDuplicatesFromT1;
 procedure RemoveDuplicatesFromT2;
@@ -27,7 +24,6 @@ procedure RemoveDuplicatesFromTarNadbavkaAfterImport;
 procedure RemoveDuplicatesFromTarJobAfterImport;
 procedure RemoveDuplicatesFromTarJobDoplataAfterImport;
 
-procedure FindAndRemoveDuplicatesInData;
 procedure ClearTables;
 procedure OptimizeDatabase;
 
@@ -60,66 +56,20 @@ begin
   end;
 end;
 
-procedure SqlUpdateTarTable(TarTableName: String;
-                            FieldName: String;
-                            TableName: String);
-begin
-  with Form1.SQL.Script do begin
-    AddText('UPDATE '+TarTableName);
-    AddText('SET id_'+TableName+' = '+TableName+'.id');
-    AddText('FROM '+TableName);
-    AddText('where '+TarTableName+'.'+FieldName+' = '+TableName+'.FOXPRO_KOD;');
-  end;
-end;
-
-procedure SqlApplyMigrationTable(TableName: String;
-                                 FieldName: String;
-                                 ChildTable: String);
-begin
-  with Form1.SQL.Script do begin
-    AddText('UPDATE '+TableName);
-    AddText('SET id_'+ChildTable+' = migration_table.to_id');
-    AddText('FROM migration_table');
-    AddText('where '+TableName+'.'+FieldName+' = migration_table.FOXPRO_KOD');
-    AddText('  and migration_table.table_name = "'+ChildTable+'";');
-  end;
-end;
-
 procedure PrepareTables;
 begin
   Form1.SQL.Script.Clear;
   SqlAddColumnsToTable('organization',
     ['pg varchar(5)', 'gr varchar(5)']);
 
-  //SqlAddColumnsToTable('org_group',
-  //  ['FOXPRO_KOD varchar(5)']);
-
-  //SqlAddColumnsToTable('person',
-  //  ['FOXPRO_KOD varchar(5)']);
-
-  //SqlAddColumnsToTable('personal_group',
-  //  ['FOXPRO_KOD varchar(5)']);
-
   SqlAddColumnsToTable('doljnost',
     ['pk int', 'gopl int']);
 
-  //SqlAddColumnsToTable('obrazovanie',
-  //  ['FOXPRO_KOD varchar(5)']);
-
-  //SqlAddColumnsToTable('predmet',
-  //  ['FOXPRO_KOD varchar(5)']);
-
   SqlAddColumnsToTable('nadbavka',
-    ['por int', 'pr varchar(5)']);
+    ['pr varchar(5)']);
 
   SqlAddColumnsToTable('doplata',
-    ['por int', 'pk int', 'pr varchar(5)']);
-
-  //SqlAddColumnsToTable('stavka',
-  //  ['RAZR int']);
-
-  //SqlAddColumnsToTable('kategory',
-  //  ['FOXPRO_KOD varchar(5)']);
+    ['pk int', 'pr varchar(5)']);
 
   with Form1.SQL.Script do begin
     AddText('create table if not exists T1 (');
@@ -152,7 +102,7 @@ begin
 
     AddText('create table if not exists migration_table (');
     AddText('table_name varchar(15),');
-    AddText('FOXPRO_KOD varchar(5),');
+    AddText('from_id int,');
     AddText('to_id int );');
   end;
 
@@ -437,11 +387,6 @@ begin
   RemoveDuplicatesFromTable('tar_job_doplata', columns);
 end;
 
-
-procedure FindAndRemoveDuplicatesInData;
-begin
-end;
-
 procedure UpdateSpravochniky;
 begin
   with Form1.SQL.Script do begin
@@ -450,43 +395,6 @@ begin
     AddText('SET id_org_group = org_group.id');
     AddText('FROM org_group');
     AddText('where organization.pg = org_group.FOXPRO_KOD;');
-    SqlApplyMigrationTable('organization', 'id_org_group', 'org_group');
-  end;
-  Form1.SQL.Execute;
-end;
-
-procedure UpdateTarJobs;
-begin
-  with Form1.SQL.Script do begin
-    Clear;
-    SqlUpdateTarTable('tar_job','FOXPRO_DOLJ', 'doljnost');
-    SqlUpdateTarTable('tar_job','FOXPRO_PREDM', 'predmet');
-    SqlUpdateTarTable('tar_job','FOXPRO_RAZR', 'stavka');
-    SqlUpdateTarTable('tar_job','FOXPRO_KAT', 'kategory');
-    SqlApplyMigrationTable('tar_job', 'FOXPRO_DOLJ', 'doljnost');
-    SqlApplyMigrationTable('tar_job', 'FOXPRO_PREDM', 'predmet');
-    SqlApplyMigrationTable('tar_job', 'FOXPRO_RAZR', 'stavka');
-    SqlApplyMigrationTable('tar_job', 'FOXPRO_KAT', 'kategory');
-  end;
-  Form1.SQL.Execute;
-end;
-
-procedure UpdateTarNadbavky;
-begin
-  with Form1.SQL.Script do begin
-    Clear;
-    SqlUpdateTarTable('tar_nadbavka','FOXPRO_NADB', 'nadbavka');
-    SqlApplyMigrationTable('tar_nadbavka', 'FOXPRO_NADB', 'nadbavka');
-  end;
-  Form1.SQL.Execute;
-end;
-
-procedure UpdateTarJobDoplaty;
-begin
-  with Form1.SQL.Script do begin
-    Clear;
-    SqlUpdateTarTable('tar_job_doplata','FOXPRO_DOPL', 'doplata');
-    SqlApplyMigrationTable('tar_job_doplata', 'FOXPRO_DOPL', 'doplata');
   end;
   Form1.SQL.Execute;
 end;
@@ -515,35 +423,14 @@ begin
   SqlRemoveColumnsFromTable('organization',
     ['pg', 'gr']);
 
-  //SqlRemoveColumnsFromTable('org_group',
-  //  ['FOXPRO_KOD']);
-
-  //SqlRemoveColumnsFromTable('person',
-  //  ['FOXPRO_KOD']);
-
-  //SqlRemoveColumnsFromTable('personal_group',
-  //  ['FOXPRO_KOD']);
-
   SqlRemoveColumnsFromTable('doljnost',
     ['pk', 'gopl']);
 
-  //SqlRemoveColumnsFromTable('obrazovanie',
-  //  ['FOXPRO_KOD']);
-
-  //SqlRemoveColumnsFromTable('predmet',
-  //  ['FOXPRO_KOD']);
-
   SqlRemoveColumnsFromTable('nadbavka',
-    ['por', 'pr']);
+    ['pr']);
 
   SqlRemoveColumnsFromTable('doplata',
-    ['por', 'pk', 'pr']);
-
-  //SqlRemoveColumnsFromTable('stavka',
-  //  ['RAZR']);
-
-  //SqlRemoveColumnsFromTable('kategory',
-  //  ['FOXPRO_KOD']);
+    ['pk', 'pr']);
 
   with Form1.SQL.Script do begin
     AddText('drop table if exists migration_table;');

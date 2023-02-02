@@ -315,6 +315,110 @@ begin
 
   UpdateAllTables;
 end;
+// Находим дубли
+function SqlApplyMigrationTable(TableName: String;
+                                 ChildTable: String) : String;
+var
+  SQL_result : String = '';
+begin
+  SQL_result := 'UPDATE '+TableName+
+    ' SET id_'+ChildTable+' = migration_table.to_id '+
+    ' FROM migration_table '+
+    ' where '+TableName+'.id_'+ChildTable+' = migration_table.from_id '+
+    '  and migration_table.table_name = "'+ChildTable+'"; ';
+  Result := SQL_result;
+end;
+
+function SqlDeleteSpravochnikyWithMigrationTable(TableName: String) : String;
+var
+  SQL_result : String = '';
+begin
+  SQL_result := 'DELETE FROM '+TableName+
+    ' WHERE id in ( '+
+    ' SELECT from_id FROM migration_table '+
+    ' WHERE table_name = "'+TableName+'"); ';
+  Result := SQL_result;
+end;
+
+procedure FindAndDeleteDublicates;
+var
+  spravochniky: array[0..10] of String;
+  sql_command, sprav : String;
+  i : Integer;
+begin
+  sql_command := 'create table if not exists migration_table '+
+                 '(table_name varchar(15), from_id int, to_id int);';
+  SQLExecute(sql_command);
+
+  spravochniky[0] := 'org_group';
+  spravochniky[1] := 'personal_group';
+  spravochniky[2] := 'doljnost';
+  spravochniky[3] := 'obrazovanie';
+  spravochniky[4] := 'predmet';
+  spravochniky[5] := 'nadbavka';
+  spravochniky[6] := 'doplata';
+  spravochniky[7] := 'stavka';
+  spravochniky[8] := 'kategory';
+
+  for i:=0 to 8 do begin
+    sprav := spravochniky[i];
+    sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
+                    'SELECT "'+sprav+'", t2.id, t1.id '+
+                    'FROM (SELECT id, name FROM '+sprav+' GROUP by name) as t1 '+
+                    'JOIN '+sprav+' as t2 on t1.name = t2.name and t1.id != t2.id;';
+    SQLExecute(sql_command);
+  end;
+
+  sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
+                 'SELECT "organization", t2.id, t1.id '+
+                 'FROM (SELECT id, short_name FROM organization GROUP by short_name) as t1 '+
+                 'JOIN organization as t2 on t1.short_name = t2.short_name and t1.id != t2.id;';
+  SQLExecute(sql_command);
+
+  sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
+                 'SELECT "person", t2.id, t1.id '+
+                 'FROM (SELECT id, familyname, firstname, middlename FROM person '+
+                 '      GROUP by familyname, firstname, middlename) as t1 '+
+                 'JOIN person as t2 '+
+                 ' on t1.familyname = t2.familyname '+
+                 ' and t1.firstname = t2.firstname '+
+                 ' and t1.middlename = t2.middlename '+
+                 ' and t1.id != t2.id;';
+  SQLExecute(sql_command);
+
+  sql_command := SqlApplyMigrationTable('organization', 'org_group');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tarifikaciya', 'person');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_job', 'doljnost');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_job', 'predmet');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_job', 'stavka');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_job', 'kategory');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_nadbavka', 'nadbavka');
+  SQLExecute(sql_command);
+  sql_command := SqlApplyMigrationTable('tar_job_doplata', 'doplata');
+  SQLExecute(sql_command);
+
+  spravochniky[9] := 'organization';
+  spravochniky[10] := 'person';
+  for i:=0 to 10 do begin
+    sprav := spravochniky[i];
+    sql_command := SqlDeleteSpravochnikyWithMigrationTable(sprav);
+    SQLExecute(sql_command);
+  end;
+
+  sql_command := 'drop table if exists migration_table';
+  SQLExecute(sql_command);
+
+  OptimizeDatabase;
+
+  UpdateAllTables;
+end;
+// Находим дубли
 
 procedure Peretarifikaciya(SelectedDate: String);
 begin
