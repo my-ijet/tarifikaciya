@@ -68,12 +68,12 @@ begin
            'organization.full_name as "organization.full_name",'+
            'ROW_NUMBER() OVER(ORDER by date desc, person.familyname, person.firstname, person.middlename) as num_of_row, '+
            'strftime("%d.%m.%Y", date) as formated_date, '+
-           'printf("%s %s" || char(10) || "%s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
+           'printf("%s"||char(10)||"%s"||char(10)||"%s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
            'obrazovanie.name as "obrazovanie.name", '+
            'diplom, '+
            'staj_year, '+
            'staj_month, '+
-           'ROUND(total_tar_job.total_summa, 2) as total_summa '+
+           'total_tar_job.total_summa as total_summa '+
            'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'LEFT JOIN person ON tarifikaciya.id_person = person.id '+
@@ -99,7 +99,7 @@ begin
            'tar_nadbavka.id_tarifikaciya, '+
            'nadbavka.name, '+
            'tar_nadbavka.nad_percent, '+
-           'ROUND(tar_nadbavka_summa.total_nadbavka_summa, 2) as total_nadbavka_summa '+
+           'tar_nadbavka_summa.total_nadbavka_summa '+
            'FROM tar_nadbavka '+
            'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
            'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
@@ -125,15 +125,13 @@ begin
            'tar_job.id_tarifikaciya, '+
            'doljnost.name as doljnost_name, '+
            'predmet.name as predmet_name, '+
-           'ROUND((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)), 2), '+
-           'tar_job.clock, '+
-           'ROUND(tar_job_summa.nagruzka, 2), '+
-           'kategory.name, '+
-           'ROUND(tar_job_summa.kategory_summa, 2), '+
-           'ROUND(tar_job_summa.nadbavka_summa, 2), '+
-           'ROUND(tar_job_summa.doplata_summa, 2), '+
-           'ROUND(tar_job_summa.doplata_persent_summa, 2), '+
-           'ROUND(tar_job_summa.total_percent_summa, 2), '+
+           'ROUND((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)), 2) as oklad, '+
+           'tar_job.clock_coeff, '+
+           'ROUND(tar_job_summa.nagruzka, 2) as nagruzka, '+
+           'kategory.name as kategory_name, '+
+           'ROUND(tar_job_summa.kategory_summa, 2) as kategory_summa, '+
+           'ROUND(tar_job_summa.nadbavka_summa, 2) as nadbavka_summa, '+
+           'ROUND(tar_job_summa.doplata_summa + tar_job_summa.doplata_persent_summa, 2) as doplata_summa, '+
            'ROUND(tar_job_summa.total_summa, 2) as itog_summa '+
            'FROM tar_job '+
            'JOIN tarifikaciya ON tar_job.id_tarifikaciya = tarifikaciya.id '+
@@ -157,14 +155,13 @@ begin
   // Запрос на получение полей Пользователя
   SQLQuery('WITH head as '+
            '(select id_organization, '+
-           ' doljnost.name as doljnost_org_head, '+
-           ' (printf("%s %s %s", person.familyname, person.firstname, person.middlename)) as FIO_org_head '+
-           ' from org_head '+
-           ' join person on org_head.id_person = person.id '+
-           ' join doljnost on org_head.id_doljnost = doljnost.id '+
-           ' join organization on org_head.id_organization = organization.id '+
-           ' where date <= '+OtchetEndDate+' '+
-           ' ORDER by date desc limit 1 ) '+  // Для отображения самых новых записей по дате
+           'doljnost.name as doljnost_org_head, '+
+           '(printf("%s %s %s", person.familyname, person.firstname, person.middlename)) as FIO_org_head '+
+           'from org_head '+
+           'JOIN person on org_head.id_person = person.id '+
+           'JOIN doljnost on org_head.id_doljnost = doljnost.id '+
+           'JOIN organization on org_head.id_organization = organization.id '+
+           'where date(date) <= date('+OtchetEndDate+') ) '+  // Для отображения самых новых записей по дате
 
            'SELECT '+
            '(printf("%s %s %s", person.familyname, person.firstname, person.middlename)) as FIO_sotrudnika, '+
@@ -173,25 +170,25 @@ begin
            'organization.full_name as organizaciya_full_name, '+
            'head.doljnost_org_head, '+
            'head.FIO_org_head '+
-           'FROM _user, head '+
-           'JOIN person ON _user.id_person = person.id '+
-           'JOIN doljnost ON _user.id_doljnost = doljnost.id '+
-           'JOIN organization ON _user.id_organization = organization.id '+
-           'WHERE head.id_organization = _user.id_organization'+
-           '  and _user.id = '+AppUserID,
+           'FROM _user '+
+           'LEFT JOIN person ON _user.id_person = person.id '+
+           'LEFT JOIN doljnost ON _user.id_doljnost = doljnost.id '+
+           'LEFT JOIN organization ON _user.id_organization = organization.id '+
+           'LEFT JOIN head on _user.id_organization = head.id_organization '+
+           'WHERE _user.id = '+AppUserID,
            DsUser);
 
 
   // Запрос на получение полей Главы организации в выбранный период
   SQLQuery('SELECT '+
-           '(printf("%s %s %s", person.familyname, person.firstname, person.middlename)) as FIO, '+
+           '(printf("%s %s. %s.", person.familyname, substr(person.firstname, 1, 1), substr(person.middlename, 1, 1) )) as FIO, '+
            'doljnost.name as doljnost '+
            'from org_head '+
-           'join person on org_head.id_person = person.id '+
-           'join doljnost on org_head.id_doljnost = doljnost.id '+
-           'join organization on org_head.id_organization = organization.id '+
+           'LEFT JOIN person on org_head.id_person = person.id '+
+           'LEFT JOIN doljnost on org_head.id_doljnost = doljnost.id '+
+           'LEFT JOIN organization on org_head.id_organization = organization.id '+
            'where organization.id = '+SelectedOrganization+' '+
-           '  and date <= '+OtchetEndDate+' '+
+           '  and date(date) <= date('+OtchetEndDate+') '+
            'ORDER by date desc limit 1 ',  // Для отображения самых новых записей по дате
            DsOrgHead);
 

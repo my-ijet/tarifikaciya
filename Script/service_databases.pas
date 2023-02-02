@@ -151,7 +151,7 @@ begin
      '       tar_job.id_tarifikaciya, '+
      '       (job_itog.nagruzka / 100 * ifnull(total_nadbavka.total_percent, 0)) as nadbavka_summa, '+
 
-     '       total_job_doplata.total_summa as doplata_summa, '+
+     '       ifnull(total_job_doplata.total_summa, 0) as doplata_summa, '+
      '       (job_itog.nagruzka / 100 * ifnull(total_job_doplata.total_percent, 0) ) as doplata_persent_summa, '+
 
      '       job_itog.nagruzka, job_itog.kategory_summa, '+
