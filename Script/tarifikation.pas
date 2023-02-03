@@ -95,7 +95,7 @@ begin
            'SELECT '+
            'tarifikaciya.id, '+
            'strftime("%d.%m.%Y", date) as formated_date, '+
-           'printf("%s %s %s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
+           'person.FIO, '+
            'obrazovanie.name as "obrazovanie.name", '+
            'staj_year, '+
            'staj_month, '+

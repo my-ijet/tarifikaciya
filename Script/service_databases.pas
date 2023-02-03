@@ -115,6 +115,9 @@ begin
                     'FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)';
   SQLExecute(SqlCreateTable);
 
+  SQLExecute('ALTER TABLE person add column '+
+             'FIO text as (printf("%s %s %s", familyname, firstname, middlename))');
+
 // запись значений в новые таблицы
   SQLExecute('insert into _user_new select * from _user;');
 // удаление старых таблиц
