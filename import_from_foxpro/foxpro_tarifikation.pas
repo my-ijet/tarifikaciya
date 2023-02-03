@@ -330,8 +330,8 @@ var
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into nadbavka';
-    SQL.Append('(name, percent, foxpro_kod, por, pr)');
-    SQL.Append('values (:name, :percent, :foxpro_kod, :por, :pr)');
+    SQL.Append('(name, percent, foxpro_kod, por, id_comp_type)');
+    SQL.Append('values (:name, :percent, :foxpro_kod, :por, :id_comp_type)');
 
     while not Form1.FoxProDbf.EOF do begin
       if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
@@ -344,8 +344,8 @@ begin
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
       ParamByName('percent').AsFloat := Form1.FoxProDbf.FieldByName('PROC').AsFloat;
+      ParamByName('id_comp_type').AsInteger := Form1.FoxProDbf.FieldByName('PR').AsInteger;
       ParamByName('por').AsInteger := Form1.FoxProDbf.FieldByName('POR').AsInteger;
-      ParamByName('pr').AsString := Form1.FoxProDbf.FieldByName('PR').AsString;
       ExecSQL;
 
       Form1.FoxProDbf.Next;
@@ -359,8 +359,8 @@ var
 begin
   with Form1.QInsertFromFoxPro do begin
     SQL.Text := 'insert into doplata';
-    SQL.Append('(name, foxpro_kod, por, pk, pr)');
-    SQL.Append('values (:name, :foxpro_kod, :por, :pk, :pr)');
+    SQL.Append('(name, foxpro_kod, por, pk, id_comp_type)');
+    SQL.Append('values (:name, :foxpro_kod, :por, :pk, :id_comp_type)');
 
     while not Form1.FoxProDbf.EOF do begin
       if (Form1.FoxProDbf.PhysicalRecNo mod Form1.ProgressBar.Step) = 0 then begin
@@ -372,9 +372,9 @@ begin
 
       ParamByName('foxpro_kod').AsString := FOXPRO_KOD;
       ParamByName('name').AsString := FOXPRO_NAIM;
+      ParamByName('id_comp_type').AsInteger := Form1.FoxProDbf.FieldByName('PR').AsInteger;
       ParamByName('por').AsInteger := Form1.FoxProDbf.FieldByName('POR').AsInteger;
       ParamByName('pk').AsInteger := Form1.FoxProDbf.FieldByName('PK').AsInteger;
-      ParamByName('pr').AsString := Form1.FoxProDbf.FieldByName('PR').AsString;
       ExecSQL;
 
       Form1.FoxProDbf.Next;

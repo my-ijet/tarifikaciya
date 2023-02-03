@@ -84,6 +84,9 @@ begin
 
 // Убираем ошибку вовремя удаления связанной записи
   SQLExecute('PRAGMA foreign_keys=OFF;');
+
+  SQLExecute('insert into comp_type (id, name) values(1, "комп."), (2, "стим.")');
+
   SqlCreateTable := 'CREATE TABLE "_user_new" '+
                     '(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, '+
                     '"username" TEXT NOT NULL DEFAULT "empty", '+
@@ -227,6 +230,7 @@ begin
   UpdateDatabase('doplata');
   UpdateDatabase('stavka');
   UpdateDatabase('kategory');
+  UpdateDatabase('comp_type');
   UpdateDatabase('tarifikaciya');
   UpdateDatabase('tar_nadbavka');
   UpdateDatabase('tar_job');
@@ -315,6 +319,7 @@ begin
 
   UpdateAllTables;
 end;
+
 // Находим дубли
 function SqlApplyMigrationTable(TableName: String;
                                  ChildTable: String) : String;
