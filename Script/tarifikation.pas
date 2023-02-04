@@ -195,7 +195,7 @@ begin
            'tar_job.id, '+
            'doljnost.name, '+
            'predmet.name, '+
-           'ROUND((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)), 2), '+
+           'ROUND(tar_job_summa.oklad, 2), '+
            'tar_job.clock, '+
            'ROUND(tar_job_summa.nagruzka, 2), '+
            'kategory.name, '+

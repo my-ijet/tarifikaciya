@@ -56,60 +56,86 @@ begin
   // Запрос на получение полей Тарификации в выбранный период
   SQLQuery('WITH latest_tar as '+
            '(SELECT id, '+
-           '        row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
+           '        row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+ // Для отображения самых новых записей по дате
            'FROM tarifikaciya '+
            'where tarifikaciya.id_organization = ' + SelectedOrganization +
-           '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
-           ' ) '+ // Для отображения самых новых записей по дате
+           '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' ), '+
+           'tar_number as '+
+           '(SELECT tarifikaciya.id, '+
+           '        ROW_NUMBER() OVER(ORDER by date desc, person.familyname, person.firstname, person.middlename) as num_of_row '+
+           'FROM tarifikaciya '+
+           'JOIN person on tarifikaciya.id_person = person.id '+
+           'WHERE '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+           '      and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+                  MainTarFilter+' ), '+
+
+           'total_tar_comp_stim as '+
+           '(SELECT tar_job_summa.id_tarifikaciya, '+
+           'total(ifnull(tar_job_viplaty_comp.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_comp.percent, 0))) as total_comp, '+
+           'total(ifnull(tar_job_summa.kategory_summa, 0) + ifnull(tar_job_viplaty_stim.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_stim.percent, 0))) as total_stim '+
+           'FROM tarifikaciya '+
+           'JOIN tar_job_summa on tarifikaciya.id = tar_job_summa.id_tarifikaciya '+
+           'LEFT JOIN tar_job_viplaty_comp on tar_job_summa.id = tar_job_viplaty_comp.id '+
+           'LEFT JOIN tar_job_viplaty_stim on tar_job_summa.id = tar_job_viplaty_stim.id '+
+           'WHERE '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+           '      and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
+                  MainTarFilter+' '+
+           'GROUP by tar_job_summa.id_tarifikaciya) '+
 
            'SELECT '+
            'tarifikaciya.id, '+
-           'organization.short_name as "organization.short_name",'+
-           'organization.full_name as "organization.full_name",'+
-           'ROW_NUMBER() OVER(ORDER by date desc, person.familyname, person.firstname, person.middlename) as num_of_row, '+
+           'organization.short_name as "organization.short_name", '+
+           'organization.full_name as "organization.full_name", '+
+           'tar_number.num_of_row, '+
            'printf("%s"||char(10)||"%s"||char(10)||"%s", person.familyname, person.firstname, person.middlename) as "person.FIO", '+
            'printf("%s"||char(10)||"%s"||char(10)||"%iлет %iмес", obrazovanie.name, diplom, staj_year, staj_month) as obrazovanie_string, '+
 
-           'nadbavka.name as nadbavka_name, '+
-           'tar_job_summa.nagruzka / 100 * ifnull(nadbavka.percent, 0) as nadbavka_summa, '+
-
            'tar_job.id as id_tar_job, '+
            'printf("%s"||char(10)||"%s", doljnost.name, predmet.name) as doljnost_string, '+
-           'ROUND((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100)), 2) as oklad, '+
+           'ROUND(tar_job_summa.oklad, 2) as oklad, '+
            'tar_job.clock_coeff, '+
-           'ROUND(tar_job_summa.nagruzka, 2) as nagruzka, '+
-           'printf("%s к."||char(10)||"%iруб.", kategory.name, ROUND(tar_job_summa.kategory_summa, 2)) as kategory_string, '+
+           'printf("%s к."||char(10)||"%iр.", kategory.name, ROUND(tar_job_summa.kategory_summa, 2)) as kategory_string, '+
 
-           'doplata.name as doplata_name, '+
-           'doplata.summa + (tar_job_summa.nagruzka / 100 * ifnull(doplata.percent, 0)) as doplata_summa, '+
+           'tar_nad_dop.name as nad_dop_name, '+
+           'tar_nad_dop.summa + (tar_job_summa.nagruzka / 100 * ifnull(tar_nad_dop.percent, 0)) as nad_dop_summa, '+
 
-           'total_tar_job.total_summa as total_summa '+
+           'printf("Нагр.: %s"||char(10)||"Комп.: %s"||char(10)||"Стим.: %s", '+
+           'ROUND(tar_job_summa.nagruzka, 2), '+
+           'ROUND(ifnull(tar_job_viplaty_comp.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_comp.percent, 0)), 2), '+
+           'ROUND(ifnull(tar_job_summa.kategory_summa, 0) + ifnull(tar_job_viplaty_stim.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_stim.percent, 0)), 2) ) as viplaty_string, '+
+
+           'printf("Итого.: %s"||char(10)||"Комп.: %s"||char(10)||"Стим.: %s", '+
+           'ROUND(total_tar_job.total_summa, 2), '+
+           'ROUND(ifnull(total_tar_comp_stim.total_comp, 0), 2), '+
+           'ROUND(ifnull(total_tar_comp_stim.total_stim, 0), 2) ) as itog_zarplata '+
+
            'FROM tarifikaciya '+
+           'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
 
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'LEFT JOIN person ON tarifikaciya.id_person = person.id '+
            'LEFT JOIN obrazovanie ON tarifikaciya.id_obrazovanie = obrazovanie.id '+
 
-           'LEFT JOIN tar_nadbavka on tarifikaciya.id = tar_nadbavka.id_tarifikaciya '+
            'LEFT JOIN tar_job on tarifikaciya.id = tar_job.id_tarifikaciya '+
-           'LEFT JOIN tar_job_doplata on tar_job.id = tar_job_doplata.id_tar_job '+
-
-           'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
+           'LEFT JOIN tar_nad_dop on tar_job.id = tar_nad_dop.id_tar_job '+
+           'LEFT JOIN tar_job_viplaty_comp on tar_job.id = tar_job_viplaty_comp.id '+
+           'LEFT JOIN tar_job_viplaty_stim on tar_job.id = tar_job_viplaty_stim.id '+
 
            'LEFT JOIN doljnost ON tar_job.id_doljnost = doljnost.id '+
            'LEFT JOIN predmet ON tar_job.id_predmet = predmet.id '+
            'LEFT JOIN kategory ON tar_job.id_kategory = kategory.id '+
            'LEFT JOIN stavka ON tar_job.id_stavka = stavka.id '+
 
-           'LEFT JOIN doplata ON tar_job_doplata.id_doplata = doplata.id '+
-
-           'LEFT JOIN total_tar_job ON tarifikaciya.id = total_tar_job.id_tarifikaciya '+
-           'JOIN tar_job_summa ON tar_nadbavka.id_tarifikaciya = tar_job_summa.id_tarifikaciya and tar_job.id = tar_job_summa.id '+
+           'JOIN tar_job_summa ON tar_job.id = tar_job_summa.id '+
+           'LEFT JOIN total_tar_comp_stim on tarifikaciya.id = total_tar_comp_stim.id_tarifikaciya '+
            'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
+           'JOIN tar_number on tarifikaciya.id = tar_number.id '+
            'WHERE '+
            '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
                   MainTarFilter+' '+
-           'ORDER by num_of_row',
+           'ORDER by tar_number.num_of_row',
            DsOtchetTar);
 
   // Запрос на получение полей Надбавок тарификации в выбранный период

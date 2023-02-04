@@ -81,39 +81,39 @@ begin
   SQLExecute('pragma temp_store = memory;');
   SQLExecute('pragma journal_mode = WAL;');
 
-
 // Убираем ошибку вовремя удаления связанной записи
   SQLExecute('PRAGMA foreign_keys=OFF;');
 
   SQLExecute('insert into comp_type (id, name) values(1, "комп."), (2, "стим.")');
 
-  SqlCreateTable := 'CREATE TABLE "_user_new" '+
-                    '(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, '+
-                    '"username" TEXT NOT NULL DEFAULT "empty", '+
-                    '"password" TEXT, '+
-                    '"id__role" INTEGER, '+
-                    '"is_admin" INTEGER, '+
-                    '"is_active" INTEGER, '+
-                    '"email" TEXT, '+
-                    '"first_name" TEXT, '+
-                    '"last_name" TEXT, '+
-                    '"last_login" TEXT, '+
-                    '"date_joined" TEXT, '+
-                    '"id_doljnost" INTEGER, '+
-                    '"id_organization" INTEGER, '+
-                    '"id_person" INTEGER, '+
-                    '"date_tar_start" TEXT, '+
-                    '"date_tar_end" TEXT, '+
-                    '"date_tar_current" TEXT, '+
-                    '"id_org_group" INTEGER, '+
-                    '"id_organization1" INTEGER, '+
-                    'FOREIGN KEY(id__role) REFERENCES "_role"(id), '+
-                    'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, '+
-                    'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, '+
-                    'FOREIGN KEY(id_org_group) REFERENCES "org_group"(id) ON DELETE SET NULL, '+
-                    'FOREIGN KEY(id_organization1) REFERENCES "organization"(id) ON DELETE SET NULL, '+
-                    'FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)';
-  SQLExecute(SqlCreateTable);
+  SQLExecute(
+    'CREATE TABLE "_user_new" '+
+    '(id INTEGER PRIMARY KEY ASC AUTOINCREMENT, '+
+    '"username" TEXT NOT NULL DEFAULT "empty", '+
+    '"password" TEXT, '+
+    '"id__role" INTEGER, '+
+    '"is_admin" INTEGER, '+
+    '"is_active" INTEGER, '+
+    '"email" TEXT, '+
+    '"first_name" TEXT, '+
+    '"last_name" TEXT, '+
+    '"last_login" TEXT, '+
+    '"date_joined" TEXT, '+
+    '"id_doljnost" INTEGER, '+
+    '"id_organization" INTEGER, '+
+    '"id_person" INTEGER, '+
+    '"date_tar_start" TEXT, '+
+    '"date_tar_end" TEXT, '+
+    '"date_tar_current" TEXT, '+
+    '"id_org_group" INTEGER, '+
+    '"id_organization1" INTEGER, '+
+    'FOREIGN KEY(id__role) REFERENCES "_role"(id), '+
+    'FOREIGN KEY(id_doljnost) REFERENCES "doljnost"(id) ON DELETE SET NULL, '+
+    'FOREIGN KEY(id_organization) REFERENCES "organization"(id) ON DELETE SET NULL, '+
+    'FOREIGN KEY(id_org_group) REFERENCES "org_group"(id) ON DELETE SET NULL, '+
+    'FOREIGN KEY(id_organization1) REFERENCES "organization"(id) ON DELETE SET NULL, '+
+    'FOREIGN KEY(id_person) REFERENCES "person"(id) ON DELETE SET NULL)'
+    );
 
   SQLExecute('ALTER TABLE person add column '+
              'FIO text as (printf("%s %s %s", familyname, firstname, middlename))');
@@ -127,95 +127,140 @@ begin
   SQLExecute('PRAGMA foreign_keys=ON;');
 
 // новые таблицы
-  SqlCreateTable :=
-     'CREATE VIEW total_nadbavka AS '+
-     'SELECT id_tarifikaciya, total(nad_percent) as total_percent '+
-     'FROM tar_nadbavka '+
-     'GROUP by id_tarifikaciya; ';
-  SQLExecute(SqlCreateTable);
+  SQLExecute(
+    'CREATE VIEW total_nadbavka AS '+
+    'SELECT id_tarifikaciya, total(nad_percent) as total_percent '+
+    'FROM tar_nadbavka '+
+    'GROUP by id_tarifikaciya; '
+    );
 
-  SqlCreateTable :=
-     'CREATE VIEW total_job_doplata AS '+
-     'SELECT id_tar_job, '+
-     '       total(dop_percent) as total_percent, '+
-     '	     total(dop_summa) as total_summa '+
-     'FROM tar_job_doplata '+
-     'GROUP by id_tar_job; ';
-  SQLExecute(SqlCreateTable);
+  SQLExecute(
+    'CREATE VIEW total_job_doplata AS '+
+    'SELECT id_tar_job, '+
+    '       total(dop_percent) as total_percent, '+
+    '       total(dop_summa) as total_summa '+
+    'FROM tar_job_doplata '+
+    'GROUP by id_tar_job; '
+    );
 
-  SqlCreateTable :=
-     'CREATE VIEW tar_job_summa AS '+
-     'WITH job_itog as ( '+
-     'SELECT tar_job.id, '+
-     '	   ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * ifnull(clock_coeff, 0))  as nagruzka, '+
-     '	   (ifnull(kategory_coeff, 0)) * ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * ifnull(clock_coeff, 0)) as kategory_summa '+
+  SQLExecute(
+    'CREATE VIEW tar_job_summa AS '+
+    'WITH job_itog as ( '+
+    'SELECT tar_job.id, '+
+    '       ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) /100) as oklad, '+
+    '       (ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * ifnull(clock_coeff, 0)  as nagruzka, '+
+    '       ifnull(kategory_coeff, 0) * ((ifnull(stavka.summa, 0)+(ifnull(stavka.summa, 0) * ifnull(oklad_plus_percent, 0) / 100)) * ifnull(clock_coeff, 0)) as kategory_summa '+
 
-     'FROM tar_job '+
-     'LEFT JOIN stavka on tar_job.id_stavka = stavka.id '+
-     ') '+
-     'SELECT tar_job.id, '+
-     '       tar_job.id_tarifikaciya, '+
-     '       (job_itog.nagruzka / 100 * ifnull(total_nadbavka.total_percent, 0)) as nadbavka_summa, '+
+    'FROM tar_job '+
+    'LEFT JOIN stavka on tar_job.id_stavka = stavka.id '+
+    ') '+
+    'SELECT tar_job.id, '+
+    '       tar_job.id_tarifikaciya, '+
+    '       (job_itog.nagruzka / 100 * ifnull(total_nadbavka.total_percent, 0)) as nadbavka_summa, '+
 
-     '       ifnull(total_job_doplata.total_summa, 0) as doplata_summa, '+
-     '       (job_itog.nagruzka / 100 * ifnull(total_job_doplata.total_percent, 0) ) as doplata_persent_summa, '+
+    '       ifnull(total_job_doplata.total_summa, 0) as doplata_summa, '+
+    '       (job_itog.nagruzka / 100 * ifnull(total_job_doplata.total_percent, 0) ) as doplata_persent_summa, '+
 
-     '       job_itog.nagruzka, job_itog.kategory_summa, '+
+    '       job_itog.oklad, job_itog.nagruzka, job_itog.kategory_summa, '+
 
-     '       ( job_itog.nagruzka / 100 * (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_job_doplata.total_percent, 0))) as total_percent_summa, '+
+    '       ( job_itog.nagruzka / 100 * (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_job_doplata.total_percent, 0))) as total_percent_summa, '+
 
-     '       (job_itog.nagruzka + job_itog.kategory_summa + ifnull(total_job_doplata.total_summa, 0) + '+
-     '       (job_itog.nagruzka / 100 * (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_job_doplata.total_percent, 0))) ) as total_summa '+
+    '       (job_itog.nagruzka + job_itog.kategory_summa + ifnull(total_job_doplata.total_summa, 0) + '+
+    '       (job_itog.nagruzka / 100 * (ifnull(total_nadbavka.total_percent, 0) + ifnull(total_job_doplata.total_percent, 0))) ) as total_summa '+
 
-     'FROM job_itog '+
-     'JOIN tar_job on tar_job.id = job_itog.id '+
-     'LEFT JOIN total_nadbavka on tar_job.id_tarifikaciya = total_nadbavka.id_tarifikaciya '+
-     'LEFT JOIN total_job_doplata on tar_job.id = total_job_doplata.id_tar_job ';
-  SQLExecute(SqlCreateTable);
+    'FROM job_itog '+
+    'JOIN tar_job on tar_job.id = job_itog.id '+
+    'LEFT JOIN total_nadbavka on tar_job.id_tarifikaciya = total_nadbavka.id_tarifikaciya '+
+    'LEFT JOIN total_job_doplata on tar_job.id = total_job_doplata.id_tar_job '
+    );
 
-  SqlCreateTable :=
-     'CREATE VIEW tar_job_doplata_summa AS '+
-     'WITH '+
-     'total_tar_job_nagruzka as '+
-     '(SELECT tar_job_summa.id, tar_job_summa.id_tarifikaciya, '+
-     '		 total(tar_job_summa.nagruzka) as total_summa '+
-     ' FROM tar_job_summa '+
-     ' GROUP by tar_job_summa.id_tarifikaciya, tar_job_summa.id) '+
+  SQLExecute(
+    'CREATE VIEW tar_job_doplata_summa AS '+
+    'WITH '+
+    'total_tar_job_nagruzka as '+
+    '(SELECT tar_job_summa.id, tar_job_summa.id_tarifikaciya, '+
+    '        total(tar_job_summa.nagruzka) as total_summa '+
+    ' FROM tar_job_summa '+
+    ' GROUP by tar_job_summa.id_tarifikaciya, tar_job_summa.id) '+
 
-     'SELECT tar_job_doplata.id, '+
-     '	   tar_job_doplata.id_tar_job, '+
-     '	   ifnull(dop_summa, 0) as total_summa, '+
-     '	   ifnull(dop_percent, 0) as total_percent, '+
+    'SELECT tar_job_doplata.id, '+
+    '       tar_job_doplata.id_tar_job, '+
+    '       ifnull(dop_summa, 0) as total_summa, '+
+    '       ifnull(dop_percent, 0) as total_percent, '+
 
-     '	   (total_tar_job_nagruzka.total_summa / 100 * ifnull(dop_percent, 0)) as total_percent_summa, '+
-     '	   (ifnull(dop_summa, 0) + (total_tar_job_nagruzka.total_summa / 100 * ifnull(dop_percent, 0))) as total_doplata_summa '+
-     'FROM tar_job_doplata '+
-     'JOIN total_tar_job_nagruzka on tar_job_doplata.id_tar_job = total_tar_job_nagruzka.id ';
-  SQLExecute(SqlCreateTable);
+    '       (total_tar_job_nagruzka.total_summa / 100 * ifnull(dop_percent, 0)) as total_percent_summa, '+
+    '       (ifnull(dop_summa, 0) + (total_tar_job_nagruzka.total_summa / 100 * ifnull(dop_percent, 0))) as total_doplata_summa '+
+    'FROM tar_job_doplata '+
+    'JOIN total_tar_job_nagruzka on tar_job_doplata.id_tar_job = total_tar_job_nagruzka.id '
+    );
 
-  SqlCreateTable :=
-     'CREATE VIEW tar_nadbavka_summa AS '+
-     'WITH total_tar_job_nagruzka as '+
-     '(SELECT tar_job_summa.id_tarifikaciya, '+
-     '		 total(tar_job_summa.nagruzka) as total_summa '+
-     ' FROM tar_job_summa '+
-     ' GROUP by tar_job_summa.id_tarifikaciya) '+
-     'SELECT tar_nadbavka.id, '+
-     '	    tar_nadbavka.id_tarifikaciya, '+
-     '		nad_percent, '+
-     '	    ( total_summa / 100 * nad_percent ) as total_nadbavka_summa '+
-     'FROM tar_nadbavka '+
-     'LEFT JOIN total_tar_job_nagruzka on tar_nadbavka.id_tarifikaciya = total_tar_job_nagruzka.id_tarifikaciya; ';
-  SQLExecute(SqlCreateTable);
+  SQLExecute(
+    'CREATE VIEW tar_nadbavka_summa AS '+
+    'WITH total_tar_job_nagruzka as '+
+    '(SELECT tar_job_summa.id_tarifikaciya, '+
+    '        total(tar_job_summa.nagruzka) as total_summa '+
+    ' FROM tar_job_summa '+
+    ' GROUP by tar_job_summa.id_tarifikaciya) '+
+    'SELECT tar_nadbavka.id, '+
+    '       tar_nadbavka.id_tarifikaciya, '+
+    '       nad_percent, '+
+    '       ( total_summa / 100 * nad_percent ) as total_nadbavka_summa '+
+    'FROM tar_nadbavka '+
+    'LEFT JOIN total_tar_job_nagruzka on tar_nadbavka.id_tarifikaciya = total_tar_job_nagruzka.id_tarifikaciya; '
+    );
 
-  SqlCreateTable :=
-     'CREATE VIEW total_tar_job AS '+
-     'SELECT tar_job.id_tarifikaciya, '+
-     '	   total(total_summa) as total_summa '+
-     'from tar_job '+
-     'JOIN tar_job_summa on tar_job.id = tar_job_summa.id '+
-     'GROUP by tar_job.id_tarifikaciya; ';
-  SQLExecute(SqlCreateTable);
+  SQLExecute(
+    'CREATE VIEW tar_nad_dop AS '+
+    'SELECT id_tar_job, '+
+    '       doplata.name, '+
+    '       dop_percent as percent, '+
+    '       dop_summa as summa, '+
+    '       por, id_comp_type '+
+    'FROM tar_job_doplata '+
+    'JOIN doplata on tar_job_doplata.id_doplata = doplata.id '+
+    'UNION ALL '+
+    'SELECT tar_job.id, '+
+    '       nadbavka.name, '+
+    '       nad_percent as percent, '+
+    '       0 as summa, '+
+    '       nadbavka.por, id_comp_type '+
+    'FROM tar_nadbavka '+
+    'JOIN nadbavka on tar_nadbavka.id_nadbavka = nadbavka.id '+
+    'JOIN tar_job on tar_nadbavka.id_tarifikaciya = tar_job.id_tarifikaciya '
+    );
+
+  SQLExecute(
+    'CREATE VIEW total_tar_nad_dop AS '+
+    'SELECT id_tar_job, id_comp_type, '+
+    '       total(percent) as percent, '+
+    '       total(summa) as summa '+
+    'FROM tar_nad_dop '+
+    'GROUP by id_tar_job, id_comp_type');
+
+  SQLExecute(
+    'CREATE VIEW tar_job_viplaty_comp AS '+
+    'SELECT tar_job.id, tar_job.id_tarifikaciya, '+
+    'total_tar_nad_dop.percent, '+
+    'total_tar_nad_dop.summa '+
+    'FROM tar_job '+
+    'JOIN total_tar_nad_dop on tar_job.id = total_tar_nad_dop.id_tar_job '+
+    '                      and total_tar_nad_dop.id_comp_type = 1');
+  SQLExecute(
+    'CREATE VIEW tar_job_viplaty_stim AS '+
+    'SELECT tar_job.id, tar_job.id_tarifikaciya, '+
+    'total_tar_nad_dop.percent, '+
+    'total_tar_nad_dop.summa '+
+    'FROM tar_job '+
+    'JOIN total_tar_nad_dop on tar_job.id = total_tar_nad_dop.id_tar_job '+
+    '                      and total_tar_nad_dop.id_comp_type = 2');
+
+  SQLExecute(
+    'CREATE VIEW total_tar_job AS '+
+    'SELECT id_tarifikaciya, '+
+    '       total(total_summa) as total_summa '+
+    'from tar_job_summa '+
+    'GROUP by id_tarifikaciya;'
+    );
 
 end;
 
