@@ -54,7 +54,7 @@ begin
   end;
 
   // Запрос на получение полей Тарификации в выбранный период
-  SQLQuery('WITH latest_tar as '+
+  SQLQuery('WITH RECURSIVE latest_tar as '+
            '(SELECT id, '+
            '        row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+ // Для отображения самых новых записей по дате
            'FROM tarifikaciya '+
@@ -65,6 +65,7 @@ begin
            '        ROW_NUMBER() OVER(ORDER by date desc, person.familyname, person.firstname, person.middlename) as num_of_row '+
            'FROM tarifikaciya '+
            'JOIN person on tarifikaciya.id_person = person.id '+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'WHERE '+
            '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
            '      and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
