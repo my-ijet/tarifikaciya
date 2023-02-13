@@ -243,8 +243,8 @@ begin
   if frmPeretarifikation.TarDate.Checked then begin
     SelectedDate := frmPeretarifikation.TarDate.sqlDate;
     Peretarifikaciya(SelectedDate);
-    Tarifikation.DateTarStart.DateTime := Tarifikation.DateTarEnd.DateTime + 1;
-    Tarifikation.DateTarEnd.DateTime := Tarifikation.DateTarEnd.DateTime + 365;
+    Tarifikation.DateTarStart.DateTime := frmPeretarifikation.TarDate.DateTime;
+    Tarifikation.DateTarEnd.DateTime := frmPeretarifikation.TarDate.DateTime + 365;
     Tarifikation_DateTarStart_OnChange(Sender); Tarifikation_DateTarEnd_OnChange(Sender);
   end else begin
     Cancel := True;

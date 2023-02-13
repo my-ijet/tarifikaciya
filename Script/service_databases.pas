@@ -403,7 +403,7 @@ end;
 procedure FindAndDeleteDublicates;
 var
   spravochniky: array[0..10] of String;
-  sql_command, sprav : String;
+  sprav : String;
   i : Integer;
 begin
   SQLExecute('create table if not exists migration_table '+
