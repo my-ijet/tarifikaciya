@@ -107,7 +107,7 @@ begin
            'ROUND(ifnull(tar_job_viplaty_comp.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_comp.percent, 0)), 2), '+
            'ROUND(ifnull(tar_job_summa.kategory_summa, 0) + ifnull(tar_job_viplaty_stim.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_stim.percent, 0)), 2) ) as viplaty_string, '+
 
-           'printf("Итого.: %s"||char(10)||"Комп.: %s"||char(10)||"Стим.: %s", '+
+           'printf("Зрп.: %s"||char(10)||"Комп.: %s"||char(10)||"Стим.: %s", '+
            'ROUND(total_tar_job.total_summa, 2), '+
            'ROUND(ifnull(total_tar_comp_stim.total_comp, 0), 2), '+
            'ROUND(ifnull(total_tar_comp_stim.total_stim, 0), 2) ) as itog_zarplata '+
