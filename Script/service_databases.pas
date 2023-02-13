@@ -299,7 +299,6 @@ begin
   Tarifikation.LabelNumPersons.Caption := SQLExecute('select count(*) from person;');
   Tarifikation.LabelNumOrganizations.Caption := SQLExecute('select count(*) from organization;');
 
-  // TODO DELETE
   Tarifikation.LabelNumTarJobs.Caption := SQLExecute('select count(*) from tar_job;');
   Tarifikation.LabelNumTarNadbavky.Caption := SQLExecute('select count(*) from tar_nadbavka;');
   Tarifikation.LabelNumTarDoplaty.Caption := SQLExecute('select count(*) from tar_job_doplata;');
@@ -321,9 +320,13 @@ begin
 end;
 
 procedure DeleteSpravochniky;
+var
+  message: String;
 begin
-  if MessageDlg('ВСЕ справочники и связанные тарификационные списки будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
-  then Exit;
+  message := 'ВСЕ справочники и связанные тарификационные списки будут УДАЛЕНЫ'#13#10+
+             '(рекомендуется создать резервную копию).'#13#10+
+             'Продолжить?';
+  if MessageDlg(message, mtConfirmation, mbYes or mbNo, 0) = mrNo then Exit;
 
   SQLExecute('delete from org_head;');
   SQLExecute('delete from organization;');
@@ -354,9 +357,13 @@ begin
 end;
 
 procedure DeleteTarifikations;
+var
+  message: String;
 begin
-  if MessageDlg('ВСЕ тарификации будут УДАЛЕНЫ (рекомендуется создать резервную копию). Продолжить?', mtConfirmation, mbYes or mbNo, 0) = mrNo
-  then Exit;
+  message := 'ВСЕ тарификации будут УДАЛЕНЫ'#13#10+
+             '(рекомендуется создать резервную копию).'#13#10+
+             'Продолжить?';
+  if MessageDlg(message, mtConfirmation, mbYes or mbNo, 0) = mrNo then Exit;
 
   SQLExecute('delete from tarifikaciya;');
   SQLExecute('delete from tar_nadbavka;');
@@ -399,9 +406,8 @@ var
   sql_command, sprav : String;
   i : Integer;
 begin
-  sql_command := 'create table if not exists migration_table '+
-                 '(table_name varchar(15), from_id int, to_id int);';
-  SQLExecute(sql_command);
+  SQLExecute('create table if not exists migration_table '+
+             '(table_name varchar(15), from_id int, to_id int);');
 
   spravochniky[0] := 'org_group';
   spravochniky[1] := 'personal_group';
@@ -415,57 +421,44 @@ begin
 
   for i:=0 to 8 do begin
     sprav := spravochniky[i];
-    sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
-                    'SELECT "'+sprav+'", t2.id, t1.id '+
-                    'FROM (SELECT id, name FROM '+sprav+' GROUP by name) as t1 '+
-                    'JOIN '+sprav+' as t2 on t1.name = t2.name and t1.id != t2.id;';
-    SQLExecute(sql_command);
+    SQLExecute('insert into migration_table (table_name, from_id, to_id) '+
+               'SELECT "'+sprav+'", t2.id, t1.id '+
+               'FROM (SELECT id, name FROM '+sprav+' GROUP by name) as t1 '+
+               'JOIN '+sprav+' as t2 on t1.name = t2.name and t1.id != t2.id;');
   end;
 
-  sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
-                 'SELECT "organization", t2.id, t1.id '+
-                 'FROM (SELECT id, short_name FROM organization GROUP by short_name) as t1 '+
-                 'JOIN organization as t2 on t1.short_name = t2.short_name and t1.id != t2.id;';
-  SQLExecute(sql_command);
+  SQLExecute('insert into migration_table (table_name, from_id, to_id) '+
+             'SELECT "organization", t2.id, t1.id '+
+             'FROM (SELECT id, short_name FROM organization GROUP by short_name) as t1 '+
+             'JOIN organization as t2 on t1.short_name = t2.short_name and t1.id != t2.id;');
 
-  sql_command := 'insert into migration_table (table_name, from_id, to_id) '+
-                 'SELECT "person", t2.id, t1.id '+
-                 'FROM (SELECT id, familyname, firstname, middlename FROM person '+
-                 '      GROUP by familyname, firstname, middlename) as t1 '+
-                 'JOIN person as t2 '+
-                 ' on t1.familyname = t2.familyname '+
-                 ' and t1.firstname = t2.firstname '+
-                 ' and t1.middlename = t2.middlename '+
-                 ' and t1.id != t2.id;';
-  SQLExecute(sql_command);
+  SQLExecute('insert into migration_table (table_name, from_id, to_id) '+
+             'SELECT "person", t2.id, t1.id '+
+             'FROM (SELECT id, familyname, firstname, middlename FROM person '+
+             '      GROUP by familyname, firstname, middlename) as t1 '+
+             'JOIN person as t2 '+
+             ' on t1.familyname = t2.familyname '+
+             ' and t1.firstname = t2.firstname '+
+             ' and t1.middlename = t2.middlename '+
+             ' and t1.id != t2.id;');
 
-  sql_command := SqlApplyMigrationTable('organization', 'org_group');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tarifikaciya', 'person');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_job', 'doljnost');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_job', 'predmet');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_job', 'stavka');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_job', 'kategory');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_nadbavka', 'nadbavka');
-  SQLExecute(sql_command);
-  sql_command := SqlApplyMigrationTable('tar_job_doplata', 'doplata');
-  SQLExecute(sql_command);
+  SQLExecute( SqlApplyMigrationTable('organization', 'org_group') );
+  SQLExecute( SqlApplyMigrationTable('tarifikaciya', 'person') );
+  SQLExecute( SqlApplyMigrationTable('tar_job', 'doljnost') );
+  SQLExecute( SqlApplyMigrationTable('tar_job', 'predmet') );
+  SQLExecute( SqlApplyMigrationTable('tar_job', 'stavka') );
+  SQLExecute( SqlApplyMigrationTable('tar_job', 'kategory') );
+  SQLExecute( SqlApplyMigrationTable('tar_nadbavka', 'nadbavka') );
+  SQLExecute( SqlApplyMigrationTable('tar_job_doplata', 'doplata') );
 
   spravochniky[9] := 'organization';
   spravochniky[10] := 'person';
   for i:=0 to 10 do begin
     sprav := spravochniky[i];
-    sql_command := SqlDeleteSpravochnikyWithMigrationTable(sprav);
-    SQLExecute(sql_command);
+    SQLExecute( SqlDeleteSpravochnikyWithMigrationTable(sprav) );
   end;
 
-  sql_command := 'drop table if exists migration_table';
-  SQLExecute(sql_command);
+  SQLExecute('drop table if exists migration_table');
 
   OptimizeDatabase;
 

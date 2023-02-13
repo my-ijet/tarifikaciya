@@ -6,11 +6,11 @@
 
 var
   ReportDsOtchetTar,
-  ReportDsOtchetTarNadbavky, ReportDsOtchetTarJobs, ReportDsOtchetTarJobDoplaty,
+  ReportDsOtchetTarItogo, ReportDsOtchetTarJobs, ReportDsOtchetTarJobDoplaty,
   ReportDsUser, ReportDsOrgHead : TfrxDBDataset;
 
   DsOtchetTar,
-  DsOtchetTarNadbavky, DsOtchetTarJobs, DsOtchetTarJobDoplaty,
+  DsOtchetTarItogo, DsOtchetTarJobs, DsOtchetTarJobDoplaty,
   DsUser, DsOrgHead : TDataSet;
 
 procedure PrepareOtchety;
@@ -140,29 +140,66 @@ begin
            DsOtchetTar);
 
   // Запрос на получение полей Надбавок тарификации в выбранный период
-  SQLQuery('WITH latest_tar as '+
+  SQLQuery('WITH RECURSIVE latest_tar as '+
            '(SELECT id, '+
            '        row_number() OVER (PARTITION by id_person ORDER by date DESC ) as MaxPersonDate '+
            'FROM tarifikaciya '+
            'where tarifikaciya.id_organization = ' + SelectedOrganization +
            '  and date between '+OtchetStartDate+' and '+OtchetEndDate+' '+
-           ' ) '+ // Для отображения самых новых записей по дате
+           ' ), '+ // Для отображения самых новых записей по дате
 
-           'SELECT tar_nadbavka.id, '+
-           'tar_nadbavka.id_tarifikaciya, '+
-           'tar_job_summa.id as id_tar_job, '+
-           'nadbavka.name, '+
-           'tar_job_summa.nagruzka / 100 * ifnull(nadbavka.percent, 0) as nadbavka_summa '+
-           'FROM tar_nadbavka '+
-           'JOIN tarifikaciya ON tar_nadbavka.id_tarifikaciya = tarifikaciya.id '+
-           'JOIN tar_job_summa ON tar_nadbavka.id_tarifikaciya = tar_job_summa.id_tarifikaciya '+
-           'LEFT JOIN nadbavka ON tar_nadbavka.id_nadbavka = nadbavka.id '+
+           'total_itog as '+
+           '(SELECT tarifikaciya.id_organization, '+
+           'total(total_tar_job.total_summa) as total_summa '+
+           'FROM tarifikaciya '+
+           'JOIN total_tar_job on tarifikaciya.id = total_tar_job.id_tarifikaciya '+
+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
+           'WHERE '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+                  MainTarFilter+'), '+
+
+           'total_nagruzka as '+
+           '(SELECT tarifikaciya.id_organization, '+
+           'total(tar_job_summa.nagruzka) as total_summa '+
+           'FROM tarifikaciya '+
+           'JOIN tar_job_summa on tarifikaciya.id = tar_job_summa.id_tarifikaciya '+
+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
+           'WHERE '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+                  MainTarFilter+'), '+
+
+           'total_tar_comp_stim as '+
+           '(SELECT tarifikaciya.id_organization, '+
+           'total(ifnull(tar_job_viplaty_comp.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_comp.percent, 0))) as total_comp, '+
+           'total(ifnull(tar_job_summa.kategory_summa, 0) + ifnull(tar_job_viplaty_stim.summa, 0) + (tar_job_summa.nagruzka / 100 * ifnull(tar_job_viplaty_stim.percent, 0))) as total_stim '+
+           'FROM tarifikaciya '+
+           'JOIN tar_job_summa on tarifikaciya.id = tar_job_summa.id_tarifikaciya '+
+           'LEFT JOIN tar_job_viplaty_comp on tar_job_summa.id = tar_job_viplaty_comp.id '+
+           'LEFT JOIN tar_job_viplaty_stim on tar_job_summa.id = tar_job_viplaty_stim.id '+
+
+           'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
+           'WHERE '+
+           '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
+                  MainTarFilter+') '+
+
+           'SELECT '+
+           'ROUND(total_itog.total_summa, 2) as itogo, '+
+           'ROUND(total_nagruzka.total_summa, 2) as nagruzka, '+
+           'ROUND(total_tar_comp_stim.total_comp, 2) as viplaty_comp, '+
+           'ROUND(total_tar_comp_stim.total_stim, 2) as viplaty_stim '+
+           'FROM tarifikaciya '+
+           'LEFT JOIN total_itog ON tarifikaciya.id_organization = total_itog.id_organization '+
+           'LEFT JOIN total_nagruzka ON tarifikaciya.id_organization = total_nagruzka.id_organization '+
+           'LEFT JOIN total_tar_comp_stim ON tarifikaciya.id_organization = total_tar_comp_stim.id_organization '+
+
            'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'WHERE '+
            '      tarifikaciya.id_organization = '+SelectedOrganization+' '+
                   MainTarFilter+' '+
            '',
-           DsOtchetTarNadbavky);
+           DsOtchetTarItogo);
 
   // Запрос на получение полей Должностей тарификации в выбранный период
   SQLQuery('WITH latest_tar as '+
@@ -252,11 +289,11 @@ begin
   ReportDsOtchetTar.OpenDataSource := True;
   ReportDsOtchetTar.DataSet := DsOtchetTar;
 
-  ReportDsOtchetTarNadbavky := TfrxDBDataset.Create(Tarifikation);
-  ReportDsOtchetTarNadbavky.UserName := 'TarNadbavky';
-  ReportDsOtchetTarNadbavky.CloseDataSource := True;
-  ReportDsOtchetTarNadbavky.OpenDataSource := True;
-  ReportDsOtchetTarNadbavky.DataSet := DsOtchetTarNadbavky;
+  ReportDsOtchetTarItogo := TfrxDBDataset.Create(Tarifikation);
+  ReportDsOtchetTarItogo.UserName := 'TarItogo';
+  ReportDsOtchetTarItogo.CloseDataSource := True;
+  ReportDsOtchetTarItogo.OpenDataSource := True;
+  ReportDsOtchetTarItogo.DataSet := DsOtchetTarItogo;
 
   ReportDsOtchetTarJobs := TfrxDBDataset.Create(Tarifikation);
   ReportDsOtchetTarJobs.UserName := 'TarJobs';
@@ -283,7 +320,7 @@ begin
   ReportDsOrgHead.DataSet := DsOrgHead;
 
   Tarifikation.frxReport.DataSets.Add(ReportDsOtchetTar);
-  Tarifikation.frxReport.DataSets.Add(ReportDsOtchetTarNadbavky);
+  Tarifikation.frxReport.DataSets.Add(ReportDsOtchetTarItogo);
   Tarifikation.frxReport.DataSets.Add(ReportDsOtchetTarJobs);
   Tarifikation.frxReport.DataSets.Add(ReportDsOtchetTarJobDoplaty);
   Tarifikation.frxReport.DataSets.Add(ReportDsUser);
@@ -291,7 +328,7 @@ begin
 
 
   ReportDsOtchetTar.DataSet.Close;
-  ReportDsOtchetTarNadbavky.DataSet.Close;
+  ReportDsOtchetTarItogo.DataSet.Close;
   ReportDsOtchetTarJobs.DataSet.Close;
   ReportDsOtchetTarJobDoplaty.DataSet.Close;
   ReportDsUser.DataSet.Close;
@@ -307,7 +344,7 @@ end;
 procedure ClearAfterReport;
 begin
   DsOtchetTar.Free;           ReportDsOtchetTar.Free;
-  DsOtchetTarNadbavky.Free;   ReportDsOtchetTarNadbavky.Free;
+  DsOtchetTarItogo.Free;      ReportDsOtchetTarItogo.Free;
   DsOtchetTarJobs.Free;       ReportDsOtchetTarJobs.Free;
   DsOtchetTarJobDoplaty.Free; ReportDsOtchetTarJobDoplaty.Free;
   DsUser.Free;                ReportDsUser.Free;
@@ -412,7 +449,7 @@ end;
 
 
 begin
-  Tarifikation.ListMainTar.dbAddRecord(1, 'Все');
+  Tarifikation.ListMainTar.dbAddRecord(1, 'Осн+Доп');
   Tarifikation.ListMainTar.dbAddRecord(2, 'Основные');
   Tarifikation.ListMainTar.dbAddRecord(3, 'Дополнительные');
   Tarifikation.ListMainTar.ItemIndex := 2;
