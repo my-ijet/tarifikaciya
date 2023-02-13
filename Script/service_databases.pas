@@ -467,10 +467,56 @@ end;
 // Находим дубли
 
 procedure Peretarifikaciya(SelectedDate: String);
+var
+  StartDate, EndDate : String;
 begin
-  // SQLExecute('delete from tarifikaciya '+
-             // 'where date(date) < date('+SelectedDate+')');
+  StartDate := Tarifikation.DateTarStart.sqlDate;
+  EndDate := Tarifikation.DateTarEnd.sqlDate;
 
+  SQLExecute('PRAGMA foreign_keys=OFF;');
+
+  SQLExecute('ALTER TABLE tarifikaciya ADD COLUMN old_id int');
+  SQLExecute('ALTER TABLE tar_job ADD COLUMN old_id int');
+
+  SQLExecute('WITH latest_tar as '+
+             '(SELECT id, '+
+             '        row_number() OVER (PARTITION by id_organization, id_person ORDER by date DESC ) as MaxPersonDate '+ // Для отображения самых новых записей по дате
+             'FROM tarifikaciya '+
+             'where date between '+StartDate+' and '+EndDate+' ) '+
+
+             'INSERT INTO tarifikaciya '+
+             '(date, id_organization, id_person, id_obrazovanie, diplom, staj_year, staj_month, main, old_id) '+
+             'SELECT '+SelectedDate+', '+
+             'id_organization, id_person, id_obrazovanie, diplom, staj_year, staj_month, true, tarifikaciya.id '+
+             'FROM tarifikaciya '+
+             'JOIN latest_tar ON tarifikaciya.id = latest_tar.id '+
+                            'and latest_tar.MaxPersonDate = 1');
+
+  SQLExecute('INSERT INTO tar_nadbavka'+
+             '(id_tarifikaciya, id_nadbavka, nad_percent) '+
+             'SELECT '+
+             'tarifikaciya.id, id_nadbavka, nad_percent '+
+             'FROM tar_nadbavka '+
+             'JOIN tarifikaciya on tar_nadbavka.id_tarifikaciya = tarifikaciya.old_id');
+
+  SQLExecute('INSERT INTO tar_job '+
+             '(id_tarifikaciya, id_doljnost, id_predmet, clock, clock_coeff, id_kategory, kategory_coeff, id_stavka, oklad_plus_percent, old_id) '+
+             'SELECT '+
+             'tarifikaciya.id, id_doljnost, id_predmet, clock, clock_coeff, id_kategory, kategory_coeff, id_stavka, oklad_plus_percent, tar_job.id '+
+             'FROM tar_job '+
+             'JOIN tarifikaciya on tar_job.id_tarifikaciya = tarifikaciya.old_id');
+
+  SQLExecute('INSERT INTO tar_job_doplata '+
+             '(id_tar_job, id_doplata, dop_percent, dop_summa) '+
+             'SELECT '+
+             'tar_job.id, id_doplata, dop_percent, dop_summa '+
+             'FROM tar_job_doplata '+
+             'JOIN tar_job on tar_job_doplata.id_tar_job = tar_job.old_id');
+
+  SQLExecute('ALTER TABLE tarifikaciya DROP COLUMN old_id');
+  SQLExecute('ALTER TABLE tar_job DROP COLUMN old_id');
+
+  SQLExecute('PRAGMA foreign_keys=ON;');
   OptimizeDatabase;
 
   UpdateAllTables;

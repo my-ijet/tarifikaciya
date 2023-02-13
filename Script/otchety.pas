@@ -97,7 +97,7 @@ begin
            'printf("%s"||char(10)||"%s", doljnost.name, predmet.name) as doljnost_string, '+
            'ROUND(tar_job_summa.oklad, 2) as oklad, '+
            'tar_job.clock_coeff, '+
-           'printf("%s к."||char(10)||"%iр.", kategory.name, ROUND(tar_job_summa.kategory_summa, 2)) as kategory_string, '+
+           'printf("%s к."||char(10)||"%i", kategory.name, ROUND(tar_job_summa.kategory_summa, 2)) as kategory_string, '+
 
            'tar_nad_dop.name as nad_dop_name, '+
            'tar_nad_dop.summa + (tar_job_summa.nagruzka / 100 * ifnull(tar_nad_dop.percent, 0)) as nad_dop_summa, '+
@@ -129,7 +129,7 @@ begin
            'LEFT JOIN kategory ON tar_job.id_kategory = kategory.id '+
            'LEFT JOIN stavka ON tar_job.id_stavka = stavka.id '+
 
-           'JOIN tar_job_summa ON tar_job.id = tar_job_summa.id '+
+           'LEFT JOIN tar_job_summa ON tar_job.id = tar_job_summa.id '+
            'LEFT JOIN total_tar_comp_stim on tarifikaciya.id = total_tar_comp_stim.id_tarifikaciya '+
            'JOIN latest_tar ON tarifikaciya.id = latest_tar.id and latest_tar.MaxPersonDate = 1 '+
            'JOIN tar_number on tarifikaciya.id = tar_number.id '+

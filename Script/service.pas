@@ -243,8 +243,10 @@ begin
   if frmPeretarifikation.TarDate.Checked then begin
     SelectedDate := frmPeretarifikation.TarDate.sqlDate;
     Peretarifikaciya(SelectedDate);
+
+    SelectedDate := SQLExecute('select date('+SelectedDate+', "+1 year", "-1 day")');
     Tarifikation.DateTarStart.DateTime := frmPeretarifikation.TarDate.DateTime;
-    Tarifikation.DateTarEnd.DateTime := frmPeretarifikation.TarDate.DateTime + 365;
+    Tarifikation.DateTarEnd.DateTime := SQLDateTimeToDateTime(SelectedDate);
     Tarifikation_DateTarStart_OnChange(Sender); Tarifikation_DateTarEnd_OnChange(Sender);
   end else begin
     Cancel := True;
