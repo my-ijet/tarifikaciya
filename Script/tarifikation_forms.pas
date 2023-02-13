@@ -1,4 +1,7 @@
 ﻿
+var
+  IgnoreCalcOfClock, IgnoreCalcOfClockCoeff : Boolean;
+
 // Форма тарификации
 // подставляетсяранее выбранная организация и текущая дата тарификации
 procedure frmEditTarifikation_OnShow (Sender: TObject; Action: string);
@@ -108,6 +111,8 @@ var
   DoljnostId, DoljnostClock : String;
   Clock, ClockCoeff : Double = 0;
 begin
+  if IgnoreCalcOfClockCoeff then Exit;
+
   DoljnostId := IntToStr(frmEditTarJob.ListDoljnosty.dbItemID);
   DoljnostClock := SQLExecute('select clock from doljnost '+
                               'where id = '+DoljnostId);
@@ -117,6 +122,26 @@ begin
     ClockCoeff := Clock / StrToFloat(DoljnostClock);
 
   frmEditTarJob.EditClockCoeff.Text := FormatFloat('0.##', ClockCoeff);
+
+  frmEditTarJob_CalculateAllFields;
+end;
+
+procedure frmEditTarJob_CalculateClock;
+var
+  DoljnostId, DoljnostClock : String;
+  Clock, ClockCoeff : Double = 0;
+begin
+  if IgnoreCalcOfClock then Exit;
+
+  DoljnostId := IntToStr(frmEditTarJob.ListDoljnosty.dbItemID);
+  DoljnostClock := SQLExecute('select clock from doljnost '+
+                              'where id = '+DoljnostId);
+  if frmEditTarJob.EditClockCoeff.Text <> '' then
+    ClockCoeff := StrToFloat(frmEditTarJob.EditClockCoeff.Text);
+  if DoljnostClock <> '' then
+    Clock := ClockCoeff * StrToFloat(DoljnostClock);
+
+  frmEditTarJob.EditClock.Text := FormatFloat('0.##', Clock);
 
   frmEditTarJob_CalculateAllFields;
 end;
@@ -133,12 +158,16 @@ end;
 
 procedure frmEditTarJob_EditClock_OnChange (Sender: TObject);
 begin
+  IgnoreCalcOfClock := true;
   frmEditTarJob_CalculateClockCoeff;
+  IgnoreCalcOfClock := false;
 end;
 
 procedure frmEditTarJob_EditClockCoeff_OnChange (Sender: TObject);
 begin
-  frmEditTarJob_CalculateAllFields;
+  IgnoreCalcOfClockCoeff := true;
+  frmEditTarJob_CalculateClock;
+  IgnoreCalcOfClockCoeff := false;
 end;
 
 procedure frmEditTarJob_ListPredmety_OnChange (Sender: TObject);
@@ -146,7 +175,9 @@ begin end;
 
 procedure frmEditTarJob_ListDoljnosty_OnChange (Sender: TObject);
 begin
-  frmEditTarJob_CalculateClockCoeff;
+  IgnoreCalcOfClockCoeff := true;
+  frmEditTarJob_CalculateClock;
+  IgnoreCalcOfClockCoeff := false;
 end;
 
 procedure frmEditTarJob_ListKategory_OnChange (Sender: TObject);
