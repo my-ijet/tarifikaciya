@@ -99,7 +99,7 @@ begin
            'obrazovanie.name as "obrazovanie.name", '+
            'staj_year, '+
            'staj_month, '+
-           'ROUND(total_tar_job.total_summa, 2) '+
+           'ROUND(ifnull(total_tar_job.total_summa, 0), 2) '+
            'FROM tarifikaciya '+
            'JOIN organization ON tarifikaciya.id_organization = organization.id '+
            'LEFT JOIN person ON tarifikaciya.id_person = person.id '+
